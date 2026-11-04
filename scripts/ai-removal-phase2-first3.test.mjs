@@ -50,7 +50,7 @@ test("removed chat and generation implementations are deleted rather than hidden
   assert.equal(existsSync(resolve(root, "apps/web/src/services/agent")), false);
 });
 
-test("manual layout, media tools and deferred on-device features are retained", () => {
+test("manual layout and media tools are retained", () => {
   const assets = read("apps/web/src/components/editor/AssetsPanel.tsx");
   for (const name of ["MusicLibraryPanel", "FilterPresetsPanel", "RecipesTab", "generateBackgroundBlob", "replaceMediaAsset"]) assert.ok(assets.includes(name), name);
   assert.match(read("apps/web/src/components/editor/editor-responsive.css"), /grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
@@ -58,7 +58,6 @@ test("manual layout, media tools and deferred on-device features are retained", 
     "apps/web/src/components/editor/EditSharingPanel.tsx",
     "apps/web/src/services/editing/portable-edits.ts",
     "apps/web/src/services/editing/creation-sync.ts",
-    "apps/web/src/components/editor/inspector/AutoCaptionPanel.tsx",
     "apps/web/src/components/editor/inspector/CaptionEditorPanel.tsx",
   ]) assert.ok(existsSync(resolve(root, path)), path);
 });

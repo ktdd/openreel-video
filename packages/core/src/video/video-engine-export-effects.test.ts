@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Project } from "../types/project";
 import type { Clip, Effect, Transform } from "../types/timeline";
+import { titleEngine } from "../text/title-engine";
+import { DEFAULT_TEXT_STYLE, DEFAULT_TEXT_TRANSFORM, type TextClip } from "../text/types";
 import type {
   ClipColorGrading,
   ColorWheelValues,
@@ -241,7 +243,55 @@ describe("VideoEngine export frame effects", () => {
   });
 
   afterEach(() => {
+    vi.mocked(titleEngine.getAllTextClips).mockRestore?.();
+    vi.mocked(titleEngine.renderText).mockRestore?.();
     vi.unstubAllGlobals();
+  });
+
+  it.each([
+    { hidden: false, time: 1, visible: true },
+    { hidden: true, time: 1, visible: false },
+    { hidden: false, time: 4, visible: false },
+  ])("composites ordinary titles and captions at $time with title track hidden=$hidden", async ({ hidden, time, visible }) => {
+    const source = makeBitmap("source");
+    const output = makeBitmap("output");
+    const readback = vi.fn().mockResolvedValue(output);
+    vi.stubGlobal("createImageBitmap", readback);
+    const fetch = vi.fn(() => { throw new Error("Rendering must not download a model"); });
+    vi.stubGlobal("fetch", fetch);
+    const title: TextClip = {
+      id: "ordinary-title", trackId: "titles", startTime: 0, duration: 2,
+      text: "Visible title", style: DEFAULT_TEXT_STYLE, transform: DEFAULT_TEXT_TRANSFORM,
+      keyframes: [], effects: [],
+    };
+    vi.spyOn(titleEngine, "getAllTextClips").mockReturnValue([title]);
+    const titleCanvas = new OffscreenCanvas(640, 360);
+    const renderTitle = vi.spyOn(titleEngine, "renderText").mockReturnValue({
+      canvas: titleCanvas, width: 640, height: 360, textMetrics: { width: 0, height: 0, lines: [] },
+    });
+    const project = makeProject(makeClip([], {} as ClipColorGrading));
+    project.timeline.tracks.unshift({
+      id: "titles", type: "text", name: "Titles", clips: [], transitions: [],
+      hidden, locked: false, muted: false, solo: false,
+    });
+    project.timeline.subtitles.push({
+      id: "manual-caption", text: "Manual caption", startTime: 0, endTime: 5,
+      style: { fontFamily: "Inter", fontSize: 20, color: "#ffffff", backgroundColor: "transparent", position: "bottom" },
+    });
+    const { VideoEngine } = await import("./video-engine");
+    const engine = new VideoEngine();
+    Object.assign(engine as unknown as Record<string, unknown>, { initialized: true, mediabunny: {} });
+    vi.spyOn(engine as unknown as { decodeFrameWithMediaBunny(): Promise<ImageBitmap> }, "decodeFrameWithMediaBunny").mockResolvedValue(source);
+    const frame = await engine.renderFrame(project, time, 640, 360);
+    expect(renderTitle).toHaveBeenCalledTimes(visible ? 1 : 0);
+    if (visible) expect(ctx.drawImage).toHaveBeenCalledWith(titleCanvas, 0, 0);
+    expect(ctx.fillText).toHaveBeenCalledWith("Manual caption", expect.any(Number), expect.any(Number));
+    expect(readback).toHaveBeenCalledTimes(1);
+    expect(source.close).toHaveBeenCalledOnce();
+    expect(output.close).not.toHaveBeenCalled();
+    frame.image.close();
+    expect(output.close).toHaveBeenCalledOnce();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("exports active clip effects and every color-grading stage", async () => {

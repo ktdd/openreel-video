@@ -64,7 +64,7 @@ test("workspace manifests, lockfile, aliases and deployment no longer configure 
   assert.ok(patches["@ffmpeg/core-mt@0.12.6"]);
 });
 
-test("manual content and deferred on-device features remain; settings have no provider or vault controls", () => {
+test("manual content remains; settings have no provider or vault controls", () => {
   for (const path of [
     "apps/web/src/components/editor/ScriptViewDialog.tsx", "apps/web/src/components/editor/EditSharingPanel.tsx",
     "apps/web/src/services/editing/portable-edits.ts", "apps/web/src/services/editing/creation-sync.ts",
@@ -72,8 +72,7 @@ test("manual content and deferred on-device features remain; settings have no pr
     "apps/web/src/motion/components/CreationWorkspacePanel.tsx", "apps/web/src/components/editor/inspector/ShaderControls.tsx",
     "packages/core/src/motion/shaders/registry.ts", "packages/core/src/motion/motion-shader-validator.ts",
     "packages/core/src/creation/index.ts", "packages/creation-core/package.json", "packages/creation-bindings/package.json", "packages/fxpkg/package.json",
-    "apps/web/src/components/editor/inspector/AutoCaptionPanel.tsx", "apps/web/src/workers/whisper-worker.ts",
-    "apps/web/src/components/editor/inspector/BackgroundRemovalSection.tsx",
+    "apps/web/src/components/editor/inspector/CaptionEditorPanel.tsx",
   ]) assert.ok(existsSync(resolve(root, path)), path);
   const dialog = read("apps/web/src/components/editor/settings/SettingsDialog.tsx");
   assert.match(dialog, /<GeneralPanel/);

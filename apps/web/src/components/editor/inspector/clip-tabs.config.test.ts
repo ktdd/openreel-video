@@ -2,20 +2,20 @@ import { describe, it, expect } from "vitest";
 import { getTabIdsForClipType, getTabsForClipType, TAB_DEFS } from "./clip-tabs.config";
 
 describe("clip-tabs.config", () => {
-  it("video has all 7 media tabs in workflow order", () => {
+  it("video has six manual media tabs in workflow order", () => {
     expect(getTabIdsForClipType("video")).toEqual([
-      "transform", "color", "effects", "audio", "speed", "animate", "ai",
+      "transform", "color", "effects", "audio", "speed", "animate",
     ]);
   });
 
   it("image has speed but no audio", () => {
     expect(getTabIdsForClipType("image")).toEqual([
-      "transform", "color", "effects", "speed", "animate", "ai",
+      "transform", "color", "effects", "speed", "animate",
     ]);
   });
 
-  it("audio shows audio and ai", () => {
-    expect(getTabIdsForClipType("audio")).toEqual(["audio", "ai"]);
+  it("audio shows only manual audio controls", () => {
+    expect(getTabIdsForClipType("audio")).toEqual(["audio"]);
   });
 
   it("text/shape/svg share transform/style/effects/animate", () => {
@@ -37,6 +37,7 @@ describe("clip-tabs.config", () => {
     const defs = getTabsForClipType("video");
     expect(defs[0]).toMatchObject({ id: "transform", label: "Transform" });
     expect(typeof defs[0].icon).toBe("object");
-    expect(Object.keys(TAB_DEFS)).toHaveLength(8);
+    expect(Object.keys(TAB_DEFS)).toHaveLength(7);
+    expect(Object.keys(TAB_DEFS)).not.toContain("ai");
   });
 });

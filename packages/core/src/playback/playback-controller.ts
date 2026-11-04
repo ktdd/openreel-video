@@ -412,9 +412,6 @@ export class PlaybackController {
       const frame = await this.videoEngine.renderFrame(
         this.project,
         time,
-        undefined,
-        undefined,
-        { realtime: true },
       );
 
       const renderTime = performance.now() - startTime;
@@ -471,9 +468,6 @@ export class PlaybackController {
     const renderPromise = this.videoEngine.renderFrame(
       this.project,
       time,
-      undefined,
-      undefined,
-      { realtime: true },
     );
 
     try {

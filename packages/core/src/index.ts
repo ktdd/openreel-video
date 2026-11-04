@@ -13,7 +13,6 @@ export * from "./graphics";
 export * from "./photo";
 export * from "./editing-templates";
 export * from "./motion";
-export * from "./ai";
 export * from "./animation";
 export * from "./effects";
 export * from "./device";

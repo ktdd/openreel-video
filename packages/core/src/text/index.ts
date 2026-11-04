@@ -2,7 +2,7 @@ export * from "./types";
 export * from "./title-engine";
 export * from "./text-animation";
 export * from "./subtitle-engine";
-export * from "./speech-to-text-engine";
+export * from "./transcript-types";
 export * from "./caption-animation-renderer";
 export * from "./text-animation-presets";
 export * from "./character-animator";

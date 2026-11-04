@@ -24,7 +24,6 @@ export interface TextClip {
   readonly blendMode?: import("../video/types").BlendMode;
   readonly blendOpacity?: number;
   readonly emphasisAnimation?: EmphasisAnimation;
-  readonly behindSubject?: boolean;
   readonly metadata?: ClipMetadata;
   /**
    * Optional 3D rendering pass. When present, the text is extruded

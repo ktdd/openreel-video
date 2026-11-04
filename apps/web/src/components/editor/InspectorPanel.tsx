@@ -50,7 +50,6 @@ import { SpeedTab } from "./inspector/tabs/SpeedTab";
 import { AnimateTab } from "./inspector/tabs/AnimateTab";
 import { StyleTab } from "./inspector/tabs/StyleTab";
 import { EffectsTab } from "./inspector/tabs/EffectsTab";
-import { AiTab } from "./inspector/tabs/AiTab";
 import { CaptionTools, AudioUtilities } from "./inspector/ManualEditingSections";
 import { AutoReframeSection } from "./inspector/AutoReframeSection";
 import { TransitionInspector } from "./inspector/TransitionInspector";
@@ -915,7 +914,6 @@ export const InspectorPanel: React.FC = () => {
                   selectedTimelineClip={selectedTimelineClip}
                   showVideoControls={showVideoControls}
                   showVideoEffects={showVideoEffects}
-                  showTextSection={showTextSection}
                   appliedEditingTemplates={appliedEditingTemplates}
                   getEditingTemplate={getEditingTemplate}
                   removeEditingTemplateApplication={removeEditingTemplateApplication}
@@ -961,13 +959,6 @@ export const InspectorPanel: React.FC = () => {
                 />
               )}
 
-              {tabIds.includes("ai") && (
-                <AiTab
-                  clipId={clipId}
-                  showAudioEffects={showAudioEffects}
-                  captionWordsPerLine={captionWordsPerLine}
-                />
-              )}
             </div>
           </InspectorTabErrorBoundary>
         ) : selectedTransition && transitionClipA ? (

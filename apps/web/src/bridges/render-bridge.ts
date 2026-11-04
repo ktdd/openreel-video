@@ -178,9 +178,6 @@ export class RenderBridge {
       const frame = await this.videoEngine.renderFrame(
         project,
         time,
-        undefined,
-        undefined,
-        { realtime: true },
       );
 
       // Draw to canvas if available
@@ -811,9 +808,6 @@ export class RenderBridge {
           const frame = await this.videoEngine.renderFrame(
             project,
             time,
-            undefined,
-            undefined,
-            { realtime: true },
           );
           if (frame && !signal.aborted) {
             const key = RenderBridge.getCacheKey(time, frameRate);

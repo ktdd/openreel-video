@@ -125,16 +125,6 @@ const SEARCHABLE_EFFECTS: SearchItem[] = [
     clipTypes: ["video", "image"],
   },
   {
-    id: "background-removal",
-    name: "Background Removal",
-    category: "Video",
-    keywords: ["background", "remove", "ai", "mask", "cutout", "person"],
-    icon: Wand2,
-    description: "AI-powered background removal",
-    sectionId: "background-removal",
-    clipTypes: ["video", "image"],
-  },
-  {
     id: "masking",
     name: "Masking",
     category: "Video",
@@ -294,7 +284,7 @@ const SEARCHABLE_EFFECTS: SearchItem[] = [
   },
 ];
 
-// Manual utilities remain discoverable independently of AI navigation.
+// Direct navigation to manual caption and editing utilities.
 SEARCHABLE_EFFECTS.push(
   { id: "manual-captions", name: "Captions / SRT / VTT", category: "Text", keywords: ["caption", "subtitle", "srt", "vtt", "import"], icon: Type, description: "Import and edit existing caption text and timing", sectionId: "editable-captions", clipTypes: ["video", "audio", "text"] },
   { id: "heuristic-reframe", name: "Auto Reframe", category: "Video", keywords: ["reframe", "portrait", "crop"], icon: Move, description: "Local pixel-based reframing", sectionId: "auto-reframe", clipTypes: ["video"] },

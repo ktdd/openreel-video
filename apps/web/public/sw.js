@@ -4,10 +4,7 @@
  * Handles offline functionality by caching application assets.
  * Implements a cache-first strategy for static assets and network-first for API calls.
  *
- * Requirements: 35.1, 35.2, 35.4
- * - 35.1: Cache all application assets on first load for offline use
- * - 35.2: Function fully for all non-AI features when offline
- * - 35.4: Inform user that AI requires internet connectivity
+ * Core editing runs locally; optional connected services use the network.
  */
 
 const CACHE_NAME = "openreel-v2";
@@ -39,13 +36,9 @@ const CACHEABLE_PATTERNS = [
 ];
 
 /**
- * Patterns for requests that should never be cached (AI features, etc.)
+ * Connected API responses must not enter the static-asset cache.
  */
-const NO_CACHE_PATTERNS = [
-  /whisper/,
-  /transcribe/,
-  /\/api\//,
-];
+const NO_CACHE_PATTERNS = [/\/api\//];
 
 /**
  * Check if a URL should be cached
@@ -53,7 +46,7 @@ const NO_CACHE_PATTERNS = [
 function shouldCache(url) {
   const urlString = url.toString();
 
-  // Never cache AI-related requests
+  // Never cache connected API responses
   if (NO_CACHE_PATTERNS.some((pattern) => pattern.test(urlString))) {
     return false;
   }
@@ -63,9 +56,9 @@ function shouldCache(url) {
 }
 
 /**
- * Check if a request is for an AI feature
+ * Check if a request must bypass the asset cache.
  */
-function isAIRequest(url) {
+function isNetworkOnlyRequest(url) {
   const urlString = url.toString();
   return NO_CACHE_PATTERNS.some((pattern) => pattern.test(urlString));
 }
@@ -145,16 +138,15 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Handle AI requests - network only with offline message
-  if (isAIRequest(url)) {
+  // Connected APIs use the network without caching their responses.
+  if (isNetworkOnlyRequest(url)) {
     event.respondWith(
       fetch(request).catch(() => {
-        // Return a JSON response indicating AI is unavailable offline
+        // Keep a useful network error for optional connected services.
         return new Response(
           JSON.stringify({
-            error: "AI_OFFLINE",
-            message:
-              "AI features require an internet connection. Please connect to the internet to use this feature.",
+            error: "NETWORK_UNAVAILABLE",
+            message: "This service requires a network connection.",
           }),
           {
             status: 503,

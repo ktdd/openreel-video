@@ -308,10 +308,3 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
   return serviceWorkerManager.register();
 }
-
-/**
- * Check if AI features are available (requires online)
- */
-export function isAIAvailable(): boolean {
-  return serviceWorkerManager.getOnlineStatus();
-}

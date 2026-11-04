@@ -2,7 +2,7 @@
 
 ## Overview
 
-This fork focuses on the local-first browser video editor. Core editing, preview, and rendering are intended to work on-device; optional AI and connected services may use the network. Preserve that distinction when changing media or network flows. The main stack is TypeScript, React, Zustand, Vite, Vitest, WebCodecs/Web Audio/WebGPU, and MediaBunny.
+This fork focuses on the local-first browser video editor. Core editing, preview, and rendering are intended to work on-device; optional connected services such as sharing may use the network. Preserve that distinction when changing media or network flows. The main stack is TypeScript, React, Zustand, Vite, Vitest, WebCodecs/Web Audio/WebGPU, and MediaBunny.
 
 ## Workspace map
 
@@ -10,7 +10,7 @@ This is a Bun workspace (`apps/*` and `packages/*` in root `package.json`). Pack
 
 - `apps/web`: main video editor. `src/components/editor` contains editor UI; `src/stores` has Zustand project, timeline, UI, and engine state; `src/bridges` connects UI/state to core engines; `src/services` and `src/workers` handle app services and background work. `src/motion` is the motion-creation workspace. `src/App.tsx` is the app entry. Desktop-specific code remains in the web source, but the desktop app was removed.
 - `packages/core`: shared editor engines and types. Start in `src/timeline`, `editing`, `media`, `playback`, `video`, `audio`, `effects`, `export`, `storage`, `motion`, or `creation`, as appropriate. AssemblyScript WASM sources live under `src/wasm`.
-- `apps/web/src/services/editing`: retained manual editing transactions, portable edit JSON/presets and creation synchronization. Agent workspaces, generative services and their provider settings were removed in Phase 2; see `docs/ai-removal-phase2.md`. Remaining on-device inference is scheduled separately in Phase 3.
+- `apps/web/src/services/editing`: retained manual editing transactions, portable edit JSON/presets and creation synchronization. Agent workspaces, generative services and their provider settings were removed in Phase 2; see `docs/ai-removal-phase2.md`. On-device transcription/segmentation was removed in Phase 3; see `docs/ai-removal-phase3.md`. Caption content/editing and deterministic reframing remain.
 - `packages/creation-core`: C++20 native creation engine; `packages/creation-bindings` provides native/WASM bindings with a TypeScript CPU fallback in `@openreel/core/creation`. See `packages/creation-core/README.md`.
 - `packages/fxpkg`: effect package types, validation, compiler, and related utilities. `packages/ui` contains shared UI components.
 - `docs/superpowers`: design specs and plans (useful context, not necessarily current implementation). `scripts` contains verification and utility scripts.

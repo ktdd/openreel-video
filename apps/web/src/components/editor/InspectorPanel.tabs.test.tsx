@@ -99,6 +99,12 @@ describe("InspectorPanel (no tabs, collapsible sections by clip type)", () => {
     expect(
       container.querySelector('[data-section-id="transform"]'),
     ).not.toBeNull();
+    for (const section of ["auto-captions", "background-removal", "text-behind-subject"]) {
+      expect(container.querySelector(`[data-section-id="${section}"]`)).toBeNull();
+    }
+    for (const section of ["green-screen", "masking", "editable-captions", "auto-edit", "highlights"]) {
+      expect(container.querySelector(`[data-section-id="${section}"]`)).not.toBeNull();
+    }
   });
 
   it("the Transform section is a collapsible with a toggle header", () => {
@@ -136,7 +142,7 @@ describe("InspectorPanel (no tabs, collapsible sections by clip type)", () => {
     expect(screen.getByText("Volume")).toBeTruthy();
     expect(screen.getByText("Fade in")).toBeTruthy();
     expect(screen.getByText("Fade out")).toBeTruthy();
-    expect(container.querySelector('[data-section-id="auto-captions"]')).not.toBeNull();
+    expect(container.querySelector('[data-section-id="auto-captions"]')).toBeNull();
     expect(container.querySelector('[data-section-id="editable-captions"]')).not.toBeNull();
   });
 
