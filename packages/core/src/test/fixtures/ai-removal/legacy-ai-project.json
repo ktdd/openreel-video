@@ -1,0 +1,121 @@
+{
+  "version": "1.2.0",
+  "project": {
+    "id": "phase0-legacy-ai",
+    "name": "Phase 0 completed content and retired features",
+    "createdAt": 1700000000000,
+    "modifiedAt": 1700000000000,
+    "settings": { "width": 640, "height": 360, "frameRate": 30, "sampleRate": 8000, "channels": 1 },
+    "mediaLibrary": {
+      "items": [
+        {
+          "id": "completed-image", "name": "completed-generation.svg", "type": "image",
+          "fileHandle": null, "blob": null, "thumbnailUrl": null, "waveformData": null,
+          "sourceFile": { "name": "completed-generation.svg", "size": 176, "lastModified": 1700000000000 },
+          "metadata": { "duration": 0, "width": 16, "height": 16, "frameRate": 0, "codec": "svg", "sampleRate": 0, "channels": 0, "fileSize": 176 }
+        },
+        {
+          "id": "pending-image", "name": "unfinished-generation.png", "type": "image",
+          "fileHandle": null, "blob": null, "thumbnailUrl": null, "waveformData": null,
+          "isPlaceholder": true, "isPending": true, "kieaiError": false, "kieaiTaskId": "synthetic-task-pending",
+          "metadata": { "duration": 0, "width": 16, "height": 16, "frameRate": 0, "codec": "png", "sampleRate": 0, "channels": 0, "fileSize": 0 }
+        },
+        {
+          "id": "failed-image", "name": "failed-generation.png", "type": "image",
+          "fileHandle": null, "blob": null, "thumbnailUrl": null, "waveformData": null,
+          "isPlaceholder": true, "isPending": false, "kieaiError": true, "kieaiTaskId": "synthetic-task-failed",
+          "metadata": { "duration": 0, "width": 16, "height": 16, "frameRate": 0, "codec": "png", "sampleRate": 0, "channels": 0, "fileSize": 0 }
+        }
+      ]
+    },
+    "timeline": {
+      "duration": 3,
+      "markers": [],
+      "subtitles": [{ "id": "supplied-caption", "text": "Saved caption text", "startTime": 0, "endTime": 1, "words": [{ "text": "Saved", "startTime": 0, "endTime": 0.3 }, { "text": "caption", "startTime": 0.3, "endTime": 0.7 }, { "text": "text", "startTime": 0.7, "endTime": 1 }] }],
+      "tracks": [
+        {
+          "id": "title-track", "type": "text", "role": "captions", "name": "Saved titles",
+          "locked": false, "hidden": false, "muted": false, "solo": false, "clips": [], "transitions": []
+        },
+        {
+          "id": "image-track", "type": "image", "name": "Completed and unfinished assets",
+          "locked": false, "hidden": false, "muted": false, "solo": false, "transitions": [],
+          "clips": [
+            {
+              "id": "completed-clip", "mediaId": "completed-image", "trackId": "image-track",
+              "startTime": 0, "duration": 1, "inPoint": 0, "outPoint": 1, "volume": 1,
+              "effects": [], "audioEffects": [], "keyframes": [],
+              "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+              "metadata": { "source": "synthetic-completed-generation" }
+            },
+            {
+              "id": "pending-clip", "mediaId": "pending-image", "trackId": "image-track",
+              "startTime": 1, "duration": 1, "inPoint": 0, "outPoint": 1, "volume": 1,
+              "effects": [], "audioEffects": [], "keyframes": [],
+              "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 }
+            },
+            {
+              "id": "failed-clip", "mediaId": "failed-image", "trackId": "image-track",
+              "startTime": 2, "duration": 1, "inPoint": 0, "outPoint": 1, "volume": 1,
+              "effects": [], "audioEffects": [], "keyframes": [],
+              "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 }
+            }
+          ]
+        }
+      ]
+    },
+    "textClips": [{
+      "id": "legacy-behind-subject-title", "trackId": "title-track", "startTime": 0, "duration": 1,
+      "text": "Keep this title visible", "behindSubject": true, "keyframes": [],
+      "style": { "fontFamily": "Arial", "fontSize": 24, "fontWeight": 400, "fontStyle": "normal", "color": "#ffffff", "textAlign": "center", "verticalAlign": "middle", "lineHeight": 1.2, "letterSpacing": 0 },
+      "transform": { "position": { "x": 320, "y": 180 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+      "metadata": { "captionSource": "whisper", "captionWhisperModel": "fast", "captionSourceClipId": "completed-clip" }
+    }],
+    "generatedShaders": [{
+      "id": "ai-phase0-saved-fill", "name": "Saved synthetic fill", "category": "fill", "origin": "generated",
+      "glsl": "#version 300 es\nprecision mediump float;\nin vec2 vUv;\nuniform float u_amount;\nout vec4 fragColor;\nvoid main() { fragColor = vec4(u_amount, 0.25, 0.5, 1.0); }",
+      "params": [{ "name": "amount", "label": "Amount", "type": "number", "default": 0.5, "min": 0, "max": 1, "step": 0.01 }]
+    }],
+    "motionCompositions": [{
+      "id": "creation-composition", "name": "Saved creation render", "width": 640, "height": 360,
+      "frameRate": 30, "duration": 3, "backgroundColor": "#000000",
+      "assets": [], "variables": [], "markers": [], "audioClips": [],
+      "createdAt": 1700000000000, "modifiedAt": 1700000000000,
+      "layers": [{
+        "id": "saved-shader-text", "type": "text", "name": "Saved shader text", "startTime": 0, "duration": 3,
+        "visible": true, "locked": false, "keyframes": [], "text": "Saved fill",
+        "transform": { "position": { "x": 320, "y": 100 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+        "style": { "fontFamily": "Arial", "fontSize": 24, "color": "#ffffff", "fillShader": { "shaderId": "ai-phase0-saved-fill", "params": { "amount": 0.5 } } }
+      }, {
+        "id": "creation-layer", "type": "scene3d", "name": "Saved box", "startTime": 0, "duration": 3,
+        "visible": true, "locked": false, "keyframes": [],
+        "transform": { "position": { "x": 320, "y": 180 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+        "object": { "kind": "box", "size": 0.5 },
+        "objects": [{ "id": "render-box", "name": "Box", "object": { "kind": "box", "size": 0.5 }, "material": { "kind": "physical", "color": "#6699ff", "roughness": 0.5 } }]
+      }]
+    }],
+    "motionInstances": [{
+      "id": "creation-instance", "compositionId": "creation-composition", "startTime": 0, "duration": 3, "opacity": 1,
+      "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 }
+    }],
+    "creation": {
+      "version": "0.1.0", "activeSceneId": "creation-scene", "operationHistory": [],
+      "assets": [{
+        "id": "box-asset", "name": "Saved procedural box", "kind": "prop", "seed": "phase0", "parameters": {},
+        "nodes": [{ "id": "box-node", "type": "primitive", "name": "Box", "inputs": [], "parameters": { "kind": "box", "size": 1 } }],
+        "materials": [{ "id": "box-material", "name": "Blue", "model": "pbr", "baseColor": "#6699ff", "roughness": 0.5 }],
+        "dependencies": [], "caches": [], "createdAt": 1700000000000, "modifiedAt": 1700000000000
+      }],
+      "scenes": [{
+        "id": "creation-scene", "name": "Saved agent-created scene", "duration": 3, "frameRate": 30,
+        "objects": [{ "id": "creation-box", "name": "Box", "assetId": "box-asset", "materialId": "box-material", "visible": true, "selectable": true, "tags": ["agent-created"], "transform": { "position": { "x": 0, "y": 0, "z": 0 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 } } }],
+        "cameras": [{ "id": "creation-camera", "name": "Camera", "position": { "x": 0, "y": 0, "z": 4 }, "target": { "x": 0, "y": 0, "z": 0 }, "fov": 35 }],
+        "activeCameraId": "creation-camera",
+        "lights": [{ "id": "creation-light", "name": "Key", "kind": "directional", "color": "#ffffff", "intensity": 1 }],
+        "animations": [], "environment": { "kind": "studio" },
+        "renderBindings": [{ "id": "creation-binding", "kind": "motion-scene3d", "compositionId": "creation-composition", "layerId": "creation-layer", "objectBindings": [{ "sceneObjectId": "creation-box", "renderObjectId": "render-box" }], "createdAt": 1700000000000, "modifiedAt": 1700000000000 }],
+        "createdAt": 1700000000000, "modifiedAt": 1700000000000
+      }]
+    }
+  }
+}

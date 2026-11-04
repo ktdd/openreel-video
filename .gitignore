@@ -45,6 +45,11 @@ coverage/
 docs/*
 !docs/superpowers/
 !docs/android-port/
+!docs/remove-ai-features.md
+!docs/ai-removal-phase0/
+
+# Local network captures may contain credentials and project/media data.
+/*.har
 .worktrees/
 # Project-specific
 /public/projects/

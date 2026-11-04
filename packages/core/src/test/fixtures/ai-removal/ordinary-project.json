@@ -1,0 +1,43 @@
+{
+  "version": "1.2.0",
+  "project": {
+    "id": "phase0-ordinary",
+    "name": "Phase 0 manual trim and caption",
+    "createdAt": 1700000000000,
+    "modifiedAt": 1700000000000,
+    "settings": { "width": 640, "height": 360, "frameRate": 30, "sampleRate": 8000, "channels": 1 },
+    "mediaLibrary": {
+      "items": [{
+        "id": "tone-media",
+        "name": "tone.wav",
+        "type": "audio",
+        "fileHandle": null,
+        "blob": null,
+        "thumbnailUrl": null,
+        "waveformData": null,
+        "sourceFile": { "name": "tone.wav", "size": 48044, "lastModified": 1700000000000 },
+        "metadata": { "duration": 3, "width": 0, "height": 0, "frameRate": 0, "codec": "pcm_s16le", "sampleRate": 8000, "channels": 1, "fileSize": 48044 }
+      }]
+    },
+    "timeline": {
+      "duration": 2,
+      "markers": [{ "id": "trim-marker", "time": 0.5, "label": "Trimmed source", "color": "#ffffff" }],
+      "subtitles": [{ "id": "manual-caption", "text": "Manual caption", "startTime": 0, "endTime": 1 }],
+      "tracks": [{
+        "id": "audio-track",
+        "type": "audio",
+        "name": "Trimmed tone",
+        "locked": false, "hidden": false, "muted": false, "solo": false,
+        "transitions": [],
+        "clips": [{
+          "id": "trimmed-tone", "mediaId": "tone-media", "trackId": "audio-track",
+          "startTime": 0, "duration": 2, "inPoint": 0.5, "outPoint": 2.5,
+          "volume": 0.75, "effects": [], "audioEffects": [], "keyframes": [],
+          "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 }
+        }]
+      }]
+    },
+    "motionCompositions": [],
+    "motionInstances": []
+  }
+}

@@ -1,0 +1,2175 @@
+{
+  "scope": "Git-visible JS/TS in apps, packages, scripts; static imports/exports, dynamic imports, import types, require, mocks and new URL references. Relative specifiers are normalized to include package-internal and transport test imports. Package/config aliases and known provider/model URL literals included. Computed module names and dependency internals are not resolved.",
+  "note": "Includes tests, desktop remnants, production functions and creation-schema review candidates. This is an inventory, not a deletion list or an AI-absence guard.",
+  "scannedSourceFiles": 1303,
+  "importingFiles": 125,
+  "sourceImports": [
+    {
+      "file": "apps/web/src/components/editor/AssetsPanel.tsx",
+      "line": 33,
+      "module": "./kieai/KieAIImageDialog",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/chat/EditSharingPanel.tsx",
+      "line": 6,
+      "module": "../../../services/agent/editing-session",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/chat/EditSharingPanel.tsx",
+      "line": 7,
+      "module": "../../../services/agent/editing-tools",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/chat/EditSharingPanel.tsx",
+      "line": 8,
+      "module": "../../../services/agent/host-singleton",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/chat/InlineConfirmCard.tsx",
+      "line": 5,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/chat/models.ts",
+      "line": 1,
+      "module": "../../../services/agent/models",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/AutoCaptionPanel.tsx",
+      "line": 25,
+      "module": "../../../workers/whisper-models",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/AutoCaptionPanel.tsx",
+      "line": 99,
+      "module": "../../../workers/whisper-worker.ts",
+      "kind": "url-reference"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/MultiCameraPanel.tsx",
+      "line": 49,
+      "module": "../../../services/multicam-transcription",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/MultiCameraPanel.tsx",
+      "line": 50,
+      "module": "../../../services/multicam-face-reactions",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/TextToSpeechPanel.tsx",
+      "line": 17,
+      "module": "./hooks/useElevenLabsApi",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/TextToSpeechPanel.tsx",
+      "line": 18,
+      "module": "./hooks/useTtsActions",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/inspector/hooks/useElevenLabsApi.ts",
+      "line": 5,
+      "module": "../../../../services/api-proxy",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 8,
+      "module": "../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 19,
+      "module": "../../../services/kieai/file-upload",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 22,
+      "module": "./ModelPicker",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 23,
+      "module": "./forms/SeedreamForm",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 24,
+      "module": "./forms/ZImageForm",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 25,
+      "module": "./forms/NanoBanana2Form",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 26,
+      "module": "./forms/Flux2Form",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 27,
+      "module": "./forms/GrokForm",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/KieAIImageDialog.tsx",
+      "line": 28,
+      "module": "./forms/QwenForm",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/ModelPicker.tsx",
+      "line": 4,
+      "module": "../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/Flux2Form.tsx",
+      "line": 4,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/Flux2Form.tsx",
+      "line": 5,
+      "module": "./shared",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/GrokForm.tsx",
+      "line": 5,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/NanoBanana2Form.tsx",
+      "line": 4,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/NanoBanana2Form.tsx",
+      "line": 5,
+      "module": "./shared",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/QwenForm.tsx",
+      "line": 6,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/SeedreamForm.tsx",
+      "line": 4,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/SeedreamForm.tsx",
+      "line": 5,
+      "module": "./shared",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/ZImageForm.tsx",
+      "line": 6,
+      "module": "../../../../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/components/editor/kieai/forms/ZImageForm.tsx",
+      "line": 7,
+      "module": "./shared",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/desktop/DesktopApp.tsx",
+      "line": 13,
+      "module": "../services/agent/mcp-listener",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/desktop/DesktopApp.tsx",
+      "line": 14,
+      "module": "../services/agent/host-singleton",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/desktop/DesktopApp.tsx",
+      "line": 15,
+      "module": "../services/agent/export-job-runner",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/hooks/useKieAIPoller.ts",
+      "line": 18,
+      "module": "../services/kieai/image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/hooks/useKieAIPoller.ts",
+      "line": 19,
+      "module": "../services/kieai/types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/motion/components/CreationWorkspacePanel.test.tsx",
+      "line": 16,
+      "module": "@openreel/agent",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/motion/components/CreationWorkspacePanel.test.tsx",
+      "line": 20,
+      "module": "../../services/agent/host-singleton",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/motion/components/CreationWorkspacePanel.tsx",
+      "line": 23,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/motion/components/CreationWorkspacePanel.tsx",
+      "line": 30,
+      "module": "../../services/agent/host-singleton",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/motion/components/GenerateShaderBox.test.tsx",
+      "line": 17,
+      "module": "../../services/ai-shader",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/motion/components/GenerateShaderBox.test.tsx",
+      "line": 27,
+      "module": "../../services/agent/llm-transport",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/motion/components/GenerateShaderBox.tsx",
+      "line": 6,
+      "module": "../../services/ai-shader",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/motion/components/GenerateShaderBox.tsx",
+      "line": 7,
+      "module": "../../services/agent/llm-transport",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/motion/model-inspection.ts",
+      "line": 3,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/direct-llm-transport.test.ts",
+      "line": 2,
+      "module": "./direct-llm-transport",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/direct-llm-transport.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-session.test.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-session.test.ts",
+      "line": 4,
+      "module": "./editing-session",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-session.test.ts",
+      "line": 5,
+      "module": "./editing-tools",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-session.ts",
+      "line": 7,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.test.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.test.ts",
+      "line": 6,
+      "module": "./editing-session",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.test.ts",
+      "line": 7,
+      "module": "./editing-tools",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.ts",
+      "line": 6,
+      "module": "./editing-session",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/editing-tools.ts",
+      "line": 7,
+      "module": "./transition-tools",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/export-job-runner.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/host-singleton.ts",
+      "line": 1,
+      "module": "./live-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/live-host.test.ts",
+      "line": 3,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/live-host.test.ts",
+      "line": 4,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/live-host.test.ts",
+      "line": 6,
+      "module": "./live-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/live-host.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/live-host.ts",
+      "line": 57,
+      "module": "./multicam-bridge",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/llm-transport.test.ts",
+      "line": 7,
+      "module": "../api-proxy",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/services/agent/llm-transport.test.ts",
+      "line": 11,
+      "module": "./llm-transport",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/llm-transport.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/llm-transport.ts",
+      "line": 7,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/llm-transport.ts",
+      "line": 8,
+      "module": "../api-proxy",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.integration.test.ts",
+      "line": 6,
+      "module": "./host-singleton",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.integration.test.ts",
+      "line": 20,
+      "module": "./mcp-listener",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.test.ts",
+      "line": 21,
+      "module": "@openreel/agent",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.test.ts",
+      "line": 29,
+      "module": "./host-singleton",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.test.ts",
+      "line": 52,
+      "module": "./mcp-listener",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/mcp-listener.ts",
+      "line": 10,
+      "module": "./host-singleton",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/model-discovery.test.ts",
+      "line": 2,
+      "module": "./model-discovery",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/model-discovery.ts",
+      "line": 1,
+      "module": "../api-proxy",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/models.test.ts",
+      "line": 2,
+      "module": "./models",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/multicam-bridge.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/agent/transition-tools.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/ai-shader.test.ts",
+      "line": 2,
+      "module": "./ai-shader",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/ai-shader.test.ts",
+      "line": 3,
+      "module": "./ai-shader-prompt",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/ai-shader.ts",
+      "line": 7,
+      "module": "./ai-shader-prompt",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/api-proxy.compatible.test.ts",
+      "line": 2,
+      "module": "./api-proxy",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/api-proxy.desktop.test.ts",
+      "line": 2,
+      "module": "./api-proxy",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/client.ts",
+      "line": 12,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/client.ts",
+      "line": 13,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/file-upload.ts",
+      "line": 23,
+      "module": "./client",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/file-upload.ts",
+      "line": 24,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/image-generation.ts",
+      "line": 15,
+      "module": "./client",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/image-generation.ts",
+      "line": 16,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 11,
+      "module": "./client",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 13,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 22,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 24,
+      "module": "./file-upload",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 31,
+      "module": "./image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/kieai/index.ts",
+      "line": 39,
+      "module": "./image-generation",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/multicam-face-reactions.ts",
+      "line": 40,
+      "module": "@mediapipe/tasks-vision",
+      "kind": "dynamic-import"
+    },
+    {
+      "file": "apps/web/src/services/multicam-transcription.test.ts",
+      "line": 2,
+      "module": "./multicam-transcription",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/multicam-transcription.ts",
+      "line": 3,
+      "module": "../workers/whisper-models",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/services/multicam-transcription.ts",
+      "line": 31,
+      "module": "../workers/whisper-worker.ts",
+      "kind": "url-reference"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 26,
+      "module": "@openreel/agent",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 40,
+      "module": "../services/agent/live-host",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 44,
+      "module": "../services/agent/direct-llm-transport",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 45,
+      "module": "../services/agent/editing-session",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 46,
+      "module": "../services/agent/editing-tools",
+      "kind": "mock"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 5,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 12,
+      "module": "../services/agent/host-singleton",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 13,
+      "module": "../services/agent/direct-llm-transport",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 14,
+      "module": "../services/agent/editing-session",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.ts",
+      "line": 15,
+      "module": "../services/agent/editing-tools",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/workers/whisper-worker.ts",
+      "line": 3,
+      "module": "@huggingface/transformers",
+      "kind": "import/export"
+    },
+    {
+      "file": "apps/web/src/workers/whisper-worker.ts",
+      "line": 4,
+      "module": "./whisper-models",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/evals/cases.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/evals/cases.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/evals/evals.test.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/evals/harness.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/export-queue.test.ts",
+      "line": 2,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/export-queue.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/node-llm.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/node-llm.ts",
+      "line": 7,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/run.test.ts",
+      "line": 6,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/run.test.ts",
+      "line": 7,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/run.ts",
+      "line": 1,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent-runner/src/run.ts",
+      "line": 9,
+      "module": "@openreel/agent",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/creation-product-motion.test.ts",
+      "line": 2,
+      "module": "@openreel/creation-schema",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/creation-product-motion.test.ts",
+      "line": 3,
+      "module": "./creation-product-motion",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/creation-product-motion.ts",
+      "line": 1,
+      "module": "@openreel/creation-schema",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 4,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 5,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 6,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 2906,
+      "module": "./host",
+      "kind": "import-type"
+    },
+    {
+      "file": "packages/agent/src/executor.test.ts",
+      "line": 3007,
+      "module": "./host",
+      "kind": "import-type"
+    },
+    {
+      "file": "packages/agent/src/executor.ts",
+      "line": 1,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.ts",
+      "line": 2,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.ts",
+      "line": 3,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/executor.ts",
+      "line": 4,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/gen-docs-cli.ts",
+      "line": 4,
+      "module": "./gen-docs",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/gen-docs.test.ts",
+      "line": 2,
+      "module": "./gen-docs",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/gen-docs.test.ts",
+      "line": 3,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/gen-docs.ts",
+      "line": 2,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/headless-host.test.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/headless-host.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/headless-host.ts",
+      "line": 7,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 1,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 2,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 4,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 5,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 6,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 15,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 16,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 17,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 18,
+      "module": "./loop",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 19,
+      "module": "./loop",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 20,
+      "module": "./system-prompt",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 21,
+      "module": "./tool-router",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 22,
+      "module": "./observability",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 23,
+      "module": "./observability",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/index.ts",
+      "line": 24,
+      "module": "./gen-docs",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/llm.test.ts",
+      "line": 2,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-budget.test.ts",
+      "line": 2,
+      "module": "./loop",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-budget.test.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-budget.test.ts",
+      "line": 4,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-budget.test.ts",
+      "line": 5,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-budget.test.ts",
+      "line": 6,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-toolcap.test.ts",
+      "line": 2,
+      "module": "./loop",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-toolcap.test.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-toolcap.test.ts",
+      "line": 4,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-toolcap.test.ts",
+      "line": 5,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop-toolcap.test.ts",
+      "line": 6,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 3,
+      "module": "./loop",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 4,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 5,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 6,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 7,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 8,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 9,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.test.ts",
+      "line": 10,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.ts",
+      "line": 1,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.ts",
+      "line": 2,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.ts",
+      "line": 3,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.ts",
+      "line": 10,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/loop.ts",
+      "line": 11,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/motion-scene3d-lighting.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/motion-scene3d-lighting.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/motion-scene3d-lighting.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/observability.test.ts",
+      "line": 2,
+      "module": "./observability",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/observability.ts",
+      "line": 1,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry-lifecycle.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry-lifecycle.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry-lifecycle.test.ts",
+      "line": 4,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry-lifecycle.test.ts",
+      "line": 5,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry-lifecycle.test.ts",
+      "line": 6,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ai-shader.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ai-shader.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ai-shader.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.comp-level.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.comp-level.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.comp-level.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-keyframe.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-keyframe.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-keyframe.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-reorder-ripple.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-reorder-ripple.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.effect-reorder-ripple.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.export.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.export.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.export.test.ts",
+      "line": 4,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.export.test.ts",
+      "line": 5,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.export.test.ts",
+      "line": 12,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.expression.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.expression.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.expression.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.layer-ops.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.layer-ops.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.layer-ops.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.mask-path.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.mask-path.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.mask-path.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.multicam.test.ts",
+      "line": 2,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.multicam.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.multicam.test.ts",
+      "line": 4,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paper-shaders.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paper-shaders.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paper-shaders.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.parity-widening.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.parity-widening.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.parity-widening.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.parity-widening.test.ts",
+      "line": 13,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paths-kf.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paths-kf.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.paths-kf.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.render-queue.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.render-queue.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.render-queue.test.ts",
+      "line": 4,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.render-queue.test.ts",
+      "line": 5,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.render-queue.test.ts",
+      "line": 12,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.roving.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.roving.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.roving.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.scene3d-edit.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.scene3d-edit.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.scene3d-edit.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shaders.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shaders.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shaders.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shape-contents.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shape-contents.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.shape-contents.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.test.ts",
+      "line": 2,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.test.ts",
+      "line": 10,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-expr.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-expr.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-expr.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-shader.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-shader.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.text-shader.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.timeline-editing.test.ts",
+      "line": 2,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.timeline-editing.test.ts",
+      "line": 3,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.timeline-editing.test.ts",
+      "line": 4,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.timeline-editing.test.ts",
+      "line": 5,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ts",
+      "line": 318,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ts",
+      "line": 326,
+      "module": "./types",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ts",
+      "line": 327,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.ts",
+      "line": 335,
+      "module": "./creation-product-motion",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.video-shader-effect.test.ts",
+      "line": 2,
+      "module": "./headless-host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.video-shader-effect.test.ts",
+      "line": 3,
+      "module": "./executor",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/registry.video-shader-effect.test.ts",
+      "line": 4,
+      "module": "./test-fixtures",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/retry.test.ts",
+      "line": 2,
+      "module": "./llm",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/serialize-paging.test.ts",
+      "line": 2,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/system-prompt.ts",
+      "line": 1,
+      "module": "./host",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/system-prompt.ts",
+      "line": 2,
+      "module": "./serialize",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/system-prompt.ts",
+      "line": 3,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/tool-router.test.ts",
+      "line": 2,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/tool-router.test.ts",
+      "line": 3,
+      "module": "./tool-router",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/tool-router.ts",
+      "line": 1,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/agent/src/tool-router.ts",
+      "line": 2,
+      "module": "./registry",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/background-removal-engine.ts",
+      "line": 1,
+      "module": "./person-segmentation-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/index.ts",
+      "line": 1,
+      "module": "./background-removal-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/index.ts",
+      "line": 2,
+      "module": "./auto-reframe-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/index.ts",
+      "line": 3,
+      "module": "./person-segmentation-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-engine.test.ts",
+      "line": 2,
+      "module": "./person-segmentation-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-engine.test.ts",
+      "line": 6,
+      "module": "./person-segmentation-protocol",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-engine.ts",
+      "line": 1,
+      "module": "./person-segmentation-protocol",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-engine.ts",
+      "line": 7,
+      "module": "./temporal-person-mask",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-engine.ts",
+      "line": 96,
+      "module": "./person-segmentation-worker.ts",
+      "kind": "url-reference"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 1,
+      "module": "@mediapipe/tasks-vision",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 5,
+      "module": "./person-segmentation-protocol",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 66,
+      "module": "@mediapipe/tasks-vision",
+      "kind": "import-type"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 81,
+      "module": "@mediapipe/tasks-vision",
+      "kind": "import-type"
+    },
+    {
+      "file": "packages/core/src/ai/temporal-person-mask.test.ts",
+      "line": 2,
+      "module": "./temporal-person-mask",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/multicam/index.ts",
+      "line": 6,
+      "module": "./silero-vad",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/multicam/silero-vad.test.ts",
+      "line": 2,
+      "module": "./silero-vad",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/multicam/silero-vad.ts",
+      "line": 50,
+      "module": "onnxruntime-web",
+      "kind": "dynamic-import"
+    },
+    {
+      "file": "packages/core/src/text/index.ts",
+      "line": 5,
+      "module": "./speech-to-text-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/video/video-engine.ts",
+      "line": 66,
+      "module": "../ai/background-removal-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/core/src/video/video-engine.ts",
+      "line": 74,
+      "module": "../ai/person-segmentation-engine",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/creation-agent/src/tools.ts",
+      "line": 1,
+      "module": "@openreel/creation-schema",
+      "kind": "import/export"
+    },
+    {
+      "file": "packages/creation-agent/src/types.ts",
+      "line": 1,
+      "module": "@openreel/creation-schema",
+      "kind": "import/export"
+    }
+  ],
+  "resourceDefinitions": [
+    {
+      "file": "apps/web/functions/api/proxy/[[catchall]].ts",
+      "line": 24,
+      "module": "https://api.elevenlabs.io/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/functions/api/proxy/[[catchall]].ts",
+      "line": 29,
+      "module": "https://api.openai.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/functions/api/proxy/[[catchall]].ts",
+      "line": 34,
+      "module": "https://api.anthropic.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/api-proxy.ts",
+      "line": 14,
+      "module": "https://api.elevenlabs.io/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/api-proxy.ts",
+      "line": 20,
+      "module": "https://api.openai.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/api-proxy.ts",
+      "line": 26,
+      "module": "https://api.anthropic.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/kieai/client.ts",
+      "line": 18,
+      "module": "https://api.kie.ai/",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/multicam-face-reactions.ts",
+      "line": 10,
+      "module": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/services/multicam-face-reactions.ts",
+      "line": 12,
+      "module": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/ai-connection-store.ts",
+      "line": 5,
+      "module": "https://api.openai.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/ai-connection-store.ts",
+      "line": 6,
+      "module": "https://api.anthropic.com/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 328,
+      "module": "https://anthropic-gateway.example/v1/messages",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/chat-store.test.ts",
+      "line": 347,
+      "module": "https://anthropic-gateway.example/v1",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/settings-store.ts",
+      "line": 22,
+      "module": "https://elevenlabs.io/docs/api-reference",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/settings-store.ts",
+      "line": 40,
+      "module": "https://kie.ai/",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "apps/web/src/stores/settings-store.ts",
+      "line": 46,
+      "module": "https://www.freepik.com/api",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/agent-runner/src/node-llm.ts",
+      "line": 12,
+      "module": "https://api.anthropic.com/v1/messages",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/agent-runner/src/node-llm.ts",
+      "line": 13,
+      "module": "https://api.openai.com/v1/chat/completions",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 16,
+      "module": "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 18,
+      "module": "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 20,
+      "module": "https://unpkg.com/@mediapipe/tasks-vision@0.10.35/vision_bundle.cjs",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/core/src/ai/person-segmentation-worker.ts",
+      "line": 22,
+      "module": "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "packages/core/src/multicam/silero-vad.ts",
+      "line": 7,
+      "module": "https://cdn.jsdelivr.net/gh/snakers4/silero-vad@v6.2.1/src/silero_vad/data/silero_vad.onnx",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "scripts/ai-removal-phase0.test.mjs",
+      "line": 31,
+      "module": "http://localhost:5173/node_modules/.vite/deps/@huggingface_transformers.js",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "scripts/ai-removal-phase0.test.mjs",
+      "line": 32,
+      "module": "https://huggingface.co/synthetic/model.onnx",
+      "kind": "provider-or-model-url"
+    },
+    {
+      "file": "scripts/ai-removal-phase0.test.mjs",
+      "line": 33,
+      "module": "http://127.0.0.1:5173/api/proxy/openai/chat/completions",
+      "kind": "provider-or-model-url"
+    }
+  ],
+  "configurationReferences": [
+    {
+      "file": "apps/web/package.json",
+      "line": 22,
+      "text": "\"@huggingface/transformers\": \"3.8.1\","
+    },
+    {
+      "file": "apps/web/package.json",
+      "line": 23,
+      "text": "\"@mediapipe/tasks-vision\": \"^0.10.35\","
+    },
+    {
+      "file": "apps/web/package.json",
+      "line": 24,
+      "text": "\"@openreel/agent\": \"workspace:*\","
+    },
+    {
+      "file": "apps/web/tsconfig.json",
+      "line": 14,
+      "text": "\"@openreel/agent\": [\"../../packages/agent/src/index.ts\"],"
+    },
+    {
+      "file": "apps/web/tsconfig.json",
+      "line": 15,
+      "text": "\"@openreel/agent/*\": [\"../../packages/agent/src/*\"],"
+    },
+    {
+      "file": "apps/web/vite.config.ts",
+      "line": 42,
+      "text": "\"@openreel/agent\": path.resolve(__dirname, \"../../packages/agent/src\"),"
+    },
+    {
+      "file": "apps/web/vitest.config.ts",
+      "line": 48,
+      "text": "\"@openreel/agent\": path.resolve(__dirname, \"../../packages/agent/src\"),"
+    },
+    {
+      "file": "packages/agent-runner/package.json",
+      "line": 2,
+      "text": "\"name\": \"@openreel/agent-runner\","
+    },
+    {
+      "file": "packages/agent-runner/package.json",
+      "line": 30,
+      "text": "\"@openreel/agent\": \"workspace:*\","
+    },
+    {
+      "file": "packages/agent-runner/tsconfig.json",
+      "line": 10,
+      "text": "\"@openreel/agent\": [\"../agent/src/index.ts\"],"
+    },
+    {
+      "file": "packages/agent-runner/tsconfig.json",
+      "line": 11,
+      "text": "\"@openreel/agent/*\": [\"../agent/src/*\"]"
+    },
+    {
+      "file": "packages/agent/package.json",
+      "line": 2,
+      "text": "\"name\": \"@openreel/agent\","
+    },
+    {
+      "file": "packages/agent/package.json",
+      "line": 29,
+      "text": "\"@openreel/creation-schema\": \"workspace:*\""
+    },
+    {
+      "file": "packages/agent/tsconfig.json",
+      "line": 9,
+      "text": "\"@openreel/agent\": [\"./src/index.ts\"],"
+    },
+    {
+      "file": "packages/agent/tsconfig.json",
+      "line": 10,
+      "text": "\"@openreel/agent/*\": [\"./src/*\"]"
+    },
+    {
+      "file": "packages/agent/vitest.config.ts",
+      "line": 13,
+      "text": "\"@openreel/agent\": path.resolve(__dirname, \"./src\"),"
+    },
+    {
+      "file": "packages/core/package.json",
+      "line": 41,
+      "text": "\"@mediapipe/tasks-vision\": \"^0.10.35\","
+    },
+    {
+      "file": "packages/core/package.json",
+      "line": 47,
+      "text": "\"onnxruntime-web\": \"1.21.0\","
+    },
+    {
+      "file": "packages/creation-agent/package.json",
+      "line": 2,
+      "text": "\"name\": \"@openreel/creation-agent\","
+    },
+    {
+      "file": "packages/creation-agent/package.json",
+      "line": 24,
+      "text": "\"@openreel/creation-schema\": \"workspace:*\""
+    },
+    {
+      "file": "packages/creation-schema/package.json",
+      "line": 2,
+      "text": "\"name\": \"@openreel/creation-schema\","
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 32,
+      "text": "\"@openreel/agent\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 33,
+      "text": "\"./packages/agent/src/index.ts\""
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 35,
+      "text": "\"@openreel/agent/*\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 36,
+      "text": "\"./packages/agent/src/*\""
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 44,
+      "text": "\"@openreel/creation-agent\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 45,
+      "text": "\"./packages/creation-agent/src/index.ts\""
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 47,
+      "text": "\"@openreel/creation-agent/*\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 48,
+      "text": "\"./packages/creation-agent/src/*\""
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 50,
+      "text": "\"@openreel/creation-schema\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 51,
+      "text": "\"./packages/creation-schema/src/index.ts\""
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 53,
+      "text": "\"@openreel/creation-schema/*\": ["
+    },
+    {
+      "file": "tsconfig.base.json",
+      "line": 54,
+      "text": "\"./packages/creation-schema/src/*\""
+    }
+  ]
+}

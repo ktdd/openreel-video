@@ -1,0 +1,67 @@
+{
+  "localStorage": {
+    "openreel-settings": {
+      "version": 7,
+      "state": {
+        "autoSave": false, "autoSaveInterval": 9, "language": "fi",
+        "defaultTtsProvider": "elevenlabs", "defaultLlmProvider": "openai-compatible",
+        "llmBaseUrl": "https://ai-fixture.invalid/v1", "llmModel": "synthetic-tool-model",
+        "defaultAggregator": "kie-ai", "elevenLabsModel": "eleven_v3",
+        "favoriteVoices": [{ "voiceId": "synthetic-voice", "name": "Fixture voice" }],
+        "favoriteModels": [{ "modelId": "synthetic-model", "name": "Fixture model" }],
+        "configuredServices": ["elevenlabs", "openai-compatible", "anthropic-compatible", "kie-ai", "freepik"],
+        "mcpAutoAllowTrustedLocal": false, "agentAutoConfirm": true, "agentDryRun": true
+      }
+    },
+    "openreel-ui-preferences": {
+      "version": 3,
+      "state": {
+        "panels": { "mediaLibrary": { "visible": true, "width": 280 }, "inspector": { "visible": true, "width": 340 }, "agentChat": { "visible": true, "width": 420 } },
+        "theme": "dark", "showWaveforms": false, "showThumbnails": true,
+        "showKeyframes": false, "autoScroll": true, "timelineMaximized": false,
+        "playbackQuality": "medium", "skipWelcomeScreen": true,
+        "inspectorActiveTab": "ai", "desktopPage": "edit"
+      }
+    },
+    "openreel-ai-chat-history": {
+      "version": 1,
+      "state": { "conversations": [{
+        "id": "synthetic-conversation", "projectId": "phase0-legacy-ai", "title": "Synthetic saved conversation",
+        "createdAt": 1700000000000, "updatedAt": 1700000000000,
+        "messages": [{ "id": "synthetic-message", "role": "user", "text": "Synthetic fixture only", "toolCalls": [] }],
+        "usage": { "inputTokens": 1, "outputTokens": 0 }
+      }] }
+    },
+    "kieai-pending-tasks": {
+      "version": 0,
+      "state": { "tasks": [
+        { "taskId": "synthetic-task-pending", "mediaId": "pending-image", "projectId": "phase0-legacy-ai", "type": "image", "suggestedName": "unfinished-generation.png", "createdAt": 1700000000000, "retries": 2, "failed": false },
+        { "taskId": "synthetic-task-failed", "mediaId": "failed-image", "projectId": "phase0-legacy-ai", "type": "image", "suggestedName": "failed-generation.png", "createdAt": 1700000000000, "retries": 10, "failed": true }
+      ] }
+    },
+    "phase0-unrelated-preference": { "keep": "unrelated origin data must survive cleanup" }
+  },
+  "olderLocalStorage": {
+    "openreel-settings": {
+      "version": 6,
+      "state": { "autoSave": false, "autoSaveInterval": 9, "language": "fi", "defaultLlmProvider": "openai-compatible", "openaiCompatibleBaseUrl": "https://ai-fixture.invalid/v1", "openaiCompatibleModel": "synthetic-older-model" }
+    },
+    "openreel-ui-preferences": {
+      "version": 1,
+      "state": { "theme": "dark", "inspectorActiveTab": "ai", "panels": { "agentChat": { "visible": true, "width": 420 } } }
+    }
+  },
+  "indexedDB": {
+    "database": "openreel-secure",
+    "version": 1,
+    "store": "secrets",
+    "records": [
+      { "id": "elevenlabs", "label": "Fixture ElevenLabs", "encryptedData": [1, 2, 3, 4], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 },
+      { "id": "openai-compatible", "label": "Fixture compatible provider", "encryptedData": [5, 6, 7, 8], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 },
+      { "id": "anthropic-compatible", "label": "Fixture compatible provider", "encryptedData": [9, 10, 11, 12], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 },
+      { "id": "kie-ai", "label": "Fixture aggregator", "encryptedData": [13, 14, 15, 16], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 },
+      { "id": "freepik", "label": "Fixture aggregator", "encryptedData": [17, 18, 19, 20], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 },
+      { "id": "phase0-unknown-secret", "label": "Must not be deleted blindly", "encryptedData": [21, 22, 23, 24], "iv": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "createdAt": 1700000000000, "updatedAt": 1700000000000 }
+    ]
+  }
+}
