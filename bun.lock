@@ -170,17 +170,6 @@
         "vitest": "^1.6.0",
       },
     },
-    "packages/image-core": {
-      "name": "@openreel/image-core",
-      "version": "0.1.0",
-      "dependencies": {
-        "zod": "^4.4.3",
-      },
-      "devDependencies": {
-        "typescript": "^5.4.5",
-        "vitest": "^1.6.0",
-      },
-    },
     "packages/ui": {
       "name": "@openreel/ui",
       "version": "0.0.1",
@@ -551,8 +540,6 @@
     "@openreel/creation-schema": ["@openreel/creation-schema@workspace:packages/creation-schema"],
 
     "@openreel/fxpkg": ["@openreel/fxpkg@workspace:packages/fxpkg"],
-
-    "@openreel/image-core": ["@openreel/image-core@workspace:packages/image-core"],
 
     "@openreel/ui": ["@openreel/ui@workspace:packages/ui"],
 

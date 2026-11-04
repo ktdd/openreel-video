@@ -12,8 +12,8 @@ This is a Bun workspace (`apps/*` and `packages/*` in root `package.json`). Pack
 - `packages/core`: shared editor engines and types. Start in `src/timeline`, `editing`, `media`, `playback`, `video`, `audio`, `effects`, `export`, `storage`, `motion`, or `creation`, as appropriate. AssemblyScript WASM sources live under `src/wasm`.
 - `packages/agent`: AI provider/tool loop, registry, executor, and host interfaces. `packages/agent-runner` supplies a Node/headless runner. `packages/creation-agent` and `packages/creation-schema` cover creation tools and schemas. See `docs/ai-editing.md` and `docs/AGENT-GUIDE.md`.
 - `packages/creation-core`: C++20 native creation engine; `packages/creation-bindings` provides native/WASM bindings with a TypeScript CPU fallback in `@openreel/core/creation`. See `packages/creation-core/README.md`.
-- `packages/fxpkg`: effect package types, validation, compiler, and related utilities. `packages/ui` contains shared UI components. `packages/image-core` contains image models and operations.
-- `docs/superpowers`: design specs and plans (useful context, not necessarily current implementation). `docs/MOBILE-OFFLINE.md`, `docs/MOBILE-PARITY.md`, and `docs/android-port` cover mobile work. `infra` holds infrastructure assets; `scripts` contains verification and utility scripts.
+- `packages/fxpkg`: effect package types, validation, compiler, and related utilities. `packages/ui` contains shared UI components.
+- `docs/superpowers`: design specs and plans (useful context, not necessarily current implementation). `scripts` contains verification and utility scripts.
 
 ## Setup and commands
 
