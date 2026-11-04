@@ -2,17 +2,13 @@
 
 ## Overview
 
-OpenReel is a local-first browser and desktop video editor, with separate image editing and effect-authoring apps. Core editing, preview, and rendering are intended to work on-device; optional AI and connected services may use the network. Preserve that distinction when changing media or network flows. The main stack is TypeScript, React, Zustand, Vite, Vitest, WebCodecs/Web Audio/WebGPU, MediaBunny, and Electron.
+This fork focuses on the local-first browser video editor. Core editing, preview, and rendering are intended to work on-device; optional AI and connected services may use the network. Preserve that distinction when changing media or network flows. The main stack is TypeScript, React, Zustand, Vite, Vitest, WebCodecs/Web Audio/WebGPU, and MediaBunny.
 
 ## Workspace map
 
-This is a pnpm monorepo (`pnpm-workspace.yaml`, `apps/*` and `packages/*`). Package scripts and current source are authoritative; some older documentation describes only the web app.
+This is a Bun workspace (`apps/*` and `packages/*` in root `package.json`). Package scripts and current source are authoritative; older documentation may describe removed apps or pnpm.
 
-- `apps/web`: main video editor and desktop renderer. `src/components/editor` contains editor UI; `src/stores` has Zustand project, timeline, UI, and engine state; `src/bridges` connects UI/state to core engines; `src/services` and `src/workers` handle app services and background work. `src/motion` is the motion-creation workspace. `src/App.tsx` is the app entry.
-- `apps/desktop`: Electron main process, preload, IPC, native integrations, MCP, and packaging. It builds and embeds the web renderer; see `apps/desktop/DISTRIBUTION.md`.
-- `apps/image`: standalone React image editor, backed by `packages/image-core`.
-- `apps/studio`: standalone effect/filter authoring and publishing app; includes Playwright tests.
-- `apps/cloud`: Cloudflare Worker for connected services, including marketplace and crash endpoints; see its README and Wrangler configuration.
+- `apps/web`: main video editor. `src/components/editor` contains editor UI; `src/stores` has Zustand project, timeline, UI, and engine state; `src/bridges` connects UI/state to core engines; `src/services` and `src/workers` handle app services and background work. `src/motion` is the motion-creation workspace. `src/App.tsx` is the app entry. Desktop-specific code remains in the web source, but the desktop app was removed.
 - `packages/core`: shared editor engines and types. Start in `src/timeline`, `editing`, `media`, `playback`, `video`, `audio`, `effects`, `export`, `storage`, `motion`, or `creation`, as appropriate. AssemblyScript WASM sources live under `src/wasm`.
 - `packages/agent`: AI provider/tool loop, registry, executor, and host interfaces. `packages/agent-runner` supplies a Node/headless runner. `packages/creation-agent` and `packages/creation-schema` cover creation tools and schemas. See `docs/ai-editing.md` and `docs/AGENT-GUIDE.md`.
 - `packages/creation-core`: C++20 native creation engine; `packages/creation-bindings` provides native/WASM bindings with a TypeScript CPU fallback in `@openreel/core/creation`. See `packages/creation-core/README.md`.
@@ -21,33 +17,28 @@ This is a pnpm monorepo (`pnpm-workspace.yaml`, `apps/*` and `packages/*`). Pack
 
 ## Setup and commands
 
-Use the pnpm version pinned in root `package.json` (currently 11.7.0); CI uses Node 22 and `pnpm install --frozen-lockfile`. The repository also contains a Bun lockfile, but CI and workspace scripts use pnpm.
+Use the Bun version pinned in root `package.json` and install Node.js/npm as well (the core WASM build invokes npm). The lockfile is `bun.lock`.
 
 ```sh
-pnpm install
-pnpm dev                         # web Vite dev server
-pnpm build                       # build core WASM, then web
-pnpm typecheck                   # recursive workspace typechecks
-pnpm test                        # recursive test:run (one-shot Vitest)
-pnpm test:watch                  # recursive watch-mode test scripts
-pnpm lint                        # recursive lint scripts
-pnpm --filter @openreel/web test:run
-pnpm --filter @openreel/web exec vitest run src/path/to/example.test.ts
-pnpm --filter @openreel/core typecheck
-pnpm --filter @openreel/image dev
-pnpm --filter @openreel/studio dev
-pnpm --filter @openreel/studio test:e2e
-pnpm --filter @openreel/desktop dev
+bun install --frozen-lockfile
+bun run dev                         # web Vite dev server
+bun run build                       # build core WASM, then web
+bun run typecheck                   # workspace typechecks
+bun run test                        # one-shot workspace Vitest suites
+bun run test:watch                  # workspace watch-mode tests
+bun run lint                        # workspace lint scripts
+bun run --filter @openreel/web test:run src/path/to/example.test.ts
+bun run --filter @openreel/core typecheck
 ```
 
-Recursive commands run only in packages defining the named script. The root `pnpm build` builds the web app, not every app; desktop dev first builds its renderer. Native creation builds require CMake/C++20, and WASM native builds require Emscripten. Desktop packaging can fetch native assets/FFmpeg; consult its scripts and distribution guide before running it. Root `pnpm clean` removes build artifacts and web source files matching generated JS/declaration patterns; inspect the script before using it.
+Workspace commands run only in packages defining the named script. Root `bun run build` builds the web app, not every package. Native creation builds require CMake/C++20, and WASM native builds require Emscripten. Root `bun run clean` removes build artifacts and web source files matching generated JS/declaration patterns; inspect the script before using it. On Windows, Ctrl+C may not stop the filtered dev server; this remains to be investigated.
 
 ## Implementation and verification notes
 
 - Follow existing local patterns and `CONTRIBUTING.md`; TypeScript is strict with unused locals/parameters checked (`tsconfig.base.json`). Prefer explicit types and avoid `any`.
 - Shared workspace imports resolve to source via TypeScript paths and app-specific Vite aliases. If adding a package or alias, check the relevant package exports, TypeScript, Vite, and Vitest configurations.
-- Tests are generally colocated as `*.test.ts`/`*.test.tsx`; web Vitest uses jsdom and `apps/web/src/test/setup.ts`. Add focused tests around changed behavior and run the relevant package tests/typecheck before broader CI checks. Browser codecs, GPU, native, and desktop behavior may require manual/platform-specific verification.
-- Editor changes may span project/timeline state, core actions or engines, bridges, persistence, undo/redo, preview, and export; inspect the relevant paths and cover affected behavior rather than changing UI alone. Keep web and desktop differences in mind.
-- Web Vite dev/preview sets COOP/COEP headers; desktop renderer builds use `OPENREEL_DESKTOP=1`, relative asset paths, and custom FFmpeg/font plugins. Avoid breaking cross-origin isolation or desktop asset loading. FFmpeg dependencies have workspace patches under `patches/`.
-- CI (`.github/workflows/ci.yml`) runs typecheck, lint, tests, then the root build. `CONTRIBUTING.md` has older test-command descriptions: root `pnpm test` is the one-shot command; there is no root `test:run` script.
+- Tests are generally colocated as `*.test.ts`/`*.test.tsx`; web Vitest uses jsdom and `apps/web/src/test/setup.ts`. Add focused tests around changed behavior and run the relevant package tests/typecheck. Browser codecs and GPU behavior may require manual verification.
+- Editor changes may span project/timeline state, core actions or engines, bridges, persistence, undo/redo, preview, and export; inspect the relevant paths and cover affected behavior rather than changing UI alone.
+- Web Vite dev/preview sets COOP/COEP headers; avoid breaking cross-origin isolation. FFmpeg dependencies have patches under `patches/`, configured in root `package.json` for Bun.
+- `README.md` and `CONTRIBUTING.md` retain upstream pnpm and removed-app references; use the commands above instead.
 - Focus changes; do not commit generated outputs or modify lockfiles unless dependencies actually change. Review existing changes before editing.

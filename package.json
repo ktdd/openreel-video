@@ -5,19 +5,19 @@
   "description": "Professional video, audio, and photo editing in your browser",
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter @openreel/web dev",
-    "build:wasm": "pnpm --filter @openreel/core build:wasm",
-    "build": "pnpm build:wasm && pnpm --filter @openreel/web build",
-    "preview": "pnpm --filter @openreel/web preview",
-    "deploy": "pnpm build && pnpm --filter @openreel/web deploy",
-    "deploy:preview": "pnpm build && pnpm --filter @openreel/web deploy:preview",
-    "test": "pnpm -r test:run",
-    "test:watch": "pnpm -r test",
-    "lint": "pnpm -r lint",
+    "dev": "bun run --filter @openreel/web dev",
+    "build:wasm": "bun run --filter @openreel/core build:wasm",
+    "build": "bun run build:wasm && bun run --filter @openreel/web build",
+    "preview": "bun run --filter @openreel/web preview",
+    "deploy": "bun run build && bun run --filter @openreel/web deploy",
+    "deploy:preview": "bun run build && bun run --filter @openreel/web deploy:preview",
+    "test": "bun run --filter '@openreel/*' test:run",
+    "test:watch": "bun run --filter '@openreel/*' test",
+    "lint": "bun run --filter '@openreel/*' lint",
     "check:mobile-offline": "node scripts/check-mobile-offline.mjs",
     "check:retired-cloud-gpu": "node scripts/check-retired-cloud-gpu.mjs",
-    "typecheck": "pnpm -r typecheck",
-    "clean": "pnpm -r clean",
+    "typecheck": "bun run --filter '@openreel/*' typecheck",
+    "clean": "bun run --filter '@openreel/*' clean",
     "claude:help": "cat scripts/claude-review.md",
     "issues": "gh issue list --label needs-claude-review",
     "prs": "gh pr list --label needs-claude-review"
@@ -48,9 +48,13 @@
   "homepage": "https://openreel.video",
   "engines": {
     "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "bun": ">=1.4.3"
   },
-  "packageManager": "pnpm@11.7.0",
+  "packageManager": "bun@1.4.3",
+  "patchedDependencies": {
+    "@ffmpeg/core@0.12.6": "patches/@ffmpeg__core@0.12.6.patch",
+    "@ffmpeg/core-mt@0.12.6": "patches/@ffmpeg__core-mt@0.12.6.patch"
+  },
   "dependencies": {
     "@ffmpeg/core": "0.12.6",
     "@ffmpeg/core-mt": "0.12.6",
