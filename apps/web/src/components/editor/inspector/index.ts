@@ -73,7 +73,6 @@ export { BeatSyncSection } from "./BeatSyncSection";
 export { MotionTrackingSection } from "./MotionTrackingSection";
 export { NestedSequenceSection } from "./NestedSequenceSection";
 export { AdjustmentLayerSection } from "./AdjustmentLayerSection";
-export { MultiCameraPanel } from "./MultiCameraPanel";
 export { AutoReframeSection } from "./AutoReframeSection";
 
 // Photo Editing

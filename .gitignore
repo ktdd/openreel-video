@@ -48,6 +48,8 @@ docs/*
 !docs/remove-ai-features.md
 !docs/ai-removal-phase0/
 !docs/ai-removal-phase1a.md
+!docs/ai-removal-phase1b.md
+!docs/ai-removal-phase1c.md
 
 # Local network captures may contain credentials and project/media data.
 /*.har

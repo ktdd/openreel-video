@@ -161,6 +161,7 @@ export interface ReframeResult {
 
 type ProgressCallback = (progress: number, message: string) => void;
 
+/** Pixel/skin-region heuristics with a centered fallback; no ML model or network backend. */
 export class AutoReframeEngine {
   private canvas: OffscreenCanvas | null = null;
   private ctx: OffscreenCanvasRenderingContext2D | null = null;
@@ -199,6 +200,8 @@ export class AutoReframeEngine {
       };
     }
 
+    // Frame indices are local to this analysis, not identities across clips.
+    this.faceCache.clear();
     const targetConfig = this.getTargetConfig(settings);
     const keyframes: ReframeKeyframe[] = [];
     const sourceWidth = frames[0]?.width || 1920;

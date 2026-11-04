@@ -41,8 +41,7 @@ export * from "./gpu-compositor";
 export * from "./shaders";
 export * from "./filter-presets";
 
-// Multi-camera editing
-export * from "./multicam-engine";
+export * from "./auto-reframe-engine";
 
 // Adjustment layers
 export * from "./adjustment-layer-engine";

@@ -20,7 +20,6 @@ export type ToolDomain =
   | "marker"
   | "ai"
   | "export"
-  | "multicam"
   | "raw";
 
 export interface ToolDef {

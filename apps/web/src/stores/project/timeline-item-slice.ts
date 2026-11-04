@@ -50,7 +50,7 @@ export function createTimelineItemSlice(
       modifiedAt: Date.now(),
     });
     set({ project: nextProject });
-    helpers.syncOverlayEnginesFromProject();
+    await helpers.syncOverlayEnginesFromProject();
     return results.at(-1) ?? { success: true };
   };
 

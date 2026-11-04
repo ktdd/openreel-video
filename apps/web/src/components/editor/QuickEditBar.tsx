@@ -90,7 +90,7 @@ export const QuickEditBar: React.FC<QuickEditBarProps> = ({
           onClick={() => void runEdit("trimEnd")} isDisabled={disabled || !canEditHere}
           className="min-h-11 w-full justify-center text-xs" />
         {capabilities.audio && <Button label="Add captions" icon={<Captions size={14} aria-hidden />} variant="secondary"
-          onClick={() => openSection("auto-captions")} isDisabled={disabled || unavailableSource}
+          onClick={() => openSection("editable-captions")} isDisabled={disabled || unavailableSource}
           className="min-h-11 w-full justify-center text-xs" />}
         {capabilities.audio && <Button label={isCleaningAudio ? "Cleaning…" : "Clean audio"}
           icon={isCleaningAudio ? <Loader2 size={14} className="animate-spin" aria-hidden /> : <Volume2 size={14} aria-hidden />}

@@ -483,6 +483,36 @@ describe("ExportEngine", () => {
       }
     }
 
+    it("exports ordinary layered tracks with transforms, keyframes and track states intact", async () => {
+      const project = createMockProject({ timeline: createMockTimeline({ duration: 1, tracks: [
+        createMockTrack({ clips: [createMockClip({ duration: 1, inPoint: 1, outPoint: 2 })], solo: true }),
+        createMockTrack({ id: "overlay", hidden: true, muted: true, clips: [createMockClip({
+          id: "overlay-clip", trackId: "overlay", duration: 1, outPoint: 1,
+          transform: { ...createMockClip().transform, rotation: 15, opacity: 0.5 },
+          keyframes: [{ id: "opacity-key", property: "opacity", time: 0.5, value: 0.25, easing: "linear" }],
+        })] }),
+      ] }) });
+      const before = JSON.stringify(project);
+      const worker = vi.fn(() => { throw new Error("Unexpected analysis worker"); });
+      const request = vi.fn(() => { throw new Error("Unexpected model request"); });
+      vi.stubGlobal("Worker", worker);
+      vi.stubGlobal("fetch", request);
+      await exportEngine.initialize();
+      const generator = exportEngine.exportVideo(project, { ...DEFAULT_VIDEO_SETTINGS, width: 640, height: 360, frameRate: 2 }, writableStream);
+      let result: ExportResult;
+      while (true) {
+        const next = await generator.next();
+        if (next.done) { result = next.value; break; }
+      }
+      expect(result).toMatchObject({ success: true, stats: { framesRendered: 2 } });
+      expect(mockRenderFrame).toHaveBeenNthCalledWith(1, project, 0, 640, 360);
+      expect(mockRenderFrame).toHaveBeenNthCalledWith(2, project, 0.5, 640, 360);
+      expect(mockRenderAudio).toHaveBeenCalledWith(project, 0, 1);
+      expect(JSON.stringify(project)).toBe(before);
+      expect(worker).not.toHaveBeenCalled();
+      expect(request).not.toHaveBeenCalled();
+    });
+
     it("should render long export audio in chunks and clear cached audio", async () => {
       const project = createMockProject({
         timeline: createMockTimeline({

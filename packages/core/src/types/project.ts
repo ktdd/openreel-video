@@ -3,7 +3,6 @@ import type { TextClip } from "../text/types";
 import type { ShapeClip, SVGClip, StickerClip } from "../graphics/types";
 import type { AdjustmentLayer } from "../video/adjustment-layer-engine";
 import type { Mask } from "../video/mask-engine";
-import type { MultiCamGroup } from "../video/multicam-engine";
 import type {
   CompoundClip,
   CompoundClipInstance,
@@ -37,7 +36,6 @@ export interface Project {
   readonly stickerClips?: StickerClip[];
   readonly adjustmentLayers?: AdjustmentLayer[];
   readonly masks?: Mask[];
-  readonly multicamGroups?: MultiCamGroup[];
   readonly compoundClips?: CompoundClip[];
   readonly nestedInstances?: CompoundClipInstance[];
   readonly motionCompositions?: MotionComposition[];

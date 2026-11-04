@@ -17,7 +17,6 @@ export * from "./ai";
 export * from "./animation";
 export * from "./effects";
 export * from "./device";
-export * from "./multicam";
 export {
   ExportEngine,
   getExportEngine,

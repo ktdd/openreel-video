@@ -12,8 +12,6 @@ import {
   SpeechToTextEngine,
   SoundLibraryEngine,
   ChromaKeyEngine,
-  MultiCamEngine,
-  multicamEngine,
   MaskEngine,
   NestedSequenceEngine,
   AdjustmentLayerEngine,
@@ -74,7 +72,6 @@ export interface EngineState {
   speechToTextEngine: SpeechToTextEngine | null;
   soundLibraryEngine: SoundLibraryEngine | null;
   chromaKeyEngine: ChromaKeyEngine | null;
-  multiCamEngine: MultiCamEngine | null;
   maskEngine: MaskEngine | null;
   nestedSequenceEngine: NestedSequenceEngine | null;
   adjustmentLayerEngine: AdjustmentLayerEngine | null;
@@ -100,7 +97,6 @@ export interface EngineState {
   getSpeechToTextEngine: () => Promise<SpeechToTextEngine>;
   getSoundLibraryEngine: () => Promise<SoundLibraryEngine>;
   getChromaKeyEngine: () => Promise<ChromaKeyEngine>;
-  getMultiCamEngine: () => Promise<MultiCamEngine>;
   getMaskEngine: () => Promise<MaskEngine>;
   getNestedSequenceEngine: () => Promise<NestedSequenceEngine>;
   getAdjustmentLayerEngine: () => Promise<AdjustmentLayerEngine>;
@@ -200,7 +196,6 @@ export const useEngineStore = create<EngineState>()(
     speechToTextEngine: null,
     soundLibraryEngine: null,
     chromaKeyEngine: null,
-    multiCamEngine: null,
     maskEngine: null,
     nestedSequenceEngine: null,
     adjustmentLayerEngine: null,
@@ -289,7 +284,6 @@ export const useEngineStore = create<EngineState>()(
         speechToTextEngine: null,
         soundLibraryEngine: null,
         chromaKeyEngine: null,
-        multiCamEngine: null,
         maskEngine: null,
         nestedSequenceEngine: null,
         adjustmentLayerEngine: null,
@@ -383,8 +377,6 @@ export const useEngineStore = create<EngineState>()(
         "chromaKey",
         () => new ChromaKeyEngine({ width: 1920, height: 1080 })
       ),
-    getMultiCamEngine: () =>
-      getOrCreateEngine("multiCam", () => multicamEngine),
     getMaskEngine: () =>
       getOrCreateEngine(
         "mask",

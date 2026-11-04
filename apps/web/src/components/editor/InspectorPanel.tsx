@@ -51,12 +51,13 @@ import { AnimateTab } from "./inspector/tabs/AnimateTab";
 import { StyleTab } from "./inspector/tabs/StyleTab";
 import { EffectsTab } from "./inspector/tabs/EffectsTab";
 import { AiTab } from "./inspector/tabs/AiTab";
+import { CaptionTools, AudioUtilities } from "./inspector/ManualEditingSections";
+import { AutoReframeSection } from "./inspector/AutoReframeSection";
 import { TransitionInspector } from "./inspector/TransitionInspector";
 import { MultiClipInspector } from "./inspector/MultiClipInspector";
 import { QuickEditBar } from "./QuickEditBar";
 import { useInspectorNavigationStore } from "../../stores/inspector-navigation-store";
 
-const MultiCameraPanel = React.lazy(() => import("./inspector/MultiCameraPanel"));
 
 // Initialize engines as singletons
 const chromaKeyEngine = new ChromaKeyEngine({ width: 1920, height: 1080 });
@@ -476,20 +477,6 @@ export const InspectorPanel: React.FC = () => {
     ],
   );
 
-  const handleRemoveBackground = useCallback(() => {
-    if (!selectedClip) return;
-    void applyClipEffectWithPlaybackLock(
-      selectedClip.id,
-      "Applying background removal",
-      () => {
-        chromaKeyEngine.enableChromaKey(selectedClip.id);
-        chromaKeyEngine.setKeyColor(selectedClip.id, { r: 0, g: 1, b: 0 });
-        chromaKeyEngine.setTolerance(selectedClip.id, 0.35);
-        forceUpdate();
-      },
-    );
-  }, [applyClipEffectWithPlaybackLock, forceUpdate, selectedClip]);
-
   const handleEnhanceAudio = useCallback(async () => {
     if (!selectedClip) return;
     setIsEnhancingAudio(true);
@@ -876,13 +863,7 @@ export const InspectorPanel: React.FC = () => {
         {selectedTimelineClip && selectedClipIds.length === 1 && (
           <QuickEditBar clipId={selectedTimelineClip.id} onCleanAudio={handleEnhanceAudio} isCleaningAudio={isEnhancingAudio} />
         )}
-        <Section title="Multi-Camera Editing" sectionId="multicam">
-          <InspectorTabErrorBoundary>
-            <React.Suspense fallback={<p role="status">Loading camera tools…</p>}>
-              <MultiCameraPanel key={project.id} />
-            </React.Suspense>
-          </InspectorTabErrorBoundary>
-        </Section>
+        <CaptionTools input={srtInputRef} onImport={handleSRTImport} wordsPerLine={captionWordsPerLine} onWordsPerLineChange={setCaptionWordsPerLine} />
         {selectedClipIds.length > 1 ? (
           <MultiClipInspector clipIds={selectedClipIds} />
         ) : selectedClip ? (
@@ -912,8 +893,19 @@ export const InspectorPanel: React.FC = () => {
               )}
 
               {tabIds.includes("color") && (
-                <ColorTab clipId={clipId} showColorGrading={showColorGrading} />
+                <>
+                  <ColorTab clipId={clipId} showColorGrading={showColorGrading} />
+                  {showVideoEffects && <Section title="Auto-Color" sectionId="auto-color">
+                    <Button label={isApplyingSelectedClipEffect ? "Applying..." : "Auto-Color"} onClick={handleAutoColor} isDisabled={isApplyingSelectedClipEffect} variant="secondary" size="sm" />
+                  </Section>}
+                </>
               )}
+              {clipType === "video" && <Section title="Auto Reframe" sectionId="auto-reframe">
+                <AutoReframeSection clipId={clipId} />
+              </Section>}
+              {showAudioEffects && <>
+                <AudioUtilities clipId={clipId} onCleanup={handleEnhanceAudio} cleaning={isEnhancingAudio} cleaned={audioEnhanced} disabled={isApplyingSelectedClipEffect} />
+              </>}
 
               {tabIds.includes("effects") && (
                 <EffectsTab
@@ -972,20 +964,8 @@ export const InspectorPanel: React.FC = () => {
               {tabIds.includes("ai") && (
                 <AiTab
                   clipId={clipId}
-                  clipType={clipType}
-                  showVideoControls={showVideoControls}
                   showAudioEffects={showAudioEffects}
-                  showVideoEffects={showVideoEffects}
-                  handleSRTImport={handleSRTImport}
-                  srtInputRef={srtInputRef}
-                  handleRemoveBackground={handleRemoveBackground}
-                  handleEnhanceAudio={handleEnhanceAudio}
-                  handleAutoColor={handleAutoColor}
-                  isEnhancingAudio={isEnhancingAudio}
-                  audioEnhanced={audioEnhanced}
-                  isApplyingSelectedClipEffect={isApplyingSelectedClipEffect}
                   captionWordsPerLine={captionWordsPerLine}
-                  onCaptionWordsPerLineChange={setCaptionWordsPerLine}
                 />
               )}
             </div>

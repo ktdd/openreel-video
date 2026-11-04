@@ -7,6 +7,7 @@ import { resolve, join } from "node:path";
 const cases = {
   "landscape-mp4": { fixture: "landscape-av.mp4", width: 640, height: 360, fps: 24, duration: 2, codec: "h264", audio: true },
   "landscape-webm": { fixture: "landscape-av.mp4", width: 640, height: 360, fps: 24, duration: 2, codec: "vp9", audio: true },
+  "trim-start": { fixture: "landscape-av.mp4 (trim In to 0.5s)", width: 640, height: 360, fps: 24, duration: 1.5, codec: "h264", audio: true },
   "portrait-60": { fixture: "portrait-av.mp4", width: 360, height: 640, fps: 60, duration: 2, codec: "h264", audio: true },
   "silent-webm": { fixture: "silent.webm", width: 640, height: 360, fps: 30, duration: 2, codec: "vp9", audio: false },
   "trimmed-mixed": { fixture: "landscape-av.mp4 + portrait-av.mp4", width: 640, height: 360, fps: 24, duration: 3, codec: "h264", audio: true },

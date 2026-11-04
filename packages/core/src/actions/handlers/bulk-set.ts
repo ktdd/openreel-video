@@ -226,29 +226,6 @@ const maskSetAll: ActionHandler = {
   },
 };
 
-const multicamSetAll: ActionHandler = {
-  type: "multicam/setAll",
-  validate(): ValidationResult {
-    return { valid: true, errors: [] };
-  },
-  apply(action: Action, project: Project): void {
-    const params = action.params as { groups: unknown[] };
-    (project as unknown as Record<string, unknown[]>).multicamGroups =
-      params.groups ?? [];
-  },
-  invert(action: Action, projectBefore: Project): Action | null {
-    const prior =
-      (projectBefore as unknown as Record<string, unknown[]>).multicamGroups ??
-      [];
-    return {
-      type: "multicam/setAll",
-      id: `inverse-${action.id}`,
-      timestamp: Date.now(),
-      params: { groups: prior.map((g) => ({ ...(g as object) })) },
-    };
-  },
-};
-
 const nestedSetAll: ActionHandler = {
   type: "nested/setAll",
   validate(): ValidationResult {
@@ -289,7 +266,6 @@ for (const handler of [
   subtitleSetAll,
   adjustmentSetAll,
   maskSetAll,
-  multicamSetAll,
   nestedSetAll,
 ]) {
   registerActionHandler(handler);

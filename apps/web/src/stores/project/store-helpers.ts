@@ -12,7 +12,6 @@ import {
   calculateProjectDuration,
   getSpeedEngine,
   getAdjustmentLayerEngine,
-  multicamEngine,
   getNestedSequenceEngine,
   withUniversalTracksCapability,
 } from "@openreel/core";
@@ -50,7 +49,7 @@ export interface ProjectStoreHelpers {
     clipId: string,
     before: { id: string } | undefined,
   ): void;
-  syncOverlayEnginesFromProject(project?: Project): void;
+  syncOverlayEnginesFromProject(project?: Project): Promise<void>;
 }
 
 export function createProjectStoreHelpers(
@@ -225,7 +224,7 @@ export function createProjectStoreHelpers(
     actionExecutor.getHistory().push(action, inverse);
   };
 
-  const syncOverlayEnginesFromProject = (project = get().project): void => {
+  const syncOverlayEnginesFromProject = async (project = get().project): Promise<void> => {
     useEngineStore
       .getState()
       .getTitleEngine()
@@ -248,23 +247,16 @@ export function createProjectStoreHelpers(
       .flatMap((t) => t.clips)
       .filter((c) => c.chromaKey);
     if (chromaClips.length > 0) {
-      void useEngineStore
-        .getState()
-        .getChromaKeyEngine()
-        .then((engine) => {
-          for (const c of chromaClips) {
-            if (c.chromaKey) engine.setSettings(c.id, c.chromaKey);
-          }
-        });
+      const engine = await useEngineStore.getState().getChromaKeyEngine();
+      for (const c of chromaClips) {
+        if (c.chromaKey) engine.setSettings(c.id, c.chromaKey);
+      }
     }
     getAdjustmentLayerEngine().loadLayers(project.adjustmentLayers ?? []);
     if (project.masks) {
-      void useEngineStore
-        .getState()
-        .getMaskEngine()
-        .then((engine) => engine.loadMasks(project.masks ?? []));
+      const engine = await useEngineStore.getState().getMaskEngine();
+      engine.loadMasks(project.masks ?? []);
     }
-    multicamEngine.loadGroups(project.multicamGroups ?? []);
     if (project.compoundClips || project.nestedInstances) {
       getNestedSequenceEngine().loadState(
         project.compoundClips ?? [],

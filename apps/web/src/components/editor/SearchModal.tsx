@@ -294,6 +294,16 @@ const SEARCHABLE_EFFECTS: SearchItem[] = [
   },
 ];
 
+// Manual utilities remain discoverable independently of AI navigation.
+SEARCHABLE_EFFECTS.push(
+  { id: "manual-captions", name: "Captions / SRT / VTT", category: "Text", keywords: ["caption", "subtitle", "srt", "vtt", "import"], icon: Type, description: "Import and edit existing caption text and timing", sectionId: "editable-captions", clipTypes: ["video", "audio", "text"] },
+  { id: "heuristic-reframe", name: "Auto Reframe", category: "Video", keywords: ["reframe", "portrait", "crop"], icon: Move, description: "Local pixel-based reframing", sectionId: "auto-reframe", clipTypes: ["video"] },
+  { id: "beat-edit", name: "Beat-Synced Edit", category: "Audio", keywords: ["beat", "edit", "music"], icon: Music2, description: "Arrange clips to local audio beats", sectionId: "auto-edit", clipTypes: ["video", "audio"] },
+  { id: "energy-highlights", name: "Energy Highlights", category: "Audio", keywords: ["highlights", "energy", "audio"], icon: Music2, description: "Find highlights using local audio energy", sectionId: "highlights", clipTypes: ["video", "audio"] },
+  { id: "dialogue-cleanup", name: "Dialogue Cleanup", category: "Audio", keywords: ["cleanup", "noise", "dialogue"], icon: Music2, description: "Local DSP audio cleanup", sectionId: "dialogue-cleanup", clipTypes: ["video", "audio"] },
+  { id: "auto-color", name: "Auto-Color", category: "Video", keywords: ["color", "automatic", "balance"], icon: Wand2, description: "Automatic local color correction", sectionId: "auto-color", clipTypes: ["video", "image"] },
+);
+
 const CATEGORIES = [
   { id: "all", name: "All" },
   { id: "video", name: "Video", icon: Video },

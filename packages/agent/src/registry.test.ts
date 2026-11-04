@@ -7,9 +7,17 @@ import {
   toCapabilityDoc,
   getTool,
 } from "./registry";
-import type { EditingHost, HumanoidRigRequest, ModelInspectionRequest } from "./host";
+import type { EditingHost, HumanoidRigRequest } from "./host";
 
 describe("tool registry", () => {
+  it("does not discover retired camera planning tools through any provider or MCP", () => {
+    for (const name of ["get_project_manifest", "get_activity_map", "get_transcript", "set_edit_policy", "annotate_segment", "get_edit_summary", "override_cut", "preview_frame"]) {
+      expect(getTool(name)).toBeUndefined();
+    }
+    for (const catalog of [listTools(), toAnthropicTools(), toOpenAITools(), toMcpTools(), toCapabilityDoc()]) {
+      expect(JSON.stringify(catalog)).not.toMatch(/multicam|\.orma\b|silero/i);
+    }
+  });
   it("has unique tool names", () => {
     const names = listTools().map((t) => t.name);
     expect(new Set(names).size).toBe(names.length);
@@ -51,7 +59,7 @@ describe("tool registry", () => {
     expect(getTool("add_motion_cursor_click")).toBeTruthy();
     expect(getTool("get_creation_capabilities")).toBeTruthy();
     expect(getTool("probe_rigging_backend")).toBeTruthy();
-    expect(getTool("inspect_3d_model")).toBeTruthy();
+    expect(getTool("inspect_3d_model")).toBeUndefined();
     expect(getTool("rig_humanoid_model")).toBeTruthy();
     expect(getTool("create_creation_3d_scene")).toBeTruthy();
     expect(getTool("sync_creation_scene_to_motion")).toBeTruthy();
@@ -131,63 +139,6 @@ describe("tool registry", () => {
     expect(result.ok).toBe(true);
     expect(result.summary).toContain("available");
     expect((result.data as { version?: string }).version).toBe("4.3.2");
-  });
-
-  it("reports model inspection as unavailable when the host has no model loader", async () => {
-    const tool = getTool("inspect_3d_model");
-    expect(tool).toBeTruthy();
-
-    const result = await tool!.handler(
-      { modelUrl: "file:///models/astronaut.glb" },
-      {} as EditingHost,
-    );
-    expect(result.ok).toBe(true);
-    expect((result.data as { available?: boolean }).available).toBe(false);
-  });
-
-  it("uses the host model inspector when present", async () => {
-    const tool = getTool("inspect_3d_model");
-    const result = await tool!.handler(
-      { modelUrl: "file:///models/astronaut.glb", name: "Astronaut" },
-      {
-        inspectModel: async (request: ModelInspectionRequest) => ({
-          modelUrl: request.modelUrl,
-          name: request.name,
-          source: request.source,
-          meshCount: 2,
-          materialCount: 3,
-          textureCount: 1,
-          animationCount: 1,
-          vertexCount: 1200,
-          triangleCount: 800,
-          meshes: [],
-          materials: [],
-          textures: [],
-          animations: [
-            {
-              name: "Wave",
-              duration: 2.4,
-              trackCount: 18,
-              targetCount: 6,
-              tracks: [],
-            },
-          ],
-          armature: {
-            hasSkinnedMesh: true,
-            skinnedMeshCount: 1,
-            boneCount: 42,
-            rootBones: ["Hips"],
-            sampleBones: ["Hips", "Spine", "Head"],
-          },
-          warnings: [],
-          suggestedNextTools: ["set_model_animation", "retarget_animation_clip"],
-        }),
-      } as unknown as EditingHost,
-    );
-    expect(result.ok).toBe(true);
-    expect(result.summary).toContain("1 animation");
-    expect((result.data as { available?: boolean; animationCount?: number }).available).toBe(true);
-    expect((result.data as { animationCount?: number }).animationCount).toBe(1);
   });
 
   it("uses the host humanoid rigging job when present", async () => {

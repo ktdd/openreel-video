@@ -1,11 +1,8 @@
 import { useRef, useState } from "react";
-import { createPortableEdit, parsePortableEdit, materializePortableEdit, parseEditPreset, type EditPreset } from "@openreel/core/editing/portable-project";
-import { useProjectStore } from "../../../stores/project-store";
-import { useUIStore } from "../../../stores/ui-store";
-import { useChatStore } from "../../../stores/chat-store";
-import { EditingSession } from "../../../services/agent/editing-session";
-import { executeEditingTool } from "../../../services/agent/editing-tools";
-import { runExclusive } from "../../../services/agent/host-singleton";
+import { createPortableEdit, parsePortableEdit, parseEditPreset } from "@openreel/core/editing/portable-project";
+import { useProjectStore } from "../../stores/project-store";
+import { useUIStore } from "../../stores/ui-store";
+import { importPortableEdit, applySharedPreset, relinkSharedMedia } from "../../services/editing/portable-edits";
 
 const control = "rounded-md border border-border bg-bg-2 px-2 py-1.5 text-[11px] text-fg-2 hover:bg-hover focus-visible:outline focus-visible:outline-accent disabled:opacity-40";
 function downloadJSON(text: string, name: string): void {
@@ -14,7 +11,7 @@ function downloadJSON(text: string, name: string): void {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function EditSharingPanel({ disabled }: { disabled: boolean }) {
+export function EditSharingPanel({ disabled = false, onWorkingChange }: { disabled?: boolean; onWorkingChange?: (working: boolean) => void }) {
   const project = useProjectStore((s) => s.project);
   const selected = useUIStore((s) => s.selectedItems[0]?.id);
   const [json, setJSON] = useState("");
@@ -27,19 +24,14 @@ export function EditSharingPanel({ disabled }: { disabled: boolean }) {
   const targetId = target || selected || clips[0]?.id || "";
   const busy = disabled || working;
   const perform = async (fn: () => Promise<void> | void) => {
-    setWorking(true); setError(""); setMessage("");
-    try { await fn(); } catch (e) { setError(e instanceof Error ? e.message : "Could not share edit"); } finally { setWorking(false); }
+    if (busy) return;
+    setWorking(true); onWorkingChange?.(true); setError(""); setMessage("");
+    try { await fn(); } catch (e) { setError(e instanceof Error ? e.message : "Could not share edit"); } finally { setWorking(false); onWorkingChange?.(false); }
   };
   const importEdit = () => perform(async () => {
     const doc = parsePortableEdit(json);
-    await runExclusive(async () => {
-      const session = new EditingSession(); const txn = session.beginTransaction();
-      const restored = materializePortableEdit(doc, session.getProject());
-      session.replaceDraft(restored.project);
-      await session.commitTransaction(txn, "Import portable edit");
-      useChatStore.getState().reset();
-      setMessage(restored.missing.length ? `Edit imported. Relink ${restored.missing.length} missing media file(s) below.` : "Edit imported as one undo step. All media references are linked.");
-    });
+    const restored = await importPortableEdit(doc);
+    setMessage(restored.missing.length ? `Edit imported. Relink ${restored.missing.length} missing media file(s) below.` : "Edit imported as one undo step. All media references are linked.");
   });
   const exportEdit = () => perform(() => {
     const text = JSON.stringify(createPortableEdit(useProjectStore.getState().getFullProject()), null, 2);
@@ -52,17 +44,7 @@ export function EditSharingPanel({ disabled }: { disabled: boolean }) {
     const text = JSON.stringify(preset, null, 2); parseEditPreset(text); setJSON(text); downloadJSON(text, "openreel-preset.json"); setMessage("Reusable preset exported. Applying it generates fresh effect and transition IDs.");
   });
   const applyPreset = () => perform(async () => {
-    const preset: EditPreset = parseEditPreset(json);
-    await runExclusive(async () => {
-      const session = new EditingSession(); const txn = session.beginTransaction();
-      const track = session.getProject().timeline.tracks.find((t) => t.clips.some((c) => c.id === targetId));
-      const ordered = [...(track?.clips ?? [])].sort((a, b) => a.startTime - b.startTime);
-      const nextClipId = ordered[ordered.findIndex((c) => c.id === targetId) + 1]?.id;
-      const result = await executeEditingTool("apply_edit_preset", { clipId: targetId, preset, ...(nextClipId ? { nextClipId } : {}) }, session);
-      if (!result.ok) throw new Error(result.error?.message ?? result.summary);
-      await session.commitTransaction(txn, "Apply shared preset");
-      setMessage(result.summary);
-    });
+    setMessage(await applySharedPreset(targetId, parseEditPreset(json)));
   });
   return (
     <details className="border-b border-border px-3 py-2 text-xs">
@@ -81,7 +63,7 @@ export function EditSharingPanel({ disabled }: { disabled: boolean }) {
         </select></label>
         <div className="flex gap-2"><button className={control} disabled={busy || !targetId} onClick={exportPreset}>Export preset</button><button className={control} disabled={busy || !targetId || !json.trim()} onClick={() => void applyPreset()}>Apply preset JSON</button></div>
         <div className="flex gap-2"><button className={control} disabled={busy || !useProjectStore.getState().canUndo()} onClick={() => void perform(async () => { await useProjectStore.getState().undo(); setMessage("Edit undone"); })}>Undo edit</button><button className={control} disabled={busy || !useProjectStore.getState().canRedo()} onClick={() => void perform(async () => { await useProjectStore.getState().redo(); setMessage("Edit restored"); })}>Redo edit</button></div>
-        {project.mediaLibrary.items.filter((m) => m.isPlaceholder).map((media) => <label key={media.id} className="block rounded border border-border p-2 text-[11px]">Relink {media.name}<input aria-label={`Relink ${media.name}`} className="mt-1 w-full" type="file" accept={`${media.type}/*`} disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void perform(async () => { if (!file.type.startsWith(media.type + "/")) throw new Error("Choose the same media type"); await runExclusive(async () => { const session = new EditingSession(); const txn = session.beginTransaction(); await session.relinkMedia(media.id, file); await session.commitTransaction(txn, "Relink shared media"); }); setMessage(`${media.name} relinked. Element IDs were preserved.`); }); }} /></label>)}
+        {project.mediaLibrary.items.filter((m) => m.isPlaceholder).map((media) => <label key={media.id} className="block rounded border border-border p-2 text-[11px]">Relink {media.name}<input aria-label={`Relink ${media.name}`} className="mt-1 w-full" type="file" accept={`${media.type}/*`} disabled={busy} onChange={(e) => { const file = e.target.files?.[0]; if (file) void perform(async () => { if (!file.type.startsWith(media.type + "/")) throw new Error("Choose the same media type"); await relinkSharedMedia(media.id, file); setMessage(`${media.name} relinked. Element IDs were preserved.`); }); }} /></label>)}
         {working && <p role="status" className="text-fg-muted">Validating and applying…</p>}
         {message && <p role="status" className="text-[11px] text-status-success">{message}</p>}
         {error && <p role="alert" className="break-words text-[11px] text-status-error">{error}</p>}

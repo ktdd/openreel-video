@@ -4,7 +4,6 @@ import {
   Subtitles,
   Palette,
   Music,
-  Video,
   ChevronRight,
   Wand2,
   FileStack,
@@ -17,11 +16,10 @@ import { AutoCaptionPanel } from "./inspector/AutoCaptionPanel";
 import { TextToSpeechPanel } from "./inspector/TextToSpeechPanel";
 import { FilterPresetsPanel } from "./inspector/FilterPresetsPanel";
 import { MusicLibraryPanel } from "./inspector/MusicLibraryPanel";
-import { MultiCameraPanel } from "./inspector/MultiCameraPanel";
 import { useTtsAudioStore } from "../../stores/tts-store";
 import { toast } from "../../stores/notification-store";
 
-type FeatureId = "captions" | "tts" | "filters" | "music" | "multicam" | null;
+type FeatureId = "captions" | "tts" | "filters" | "music" | null;
 
 interface FeatureCardProps {
   icon: React.ElementType;
@@ -129,8 +127,6 @@ export const AIGenTab: React.FC = () => {
         return <FilterPresetsPanel />;
       case "music":
         return <MusicLibraryPanel />;
-      case "multicam":
-        return <MultiCameraPanel />;
       default:
         return null;
     }
@@ -222,21 +218,6 @@ export const AIGenTab: React.FC = () => {
             activeRing="ring-teal-500/30"
             isActive={activeFeature === "music"}
             onClick={() => handleFeatureClick("music")}
-          />
-        </FeatureSection>
-
-        <FeatureSection title="Tools" icon={Video}>
-          <FeatureCard
-            icon={Video}
-            title="Multi-Camera Editing"
-            description="Sync and switch between multiple angles"
-            iconColor="text-cyan-400"
-            iconBg="bg-cyan-500/20"
-            activeBorder="border-cyan-500/50"
-            activeBg="bg-cyan-500/10"
-            activeRing="ring-cyan-500/30"
-            isActive={activeFeature === "multicam"}
-            onClick={() => handleFeatureClick("multicam")}
           />
         </FeatureSection>
 

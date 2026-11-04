@@ -258,7 +258,7 @@ export function createHistorySlice(
       if (result.success) {
         syncProjectEffectsBridge(targetProject, previousProject);
         syncProjectTransitionsBridge(targetProject, previousProject);
-        syncOverlayEnginesFromProject(targetProject);
+        await syncOverlayEnginesFromProject(targetProject);
         set({
           project: { ...targetProject, modifiedAt: Date.now() },
           redoJournal: [...get().redoJournal, "action"],
@@ -472,7 +472,7 @@ export function createHistorySlice(
       if (result.success) {
         syncProjectEffectsBridge(targetProject, previousProject);
         syncProjectTransitionsBridge(targetProject, previousProject);
-        syncOverlayEnginesFromProject(targetProject);
+        await syncOverlayEnginesFromProject(targetProject);
         set({
           project: { ...targetProject, modifiedAt: Date.now() },
           redoJournal: nextJournal,

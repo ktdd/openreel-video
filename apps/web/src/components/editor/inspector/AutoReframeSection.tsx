@@ -124,7 +124,7 @@ export const AutoReframeSection: React.FC<AutoReframeSectionProps> = ({
 
     try {
       if (!isInitialized) {
-        setProgressMessage("Loading AI engine...");
+        setProgressMessage("Preparing heuristic reframing...");
         setProgress(10);
         await handleInitialize();
       }

@@ -8,8 +8,6 @@ import type {
   ImportedMediaRef,
   RiggingBackendProbe,
   CreateProjectOptions,
-  ModelInspectionReport,
-  ModelInspectionRequest,
   HumanoidRigRequest,
   HumanoidRigResult,
   TextOverlayOptions,
@@ -29,7 +27,6 @@ import type {
   MotionRenderQueueAddResult,
   MotionRenderQueueAddError,
   MotionRenderQueueRunResult,
-  MulticamHostBridge,
 } from "@openreel/agent";
 import type { TextStyle, TextAnimationPreset } from "@openreel/core/text/types";
 import type { ShapeStyle, ShapeType } from "@openreel/core/graphics/types";
@@ -41,7 +38,6 @@ import type { CapabilityManifest } from "@openreel/core/capabilities/manifest";
 import { useProjectStore } from "../../stores/project-store";
 import { insertTimelineOverlay } from "../../stores/project/insert-timeline-overlay";
 import { checkForRecovery } from "../auto-save";
-import { inspectGltfModel } from "../../motion/model-inspection";
 import {
   exportMotionCompositionScene,
   MOTION_EXPORT_FORMATS,
@@ -54,7 +50,6 @@ import {
   type MotionRenderQueueFormat,
 } from "../../motion/stores/motion-store";
 import { runMotionRenderQueue } from "../../motion/render-queue-runner";
-import { createMulticamHostBridge } from "./multicam-bridge";
 
 const MIME_BY_EXT: Record<string, string> = {
   mp4: "video/mp4",
@@ -147,9 +142,6 @@ function normalizeRenderQueueScale(
 export class LiveEditorHost implements EditingHost {
   private jobRunner?: JobRunner;
   private appliedInTxn = 0;
-  readonly multicam: MulticamHostBridge = createMulticamHostBridge((timeMs) =>
-    this.runJob("exportFrame", { time: timeMs / 1_000 }),
-  );
 
   constructor(options: LiveEditorHostOptions = {}) {
     this.jobRunner = options.jobRunner;
@@ -450,13 +442,6 @@ export class LiveEditorHost implements EditingHost {
       };
     }
     return probeBackend();
-  }
-
-  async inspectModel(options: ModelInspectionRequest): Promise<ModelInspectionReport> {
-    return inspectGltfModel(options.modelUrl, {
-      ...(options.name ? { name: options.name } : {}),
-      ...(options.source ? { source: options.source } : {}),
-    });
   }
 
   async rigHumanoidModel(options: HumanoidRigRequest): Promise<HumanoidRigResult> {

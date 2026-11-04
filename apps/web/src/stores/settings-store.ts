@@ -52,10 +52,6 @@ export type LlmProvider = "openai-compatible" | "anthropic-compatible";
 export type AggregatorProvider = "kie-ai" | "freepik";
 export type SettingsTab = "general" | "ai-editor" | "api-keys" | "mcp";
 
-function isLlmProvider(value: unknown): value is LlmProvider {
-  return value === "openai-compatible" || value === "anthropic-compatible";
-}
-
 export interface SettingsState {
   // General preferences
   autoSave: boolean;
@@ -134,7 +130,7 @@ export const useSettingsStore = create<SettingsState>()(
         favoriteModels: [],
         configuredServices: [],
 
-        mcpAutoAllowTrustedLocal: true,
+        mcpAutoAllowTrustedLocal: false,
         agentAutoConfirm: false,
         agentDryRun: false,
 
@@ -231,55 +227,10 @@ export const useSettingsStore = create<SettingsState>()(
       }),
       {
         name: "openreel-settings",
-        version: 7,
-        migrate: (persisted, version) => {
-          const next = (persisted ?? {}) as Record<string, unknown>;
-          if (version < 2) next.mcpAutoAllowTrustedLocal = true;
-          if (version < 3 && (!next.llmModel || next.llmModel === "gpt-4o")) {
-            next.llmModel = "gpt-5.6-sol";
-          }
-          if (version < 5 || next.defaultTtsProvider === "piper") {
-            next.defaultTtsProvider = "elevenlabs";
-          }
-          const previousProvider = next.defaultLlmProvider;
-          if (!isLlmProvider(previousProvider)) {
-            next.defaultLlmProvider = null;
-            next.llmBaseUrl = "";
-            next.llmModel = "";
-          } else {
-            next.llmBaseUrl =
-              typeof next.llmBaseUrl === "string"
-                ? next.llmBaseUrl
-                : previousProvider === "openai-compatible" &&
-                    typeof next.openaiCompatibleBaseUrl === "string"
-                  ? next.openaiCompatibleBaseUrl
-                  : "";
-            next.llmModel =
-              previousProvider === "openai-compatible" &&
-              typeof next.openaiCompatibleModel === "string"
-                ? next.openaiCompatibleModel
-                : typeof next.llmModel === "string"
-                  ? next.llmModel
-                  : "";
-          }
-          return next as unknown as SettingsState;
-        },
         partialize: (state) => ({
           autoSave: state.autoSave,
           autoSaveInterval: state.autoSaveInterval,
           language: state.language,
-          defaultTtsProvider: state.defaultTtsProvider,
-          defaultLlmProvider: state.defaultLlmProvider,
-          llmBaseUrl: state.llmBaseUrl,
-          llmModel: state.llmModel,
-          defaultAggregator: state.defaultAggregator,
-          elevenLabsModel: state.elevenLabsModel,
-          favoriteVoices: state.favoriteVoices,
-          favoriteModels: state.favoriteModels,
-          configuredServices: state.configuredServices,
-          mcpAutoAllowTrustedLocal: state.mcpAutoAllowTrustedLocal,
-          agentAutoConfirm: state.agentAutoConfirm,
-          agentDryRun: state.agentDryRun,
         }),
       },
     ),

@@ -127,7 +127,7 @@ describe("QuickEditBar", () => {
     show();
     expect(screen.queryByRole("button", { name: "Reframe" })).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Add captions" }));
-    expect(useInspectorNavigationStore.getState().request).toMatchObject({ sectionId: "auto-captions", clipId });
+    expect(useInspectorNavigationStore.getState().request).toMatchObject({ sectionId: "editable-captions", clipId });
     fireEvent.click(screen.getByRole("button", { name: "Export video" }));
     expect(useUIStore.getState().activeModal).toBe("export");
   });

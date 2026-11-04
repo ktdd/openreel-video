@@ -12,7 +12,6 @@ import { ChatComposer } from "./ChatComposer";
 import { InlineConfirmCard } from "./InlineConfirmCard";
 import { ChatErrorCard } from "./ChatErrorCard";
 import { ChatHistoryPanel } from "./ChatHistoryPanel";
-import { EditSharingPanel } from "./EditSharingPanel";
 import { useAIConnectionStore } from "../../../stores/ai-connection-store";
 
 const SUGGESTIONS: ReadonlyArray<string> = [
@@ -172,7 +171,6 @@ export function ChatPanel({
         </div>
       </header>
       <div className="max-h-[40%] shrink-0 overflow-y-auto">
-        <EditSharingPanel disabled={busy} />
       </div>
 
       {historyOpen && (

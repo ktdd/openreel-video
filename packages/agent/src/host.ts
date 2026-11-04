@@ -1,12 +1,6 @@
 import type { Action, ActionResult } from "@openreel/core/types/actions";
 import type { Project } from "@openreel/core/types/project";
 import type { CapabilityManifest } from "@openreel/core/capabilities/manifest";
-import type {
-  MulticamActivityMap,
-  MulticamManifest,
-  MulticamShotPolicy,
-  MulticamTranscriptSegment,
-} from "@openreel/core";
 
 export type JobKind =
   | "exportVideo"
@@ -52,89 +46,10 @@ export interface RiggingBackendProbe {
   readonly error?: string;
 }
 
-export interface ModelInspectionVec3 {
-  readonly x: number;
-  readonly y: number;
-  readonly z: number;
-}
-
-export interface ModelInspectionBounds {
-  readonly min: ModelInspectionVec3;
-  readonly max: ModelInspectionVec3;
-  readonly size: ModelInspectionVec3;
-  readonly center: ModelInspectionVec3;
-}
-
-export interface ModelInspectionMesh {
-  readonly name: string;
-  readonly vertexCount: number;
-  readonly triangleCount: number;
-  readonly skinned: boolean;
-  readonly materialNames: readonly string[];
-}
-
-export interface ModelInspectionTexture {
-  readonly name: string;
-  readonly slot: string;
-  readonly width?: number;
-  readonly height?: number;
-}
-
-export interface ModelInspectionMaterial {
-  readonly name: string;
-  readonly type: string;
-  readonly color?: string;
-  readonly metalness?: number;
-  readonly roughness?: number;
-  readonly textureSlots: readonly string[];
-}
-
-export interface ModelInspectionAnimation {
-  readonly name: string;
-  readonly duration: number;
-  readonly trackCount: number;
-  readonly targetCount: number;
-  readonly tracks: readonly string[];
-}
-
-export interface ModelInspectionArmature {
-  readonly hasSkinnedMesh: boolean;
-  readonly skinnedMeshCount: number;
-  readonly boneCount: number;
-  readonly rootBones: readonly string[];
-  readonly sampleBones: readonly string[];
-}
-
-export interface ModelInspectionWarning {
+export interface RiggingWarning {
   readonly code: string;
   readonly severity: "info" | "warning" | "error";
   readonly message: string;
-}
-
-export interface ModelInspectionReport {
-  readonly modelUrl: string;
-  readonly name?: string;
-  readonly source?: string;
-  readonly meshCount: number;
-  readonly materialCount: number;
-  readonly textureCount: number;
-  readonly animationCount: number;
-  readonly vertexCount: number;
-  readonly triangleCount: number;
-  readonly bounds?: ModelInspectionBounds;
-  readonly meshes: readonly ModelInspectionMesh[];
-  readonly materials: readonly ModelInspectionMaterial[];
-  readonly textures: readonly ModelInspectionTexture[];
-  readonly animations: readonly ModelInspectionAnimation[];
-  readonly armature: ModelInspectionArmature;
-  readonly warnings: readonly ModelInspectionWarning[];
-  readonly suggestedNextTools: readonly string[];
-}
-
-export interface ModelInspectionRequest {
-  readonly modelUrl: string;
-  readonly name?: string;
-  readonly source?: string;
 }
 
 export interface HumanoidRigRequest {
@@ -157,39 +72,8 @@ export interface HumanoidRigResult {
   readonly skinnedMeshCount: number;
   readonly meshCount: number;
   readonly boneCount: number;
-  readonly warnings: readonly ModelInspectionWarning[];
+  readonly warnings: readonly RiggingWarning[];
   readonly error?: string;
-}
-
-export interface MulticamHostBridge {
-  getManifest(groupId?: string): Promise<{ groupId: string; manifest: MulticamManifest }>;
-  getActivityMap(
-    groupId?: string,
-    range?: { startMs?: number; endMs?: number },
-  ): Promise<{ groupId: string; activity: MulticamActivityMap; sampled: boolean }>;
-  getTranscript(
-    groupId?: string,
-    range?: { startMs?: number; endMs?: number },
-  ): Promise<{ groupId: string; transcripts: Record<string, MulticamTranscriptSegment[]> }>;
-  setEditPolicy(
-    groupId: string,
-    policy: Partial<MulticamShotPolicy>,
-  ): Promise<Record<string, unknown>>;
-  annotateSegment(input: {
-    groupId: string;
-    startMs: number;
-    endMs: number;
-    note: string;
-  }): Promise<Record<string, unknown>>;
-  getEditSummary(groupId?: string): Promise<Record<string, unknown>>;
-  overrideCut(input: {
-    groupId: string;
-    switchId: string;
-    operation: "accept" | "reject" | "nudge" | "set-camera";
-    deltaMs?: number;
-    cameraId?: string;
-  }): Promise<Record<string, unknown>>;
-  previewFrame(groupId: string, timeMs: number): Promise<JobResult>;
 }
 
 export interface CreateProjectOptions {
@@ -238,8 +122,6 @@ export interface EditingHost {
   runJob(kind: JobKind, params: Record<string, unknown>): Promise<JobResult>;
   /** Machine-readable enums + parameter ranges for the agent. */
   capabilities(): CapabilityManifest;
-  /** Narrow multicam planning/review surface shared with local MCP clients. */
-  multicam?: MulticamHostBridge;
   /** Throws when no project is open (guard for mutating tools). */
   requireOpenProject(): void;
 
@@ -275,7 +157,6 @@ export interface EditingHost {
   /** Desktop-only DCC backend discovery for character rigging/retarget jobs. */
   probeRiggingBackend?(): Promise<RiggingBackendProbe>;
   /** Inspect a GLB/glTF model so agents can choose animation, rigging, and cleanup tools. */
-  inspectModel?(options: ModelInspectionRequest): Promise<ModelInspectionReport>;
   /** Run a desktop rigging backend job to create or repair a humanoid GLB rig. */
   rigHumanoidModel?(options: HumanoidRigRequest): Promise<HumanoidRigResult>;
   /**

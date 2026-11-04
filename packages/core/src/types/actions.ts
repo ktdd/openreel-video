@@ -23,7 +23,6 @@ import type { TextClip } from "../text/types";
 import type { ShapeClip, SVGClip, StickerClip } from "../graphics/types";
 import type { AdjustmentLayer } from "../video/adjustment-layer-engine";
 import type { Mask } from "../video/mask-engine";
-import type { MultiCamGroup } from "../video/multicam-engine";
 import type {
   CompoundClip,
   CompoundClipInstance,
@@ -460,21 +459,6 @@ export type MotionAction =
 export type AdjustmentAction =
   | { type: "adjustment/setAll"; params: { layers: AdjustmentLayer[] } }
   | { type: "mask/setAll"; params: { masks: Mask[] } }
-  | { type: "multicam/setAll"; params: { groups: MultiCamGroup[] } }
-  | {
-      type: "multicam/applyEdit";
-      params: {
-        outputTrack?: import("./timeline").Track;
-        outputTracks?: import("./timeline").Track[];
-        outputTrackPosition?: number;
-        sourceTrackIds: string[];
-        groups: MultiCamGroup[];
-      };
-    }
-  | {
-      type: "multicam/restoreEdit";
-      params: Record<string, unknown>;
-    }
   | {
       type: "nested/setAll";
       params: {

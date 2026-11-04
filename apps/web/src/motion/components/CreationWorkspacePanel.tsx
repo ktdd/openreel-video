@@ -20,14 +20,13 @@ import {
   RotateCcw,
   type LucideIcon,
 } from "@/icons/lucide-compat";
-import { executeTool, type ToolResult } from "@openreel/agent";
 import {
   ToolcraftSwitchControl,
   ToolcraftText,
   ToolcraftTextInputControl,
 } from "@openreel/ui";
 import { useProjectStore } from "../../stores/project-store";
-import { getLiveEditorHost, runExclusive } from "../../services/agent/host-singleton";
+import { syncCreationSceneToMotion } from "../../services/editing/creation-sync";
 import { useMotionStore } from "../stores/motion-store";
 import type { CreationCameraEditPatch } from "../creation-camera-editing";
 import type { CreationObjectEditPatch } from "../creation-object-editing";
@@ -167,28 +166,11 @@ export function CreationWorkspacePanel(): JSX.Element {
     setSyncingSceneId(scene.sceneId);
     setSyncError(null);
     try {
-      const result = await runExclusive(() =>
-        executeTool(
-          "sync_creation_scene_to_motion",
-          {
-            sceneId: scene.sceneId,
-            ...(scene.compositionId ? { compositionId: scene.compositionId } : {}),
-            ...(scene.layerId ? { layerId: scene.layerId } : {}),
-          },
-          getLiveEditorHost(),
-        ),
-      );
-      if (!result.ok) {
-        setSyncError({
-          sceneId: scene.sceneId,
-          message: result.error?.message ?? result.summary,
-        });
-        return;
-      }
-
-      const data = resultDataRecord(result);
-      const compositionId = optionalString(data?.compositionId) ?? scene.compositionId;
-      const layerId = optionalString(data?.layerId) ?? scene.layerId;
+      const { compositionId, layerId } = await syncCreationSceneToMotion({
+        sceneId: scene.sceneId,
+        ...(scene.compositionId ? { compositionId: scene.compositionId } : {}),
+        ...(scene.layerId ? { layerId: scene.layerId } : {}),
+      });
       if (compositionId) setActiveCompositionId(compositionId);
       if (layerId) selectLayer(layerId);
       setLeftTab("layers");
@@ -1220,16 +1202,6 @@ function formatTrackRange(
   if (firstTime === undefined) return `-${formatSeconds(lastTime ?? 0)}`;
   if (lastTime === undefined || firstTime === lastTime) return formatSeconds(firstTime);
   return `${formatSeconds(firstTime)}-${formatSeconds(lastTime)}`;
-}
-
-function resultDataRecord(result: ToolResult): Record<string, unknown> | null {
-  return result.data && typeof result.data === "object" && !Array.isArray(result.data)
-    ? (result.data as Record<string, unknown>)
-    : null;
-}
-
-function optionalString(value: unknown): string | null {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function normalizeColorInput(value: string): string {

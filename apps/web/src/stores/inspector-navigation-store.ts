@@ -16,7 +16,7 @@ interface InspectorNavigationState {
 export const useInspectorNavigationStore = create<InspectorNavigationState>((set) => ({
   request: null,
   requestSection: (sectionId, clipId) => set((state) => ({
-    request: { sectionId, clipId, sequence: (state.request?.sequence ?? 0) + 1 },
+    request: { sectionId: sectionId === "ai-highlights" ? "highlights" : sectionId, clipId, sequence: (state.request?.sequence ?? 0) + 1 },
   })),
   clearRequest: () => set({ request: null }),
 }));

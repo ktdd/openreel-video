@@ -1,36 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useSettingsStore } from "../stores/settings-store";
-import { useUIStore } from "../stores/ui-store";
+import { describe, expect, it } from "vitest";
 import legacyProject from "../../../../packages/core/src/test/fixtures/ai-removal/legacy-ai-project.json";
 import browserState from "./fixtures/ai-removal-browser-state.json";
 
-const initialSettings = useSettingsStore.getState();
-const initialUI = useUIStore.getState();
-
+// Historical fixture integrity only; old-state hydration is no longer required.
 describe("AI removal browser-state fixtures", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    vi.stubGlobal("fetch", vi.fn(() => { throw new Error("State fixtures must not call providers"); }));
-  });
-  afterEach(() => {
-    useSettingsStore.setState(initialSettings, true);
-    useUIStore.setState(initialUI, true);
-    localStorage.clear();
-    vi.unstubAllGlobals();
-  });
-
-  it.each([
-    ["current", browserState.localStorage],
-    ["older", browserState.olderLocalStorage],
-  ] as const)("rehydrates %s settings while preserving manual preferences", async (_name, records) => {
-    for (const [key, record] of Object.entries(records)) localStorage.setItem(key, JSON.stringify(record));
-    // Deliberately do not mount App or import/hydrate the task/chat stores.
-    await useSettingsStore.persist.rehydrate();
-    await useUIStore.persist.rehydrate();
-    expect(useSettingsStore.getState()).toMatchObject({ autoSave: false, autoSaveInterval: 9, language: "fi" });
-    expect(useUIStore.getState().theme).toBe("dark");
-    expect(fetch).not.toHaveBeenCalled();
-  });
 
   it("covers retired UI/provider settings without real credentials or executable clients", () => {
     expect(browserState.localStorage["openreel-ui-preferences"].state).toMatchObject({

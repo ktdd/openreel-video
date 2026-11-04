@@ -12,6 +12,7 @@ import { createProjectPackage, readProjectPackage, copyPackagedProject, projectM
 import { exportFilename } from "../../services/export-runner";
 import { restoreMediaItem } from "../../utils/media-recovery";
 import { projectManager } from "../../services/project-manager";
+import { EditSharingPanel } from "./EditSharingPanel";
 
 export function formatPackageBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
@@ -37,14 +38,16 @@ export function ProjectPackageDialog({ onClose }: { onClose: () => void }) {
   const exporting = useUIStore((state) => state.exportState.isExporting);
   const input = useRef<HTMLInputElement>(null);
   const controller = useRef<AbortController | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [packageBusy, setBusy] = useState(false);
+  const [sharingBusy, setSharingBusy] = useState(false);
+  const busy = packageBusy || sharingBusy;
   const committing = useRef(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [incoming, setIncoming] = useState<Project | null>(null);
   const [storage, setStorage] = useState<{ usage?: number; quota?: number } | null>(null);
   const summary = projectMediaSummary(project);
-  const close = () => { if (committing.current) return; controller.current?.abort(); onClose(); };
+  const close = () => { if (committing.current || sharingBusy) return; controller.current?.abort(); onClose(); };
   useEffect(() => {
     let active = true;
     navigator.storage?.estimate?.().then((estimate) => { if (active) setStorage(estimate); }).catch(() => {});
@@ -180,10 +183,11 @@ export function ProjectPackageDialog({ onClose }: { onClose: () => void }) {
           <Button label="Open this project" variant="primary" onClick={() => void open()} isDisabled={busy || exporting} />
         </div>}
       </section>
+      <EditSharingPanel disabled={packageBusy || exporting || incoming !== null} onWorkingChange={setSharingBusy} />
       {storage?.quota && <p className="text-xs text-fg-3">Browser storage: {formatPackageBytes(storage.usage ?? 0)} of {formatPackageBytes(storage.quota)} used. Keep a backup outside your browser.</p>}
       {status && <p role="status" className="text-xs text-fg-2">{status}</p>}
       {error && <p role="alert" className="text-xs text-status-error">{error}</p>}
-      <div className="flex justify-end"><Button label={busy ? "Cancel operation" : "Close"} isDisabled={committing.current} variant="secondary" onClick={close} /></div>
+      <div className="flex justify-end"><Button label={busy ? "Cancel operation" : "Close"} isDisabled={committing.current || sharingBusy} variant="secondary" onClick={close} /></div>
     </div>
   </Dialog>;
 }

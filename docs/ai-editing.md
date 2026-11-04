@@ -20,7 +20,7 @@ Each turn uses the existing agent loop and core action executor on an isolated d
 
 Share original media separately. Existing local assets are matched by ID or a unique filename/size hint. Missing files become explicit placeholders; relinking decodes the chosen file, checks source ranges, preserves IDs, and commits one undo step. Import performs no network fetch. Preset version 1 shares a built-in look and/or transition; applying it generates fresh IDs and preserves unrelated clips.
 
-Portable JSON currently covers media clips, text, supplied captions, markers, numeric built-in effects, and transitions. Projects using graphics, SVG/stickers, masks, adjustment layers, nested/multicam/motion/creation scenes, or unsupported properties must use the ordinary project format; portable export rejects those instead of silently dropping them. AI editing preserves existing unsupported project data, but its catalog does not expose arbitrary scripts, shaders, URL media, automatic transcription, or generative-media services. `open_export` opens local settings; encoding starts when the user chooses **Start Export**.
+Portable JSON currently covers media clips, text, supplied captions, markers, numeric built-in effects, and transitions. Projects using graphics, SVG/stickers, masks, adjustment layers, nested/motion/creation scenes, or unsupported properties must use the ordinary project format; portable export rejects those instead of silently dropping them. AI editing preserves existing unsupported project data, but its catalog does not expose arbitrary scripts, shaders, URL media, automatic transcription, or generative-media services. `open_export` opens local settings; encoding starts when the user chooses **Start Export**.
 
 ## Verification
 

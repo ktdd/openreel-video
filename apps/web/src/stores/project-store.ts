@@ -1,4 +1,5 @@
 import { cloneProjectForEdit } from "./project/clone-project-for-edit";
+import { editSnapshot } from "@openreel/core/actions/handlers/edit-snapshot";
 import { create } from "zustand";
 import { useTimelineStore } from "./timeline-store";
 import { useUIStore } from "./ui-store";
@@ -2948,17 +2949,38 @@ export const useProjectStore = create<ProjectState>()(
             },
           };
         }
-        const targetProject = action.type === "project/applyEditSnapshot" ? get().getFullProject() : project;
-        const previousProject = action.type === "project/applyEditSnapshot" ? { ...targetProject } : undefined;
-        const result = await actionExecutor.execute(action, targetProject);
-        if (result.success) {
-          if (action.type === "project/applyEditSnapshot") {
-            syncOverlayEnginesFromProject(targetProject);
-            syncProjectEffectsBridge(targetProject, previousProject);
-            syncProjectTransitionsBridge(targetProject, previousProject);
+        if (action.type === "project/applyEditSnapshot") {
+          // Validate/apply on a detached candidate; history and redo remain
+          // untouched until all live engines have accepted the candidate.
+          const before = cloneProjectForEdit(get().getFullProject());
+          const candidate = cloneProjectForEdit(before);
+          const result = await new ActionExecutor().execute(action, candidate);
+          if (!result.success) return result;
+          if (get().project !== project) return { success: false, error: { code: "INVALID_PARAMS", message: "The project changed while preparing this edit" } };
+          try {
+            await syncOverlayEnginesFromProject(candidate);
+            if (get().project !== project) throw new Error("The project changed while synchronizing this edit");
+            syncProjectEffectsBridge(candidate, before);
+            syncProjectTransitionsBridge(candidate, before);
+            registerProjectGeneratedShaders(candidate);
+          } catch (error) {
+            const restoreProject = get().project === project ? before : get().project;
+            for (const restore of [
+              () => syncOverlayEnginesFromProject(restoreProject),
+              () => syncProjectEffectsBridge(restoreProject, candidate),
+              () => syncProjectTransitionsBridge(restoreProject, candidate),
+              () => registerProjectGeneratedShaders(restoreProject),
+            ]) {
+              try { await restore(); } catch (restoreError) { console.warn("Could not restore an editing engine:", restoreError); }
+            }
+            return { success: false, error: { code: "INVALID_PARAMS", message: error instanceof Error ? error.message : "Could not synchronize editing engines" } };
           }
-          set({ project: { ...targetProject } });
+          get().actionHistory.push(action, { type: "project/applyEditSnapshot", id: `inverse-${action.id}`, timestamp: action.timestamp, params: { snapshot: editSnapshot(before) } });
+          set({ project: candidate });
+          return result;
         }
+        const result = await actionExecutor.execute(action, project);
+        if (result.success) set({ project: { ...project } });
         return result;
       },
 

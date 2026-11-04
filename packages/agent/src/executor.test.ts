@@ -156,7 +156,7 @@ describe("executeTool", () => {
     expect(data.coreWorkflow).toContain("create_creation_3d_scene");
     expect(data.coreWorkflow).toContain("render_creation_preview");
     expect(data.coreWorkflow).toContain("inspect_creation_product_parts");
-    expect(data.coreWorkflow).toContain("inspect_3d_model");
+    expect(data.coreWorkflow).not.toContain("inspect_3d_model");
     expect(data.coreWorkflow).toContain("rig_humanoid_model");
     expect(data.coreWorkflow).toContain("add_creation_product_part");
     expect(data.coreWorkflow).toContain("add_creation_screen_stack");
@@ -2898,107 +2898,6 @@ describe("executeTool", () => {
       timeOffset: 0.5,
       playbackRate: 0.75,
       loop: false,
-    });
-  });
-
-  it("inspects GLB models resolved from editable creation scene objects", async () => {
-    const host = new HeadlessHost(makeEmptyProject()) as HeadlessHost & {
-      inspectModel: NonNullable<import("./host").EditingHost["inspectModel"]>;
-    };
-    const inspected: Array<{ modelUrl: string; name?: string; source?: string }> = [];
-    host.inspectModel = async (request) => {
-      inspected.push(request);
-      return {
-        modelUrl: request.modelUrl,
-        name: request.name,
-        source: request.source,
-        meshCount: 1,
-        materialCount: 2,
-        textureCount: 1,
-        animationCount: 2,
-        vertexCount: 2400,
-        triangleCount: 1600,
-        bounds: {
-          min: { x: -1, y: 0, z: -1 },
-          max: { x: 1, y: 2, z: 1 },
-          size: { x: 2, y: 2, z: 2 },
-          center: { x: 0, y: 1, z: 0 },
-        },
-        meshes: [
-          {
-            name: "Astronaut suit",
-            vertexCount: 2400,
-            triangleCount: 1600,
-            skinned: true,
-            materialNames: ["Suit", "Visor"],
-          },
-        ],
-        materials: [],
-        textures: [],
-        animations: [
-          { name: "Idle", duration: 1.2, trackCount: 10, targetCount: 4, tracks: [] },
-          { name: "Wave", duration: 2.1, trackCount: 18, targetCount: 7, tracks: [] },
-        ],
-        armature: {
-          hasSkinnedMesh: true,
-          skinnedMeshCount: 1,
-          boneCount: 38,
-          rootBones: ["Hips"],
-          sampleBones: ["Hips", "Spine", "Head", "Hand.R"],
-        },
-        warnings: [],
-        suggestedNextTools: ["set_model_animation", "retarget_animation_clip"],
-      };
-    };
-
-    await executeTool(
-      "create_creation_3d_scene",
-      {
-        sceneId: "scene-inspect-model",
-        compositionId: "comp-inspect-model",
-        layerId: "layer-inspect-model",
-        name: "Inspectable Model Scene",
-        objects: [
-          {
-            key: "astronaut",
-            objectId: "object-inspect-astronaut",
-            kind: "model",
-            name: "Inspectable astronaut",
-            modelUrl: "file:///models/astronaut.glb",
-          },
-        ],
-      },
-      host,
-    );
-
-    const result = await executeTool(
-      "inspect_3d_model",
-      {
-        sceneId: "scene-inspect-model",
-        creationObjectId: "object-inspect-astronaut",
-      },
-      host,
-    );
-
-    expect(result.ok).toBe(true);
-    expect(inspected).toEqual([
-      {
-        modelUrl: "file:///models/astronaut.glb",
-        name: "Inspectable astronaut",
-        source: "creation-scene-object",
-      },
-    ]);
-    expect(result.data).toMatchObject({
-      available: true,
-      source: "creation-scene-object",
-      sceneId: "scene-inspect-model",
-      creationObjectId: "object-inspect-astronaut",
-      meshCount: 1,
-      animationCount: 2,
-      armature: {
-        hasSkinnedMesh: true,
-        boneCount: 38,
-      },
     });
   });
 

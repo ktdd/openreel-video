@@ -7,20 +7,9 @@ import { useProjectStore } from "../../stores/project-store";
 import { useMotionStore } from "../stores/motion-store";
 import { CreationWorkspacePanel } from "./CreationWorkspacePanel";
 
-const h = vi.hoisted(() => ({
-  executeTool: vi.fn(),
-  host: { id: "host" },
-  runExclusive: vi.fn((fn: () => Promise<unknown>) => fn()),
-}));
-
-vi.mock("@openreel/agent", () => ({
-  executeTool: h.executeTool,
-}));
-
-vi.mock("../../services/agent/host-singleton", () => ({
-  getLiveEditorHost: () => h.host,
-  runExclusive: h.runExclusive,
-}));
+const h = vi.hoisted(() => ({ sync: vi.fn() }));
+vi.mock("../../services/editing/creation-sync", () => ({ syncCreationSceneToMotion: h.sync }));
+vi.mock("@openreel/agent", () => { throw new Error("Manual creation must not import agents"); });
 
 function creationScene(): CreationScene {
   return {
@@ -119,25 +108,17 @@ describe("CreationWorkspacePanel", () => {
     });
   });
 
-  it("syncs an unbound creation scene through the shared MCP motion tool", async () => {
-    h.executeTool.mockResolvedValue({
-      ok: true,
-      summary: "Synced",
-      data: { compositionId: "comp-synced", layerId: "layer-synced" },
-    });
+  it("syncs an unbound creation scene through local editing", async () => {
+    h.sync.mockResolvedValue({ compositionId: "comp-synced", layerId: "layer-synced", missingAssetObjectIds: [] });
 
     render(<CreationWorkspacePanel />);
 
     fireEvent.click(screen.getByRole("button", { name: "Sync render scene" }));
 
     await waitFor(() => {
-      expect(h.executeTool).toHaveBeenCalledWith(
-        "sync_creation_scene_to_motion",
-        { sceneId: "scene-sync" },
-        h.host,
-      );
+      expect(h.sync).toHaveBeenCalledWith({ sceneId: "scene-sync" });
     });
-    expect(h.runExclusive).toHaveBeenCalledTimes(1);
+    expect(h.sync).toHaveBeenCalledTimes(1);
     expect(useMotionStore.getState().activeCompositionId).toBe("comp-synced");
     expect(useMotionStore.getState().selectedLayerId).toBe("layer-synced");
     expect(useMotionStore.getState().leftTab).toBe("layers");
@@ -145,14 +126,7 @@ describe("CreationWorkspacePanel", () => {
   });
 
   it("reports sync errors without leaving the creation workspace", async () => {
-    h.executeTool.mockResolvedValue({
-      ok: false,
-      summary: "Creation scene has no objects to render",
-      error: {
-        code: "INVALID_PARAMS",
-        message: "Creation scene has no objects to render",
-      },
-    });
+    h.sync.mockRejectedValue(new Error("Creation scene has no objects to render"));
 
     render(<CreationWorkspacePanel />);
 

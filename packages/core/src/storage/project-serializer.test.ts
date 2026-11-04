@@ -271,6 +271,35 @@ describe("normalizeProjectCreationFields", () => {
 });
 
 describe("ProjectSerializer round-trip", () => {
+  it("roundtrips current-format multi-track edits and local media through storage and project JSON", async () => {
+    const serializer = new ProjectSerializer(new MemoryStorageEngine());
+    const blob = new Blob(["video"], { type: "video/mp4" });
+    const project = makeProject({
+      mediaLibrary: { items: [{ id: "source", name: "source.mp4", type: "video", blob, fileHandle: null,
+        thumbnailUrl: null, waveformData: null,
+        metadata: { duration: 6, width: 1920, height: 1080, frameRate: 30, sampleRate: 48000, channels: 2, codec: "avc", fileSize: blob.size },
+      }] },
+      timeline: { duration: 4, subtitles: [], markers: [], tracks: ["base", "overlay"].map((id, index) => ({
+        id, name: id, type: "video", groupId: "ordinary-track-group", locked: index === 1,
+        hidden: index === 1, muted: index === 1, solo: index === 0, transitions: [],
+        clips: [{ id: `${id}-clip`, trackId: id, mediaId: "source", startTime: 0, duration: 4, inPoint: 1, outPoint: 5,
+          effects: [], audioEffects: [], volume: 0.75,
+          transform: { position: { x: 0.5, y: 0.5 }, scale: { x: 0.5, y: 0.5 }, rotation: index * 15, opacity: 0.8, anchor: { x: 0.5, y: 0.5 } },
+          keyframes: [{ id: `${id}-opacity`, property: "opacity", time: 1, value: 0.4, easing: "linear" }],
+        }],
+      })) },
+    });
+    await serializer.saveProject(project);
+    const stored = await serializer.loadProject(project.id);
+    expect(stored?.timeline).toEqual(project.timeline);
+    expect(stored?.mediaLibrary.items[0].blob).toBe(blob);
+    const json = serializer.exportToJson(project);
+    expect(serializer.validateProjectJson(json).valid).toBe(true);
+    const reopened = serializer.importFromJson(json);
+    expect(reopened.timeline).toEqual(project.timeline);
+    expect(reopened.mediaLibrary.items[0]).toMatchObject({ id: "source", name: "source.mp4", metadata: project.mediaLibrary.items[0].metadata, isPlaceholder: true });
+  });
+
   it("preserves instantiated template text, animation and generic variable bindings", () => {
     const serializer = new ProjectSerializer(new MemoryStorageEngine());
     const layer: MotionTextLayer = {

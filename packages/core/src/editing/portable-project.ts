@@ -101,7 +101,7 @@ export function parsePortableEdit(json: string): PortableEdit {
 }
 
 export function createPortableEdit(project: Project): PortableEdit {
-  for (const key of ["shapeClips", "svgClips", "stickerClips", "adjustmentLayers", "masks", "multicamGroups", "compoundClips", "nestedInstances", "motionCompositions", "motionInstances", "generatedShaders"] as const) {
+  for (const key of ["shapeClips", "svgClips", "stickerClips", "adjustmentLayers", "masks", "compoundClips", "nestedInstances", "motionCompositions", "motionInstances", "generatedShaders"] as const) {
     if (project[key]?.length) throw new Error(`Portable edits do not yet support ${key}; use the ordinary project format to retain them`);
   }
   if (project.creation) throw new Error("Portable edits do not yet support creation scenes");
@@ -121,7 +121,7 @@ export function materializePortableEdit(doc: PortableEdit, current: Project): { 
     return { ...ref, metadata: found?.metadata ?? ref.metadata, fileHandle: found?.fileHandle ?? null, blob: found?.blob ?? null, thumbnailUrl: found?.thumbnailUrl ?? null, waveformData: found?.waveformData ?? null, filmstripThumbnails: found?.filmstripThumbnails, isPlaceholder: !found };
   });
   const duration = Math.max(0, ...doc.project.timeline.tracks.flatMap((t) => t.clips.map((c) => c.startTime + c.duration)), ...doc.project.textClips.map((c) => c.startTime + c.duration), ...doc.project.timeline.subtitles.map((s) => s.endTime));
-  const project = { ...current, name: doc.project.name, settings: doc.project.settings, timeline: { ...doc.project.timeline, duration }, textClips: doc.project.textClips, mediaLibrary: { items }, shapeClips: [], svgClips: [], stickerClips: [], adjustmentLayers: [], masks: [], multicamGroups: [], compoundClips: [], nestedInstances: [], motionCompositions: [], motionInstances: [], generatedShaders: [], creation: undefined };
+  const project = { ...current, name: doc.project.name, settings: doc.project.settings, timeline: { ...doc.project.timeline, duration }, textClips: doc.project.textClips, mediaLibrary: { items }, shapeClips: [], svgClips: [], stickerClips: [], adjustmentLayers: [], masks: [], compoundClips: [], nestedInstances: [], motionCompositions: [], motionInstances: [], generatedShaders: [], creation: undefined };
   createPortableEdit(project);
   return { project, missing };
 }

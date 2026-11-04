@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { projectManager } from "./project-manager";
+import { createEmptyProject } from "../stores/project/project-helpers";
 
 const store = new Map<string, string>();
 
@@ -22,11 +23,8 @@ afterEach(() => {
   delete (window as any).openreel;
 });
 
-const project: any = {
-  id: "p1",
-  name: "Demo",
-  timeline: { duration: 1, tracks: [] },
-};
+const blank = createEmptyProject("Demo");
+const project = { ...blank, id: "p1", timeline: { ...blank.timeline, duration: 1 } };
 
 describe("ProjectManager desktop fs", () => {
   it("saveProjectAs writes via window.openreel.fs and round-trips", async () => {
