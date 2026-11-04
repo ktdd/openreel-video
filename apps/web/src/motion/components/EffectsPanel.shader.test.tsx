@@ -128,6 +128,7 @@ describe("EffectsPanel shader effects", () => {
 
     const effect = storedShaderEffect();
     expect(effect?.params).toEqual({ levels: 4, scale: 1 });
+    expect(screen.queryByRole("button", { name: /Generate shader/i })).toBeNull();
   });
 
   it("renders the levels param control and writes params.levels on change", async () => {

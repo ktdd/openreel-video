@@ -98,6 +98,7 @@ describe("PropertiesPanel text shader animator", () => {
 
   it("picks a text shader and writes a param via the store", async () => {
     render(<PropertiesPanel composition={composition()} />);
+    expect(screen.queryByRole("button", { name: /Generate shader/i })).toBeNull();
 
     const picker = screen.getByRole("combobox", { name: "Text shader animator" });
     fireEvent.change(picker, { target: { value: "glyph-dissolve" } });

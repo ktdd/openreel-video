@@ -6,6 +6,7 @@ import { test } from "node:test";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 function files(directory) {
+  if (!existsSync(directory)) return [];
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     if (["node_modules", "dist", "build", ".wrangler"].includes(entry.name)) return [];
     const path = resolve(directory, entry.name);
@@ -18,7 +19,7 @@ test("runtime sources have no multicam UI, engine, storage, worker, model or hos
     .flatMap((directory) => files(resolve(root, directory)))
     .filter((path) => /\.[cm]?[jt]sx?$/.test(path) && !/\.(?:test|spec)\./.test(path));
   assert.ok(paths.length > 500);
-  for (const path of ["apps/web/src/App.tsx", "packages/core/src/index.ts", "packages/agent/src/registry.ts"]) {
+  for (const path of ["apps/web/src/App.tsx", "packages/core/src/index.ts"]) {
     assert.ok(paths.includes(resolve(root, path)), path);
   }
   for (const path of paths) {

@@ -19,13 +19,11 @@ test("retained manual editing surfaces do not depend on agents or chat state", (
     assert.doesNotMatch(read(path), /(?:from\s+["'][^"']*(?:@openreel\/agent|services\/agent)|executeTool\(|executeEditingTool\(|useChatStore|suggestedNextTools)/, path);
   }
   assert.ok(read("apps/web/src/components/editor/ProjectPackageDialog.tsx").includes("<EditSharingPanel"));
-  assert.ok(!read("apps/web/src/components/editor/chat/ChatPanel.tsx").includes("EditSharingPanel"));
+  assert.equal(existsSync(resolve(root, "apps/web/src/components/editor/chat/ChatPanel.tsx")), false);
 });
 test("heuristic reframe and agent-only inspection have been disentangled", () => {
   assert.equal(existsSync(resolve(root, "packages/core/src/ai/auto-reframe-engine.ts")), false);
   assert.equal(existsSync(resolve(root, "apps/web/src/motion/model-inspection.ts")), false);
   assert.ok(read("packages/core/src/video/index.ts").includes('"./auto-reframe-engine"'));
-  assert.doesNotMatch(read("packages/agent/src/registry.ts"), /name: "inspect_3d_model"/);
-  assert.doesNotMatch(read("packages/agent/src/host.ts"), /inspectModel|ModelInspection/);
-  assert.doesNotMatch(read("packages/agent/src/system-prompt.ts"), /inspect_3d_model/);
+  assert.equal(existsSync(resolve(root, "packages/agent")), false);
 });

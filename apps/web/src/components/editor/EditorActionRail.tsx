@@ -71,7 +71,7 @@ export const EditorActionRail: React.FC = () => {
       className="flex w-12 shrink-0 flex-col items-center gap-1 border-r border-border bg-bg-1 py-3"
     >
       <RailButton
-        label="Search tools, effects, or ask AI"
+        label="Search tools and effects"
         icon="magnifyingglass"
         onClick={() => openModal("search")}
       />
@@ -105,12 +105,6 @@ export const EditorActionRail: React.FC = () => {
         icon="music.note"
         onClick={() => togglePanel("audioMixer")}
         active={Boolean(panels.audioMixer?.visible)}
-      />
-      <RailButton
-        label="AI Editor chat"
-        icon="bubble.left.and.text.bubble.right"
-        onClick={() => togglePanel("agentChat")}
-        active={Boolean(panels.agentChat?.visible)}
       />
       <RailButton
         label="Project JSON / Comments"

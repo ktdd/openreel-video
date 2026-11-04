@@ -43,7 +43,7 @@ export function groupShaderDefsByCollection(
     const bucket = buckets.get(title);
     const option = {
       value: def.id,
-      label: def.origin === "generated" ? `${def.name} (AI)` : def.name,
+      label: def.name,
     };
     if (bucket) {
       bucket.push(option);

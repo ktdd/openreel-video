@@ -9,7 +9,6 @@ import { CreationWorkspacePanel } from "./CreationWorkspacePanel";
 
 const h = vi.hoisted(() => ({ sync: vi.fn() }));
 vi.mock("../../services/editing/creation-sync", () => ({ syncCreationSceneToMotion: h.sync }));
-vi.mock("@openreel/agent", () => { throw new Error("Manual creation must not import agents"); });
 
 function creationScene(): CreationScene {
   return {

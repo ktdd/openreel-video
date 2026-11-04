@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cleanup,
   fireEvent,
@@ -9,6 +9,8 @@ import {
 } from "@testing-library/react";
 import {
   DEFAULT_MOTION_TRANSFORM,
+  clearGeneratedMotionShaders,
+  type MotionShaderDef,
   type MotionComposition,
   type MotionShapeLayer,
 } from "@openreel/core";
@@ -91,6 +93,8 @@ describe("PropertiesPanel shader fill", () => {
 
   afterEach(() => {
     cleanup();
+    clearGeneratedMotionShaders();
+    vi.restoreAllMocks();
     useProjectStore.setState({ hasOpenProject: false });
   });
 
@@ -105,6 +109,34 @@ describe("PropertiesPanel shader fill", () => {
 
     expect(storedShapeLayer().style.fill.shader?.shaderId).toBe("liquid-metal");
     expect(storedShapeLayer().style.fill.shader?.params.scale).toBe(6);
+    expect(screen.queryByRole("button", { name: /Generate shader/i })).toBeNull();
+  });
+
+  it("loads a saved generated fill as ordinary content and edits its parameters without authoring requests", async () => {
+    const request = vi.spyOn(globalThis, "fetch");
+    const def: MotionShaderDef = {
+      id: "saved-amber-fill", name: "Saved Amber", category: "fill", origin: "generated",
+      glsl: "#version 300 es\nprecision highp float;\nuniform float u_amount;\nout vec4 fragColor;\nvoid main(){fragColor=vec4(u_amount,0.5,0.0,1.0);}",
+      params: [{ name: "amount", label: "Amber amount", type: "number", control: "number", default: 0.5, min: 0, max: 1, step: 0.1 }],
+    };
+    useProjectStore.getState().loadProject({ ...useProjectStore.getState().project, generatedShaders: [def] });
+    render(<PropertiesPanel composition={storedComposition()} />);
+    fireEvent.click(screen.getByRole("radio", { name: "Shader" }));
+    await waitFor(() => expect(storedShapeLayer().style.fill.type).toBe("shader"));
+    cleanup();
+    render(<PropertiesPanel composition={storedComposition()} />);
+    const picker = screen.getByRole("combobox", { name: "Shader fill" });
+    expect(within(picker).getByRole("option", { name: "Saved Amber" })).toBeInTheDocument();
+    fireEvent.change(picker, { target: { value: def.id } });
+    await waitFor(() => expect(storedShapeLayer().style.fill.shader?.shaderId).toBe(def.id));
+    cleanup();
+    render(<PropertiesPanel composition={storedComposition()} />);
+    const field = screen.getByText("Amber amount").closest(".astryx-field") as HTMLElement;
+    fireEvent.change(within(field).getByRole("spinbutton"), { target: { value: "0.8" } });
+    await waitFor(() => expect(storedShapeLayer().style.fill.shader?.params.amount).toBe(0.8));
+    expect(useProjectStore.getState().getFullProject().generatedShaders).toEqual([def]);
+    expect(screen.queryByRole("button", { name: /Generate shader/i })).toBeNull();
+    expect(request).not.toHaveBeenCalled();
   });
 
   it("picks Liquid Metal explicitly and writes a param via the store", async () => {

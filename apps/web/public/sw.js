@@ -42,8 +42,6 @@ const CACHEABLE_PATTERNS = [
  * Patterns for requests that should never be cached (AI features, etc.)
  */
 const NO_CACHE_PATTERNS = [
-  /api\.anthropic\.com/,
-  /api\.openai\.com/,
   /whisper/,
   /transcribe/,
   /\/api\//,

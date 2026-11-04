@@ -8,7 +8,6 @@ import { applySharedPreset, importPortableEdit, relinkSharedMedia, runLocalEdit 
 import { getMediaBridge } from "../../bridges/media-bridge";
 import { runExclusive } from "./mutation-queue";
 
-vi.mock("@openreel/agent", () => { throw new Error("Manual edits must not import agents"); });
 const preset: EditPreset = {
   format: "openreel-preset", version: 1, name: "Shared look",
   effects: [{ id: "shared-effect", type: "brightness", enabled: false, params: { value: 0.1 } }],

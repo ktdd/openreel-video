@@ -16,7 +16,7 @@ export const PreviewProxyControls: React.FC<{ item: MediaItem }> = ({ item }) =>
   const [preset, setPreset] = useState<PreviewProxyPreset>(entry?.preset ?? "medium");
   const busy = entry?.status === "queued" || entry?.status === "encoding";
   const heavy = item.metadata.width >= 3840 || item.metadata.height >= 2160 || item.metadata.duration >= 600 || item.metadata.fileSize >= 500 * 1024 * 1024;
-  if (item.type !== "video" || item.isPlaceholder || item.isPending) return null;
+  if (item.type !== "video" || item.isPlaceholder) return null;
   return (
     <section aria-label={`Preview performance for ${item.name}`} className="min-w-0 rounded-lg border border-border bg-bg-2 p-3 space-y-2">
       <div className="text-xs font-semibold text-fg-2">Smoother preview {heavy && <span className="font-normal text-accent">· Recommended</span>}</div>

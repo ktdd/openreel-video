@@ -6,10 +6,6 @@ import { EditorActionRail } from "./EditorActionRail";
 import { useProjectStore } from "../../stores/project-store";
 import { createEmptyProject } from "../../stores/project/project-helpers";
 
-// Keep the real navigation; unrelated panels need not initialize codecs/AI.
-vi.mock("./AIGenTab", () => ({ AIGenTab: () => <div>Generation tools</div> }));
-vi.mock("./kieai/KieAIImageDialog", () => ({ KieAIImageDialog: () => null }));
-
 const capture = { getDisplayMedia: vi.fn(), getUserMedia: vi.fn() };
 const originalMediaDevices = Object.getOwnPropertyDescriptor(navigator, "mediaDevices");
 beforeEach(() => {

@@ -19,15 +19,16 @@ describe("manual settings persistence", () => {
     });
   });
 
-  it("persists only supported manual preferences, not session AI configuration", () => {
-    useSettingsStore.getState().setDefaultLlmProvider("openai-compatible");
-    useSettingsStore.getState().openSettings("ai-editor");
+  it("persists only supported preferences, not dialog state", () => {
+    useSettingsStore.getState().openSettings();
     const persisted = JSON.parse(localStorage.getItem("openreel-settings")!);
     expect(persisted.state).toEqual({
       autoSave: initial.autoSave,
       autoSaveInterval: initial.autoSaveInterval,
       language: initial.language,
     });
-    expect(useSettingsStore.getState().defaultLlmProvider).toBe("openai-compatible");
+    expect(useSettingsStore.getState().settingsOpen).toBe(true);
+    useSettingsStore.getState().closeSettings();
+    expect(useSettingsStore.getState().settingsOpen).toBe(false);
   });
 });

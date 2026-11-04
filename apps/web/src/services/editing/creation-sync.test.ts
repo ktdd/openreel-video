@@ -7,7 +7,6 @@ import { useProjectStore } from "../../stores/project-store";
 import { EditingSession } from "./editing-session";
 import { syncCreationSceneToMotion } from "./creation-sync";
 
-vi.mock("@openreel/agent", () => { throw new Error("Creation sync must not import agents"); });
 beforeEach(() => useProjectStore.getState().loadProject(structuredClone(legacy.project) as unknown as Project));
 afterEach(() => { vi.restoreAllMocks(); });
 const snapshot = () => editSnapshot(useProjectStore.getState().getFullProject());

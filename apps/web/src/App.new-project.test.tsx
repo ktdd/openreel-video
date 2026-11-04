@@ -16,7 +16,6 @@ const recovery = vi.hoisted(() => ({
 vi.mock("./hooks/useProjectRecovery", () => ({
   useProjectRecovery: () => recovery,
 }));
-vi.mock("./hooks/useKieAIPoller", () => ({ useKieAIPoller: () => undefined }));
 vi.mock("./components/MobileBlocker", () => ({ MobileBlocker: () => null }));
 vi.mock("./components/Toast", () => ({ ToastContainer: () => null }));
 vi.mock("./components/editor/EditorInterface", () => ({ EditorInterface: () => <p>Editor</p> }));

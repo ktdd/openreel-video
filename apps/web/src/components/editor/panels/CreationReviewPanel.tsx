@@ -89,7 +89,7 @@ export const CreationReviewPanel: React.FC<CreationReviewPanelProps> = ({ onClos
 
       {!review.available ? (
         <div className="flex flex-1 items-center justify-center px-6 text-center text-sm text-white/50">
-          No agent-created 3D scenes yet. Use the creation tools to build a product, character, or
+          No 3D scenes yet. Use the creation tools to build a product, character, or
           scene.
         </div>
       ) : (

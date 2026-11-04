@@ -6,6 +6,7 @@ import { test } from "node:test";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 function sources(directory) {
+  if (!existsSync(directory)) return [];
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory()) return entry.name === "test" ? [] : sources(path);
@@ -37,7 +38,7 @@ test("startup and remaining runtimes cannot initialize retired product features"
   // Exact feature identifiers, not blanket template/preset/recording bans:
   // Recipes, manual variables, layer animation, voice-over and export remain.
   const forbidden = /\b(?:WelcomeScreen|skipWelcomeScreen|setSkipWelcomeScreen|TemplateEngine|DEFAULT_TEMPLATES|MotionTemplateBrowser|ScreenRecorder|useRecorderStore|SpotlightTour|MoGraphTour|useTour|useMoGraphTour|apply_motion_template|getDisplayMedia)\b|data-tour=|openreel-(?:onboarding-complete|mograph-tour-complete)|template-cloud-service/;
-  for (const directory of ["apps/web/src", "apps/web/functions", "packages/core/src", "packages/agent/src"]) {
+  for (const directory of ["apps/web/src", "apps/web/functions", "packages/core/src"]) {
     for (const path of sources(resolve(root, directory))) {
       assert.doesNotMatch(readFileSync(path, "utf8"), forbidden, relative(root, path));
     }

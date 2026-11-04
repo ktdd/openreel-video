@@ -114,15 +114,6 @@ export type OpenReelAuroraSequenceSessionEvent =
       error: string;
     };
 
-export interface OpenReelMcpStatus {
-  running: boolean;
-  url: string;
-  port: number;
-  token: string;
-  shimPath: string;
-  endpointFile: string;
-}
-
 export interface OpenReelRiggingBackendProbe {
   available: boolean;
   provider: "blender";
@@ -195,11 +186,6 @@ declare global {
         abortWrite(handleId: string): Promise<void>;
         revealInFolder(path: string): Promise<void>;
       };
-      keychain: {
-        get(id: string): Promise<string | null>;
-        set(id: string, value: string): Promise<void>;
-        delete(id: string): Promise<void>;
-      };
       export: {
         start(args: OpenReelExportStartArgs): Promise<OpenReelExportSession>;
         writeAudioWav(jobId: string, wav: ArrayBuffer): Promise<void>;
@@ -226,23 +212,6 @@ declare global {
           cb: (event: OpenReelAuroraSequenceSessionEvent) => void,
         ): () => void;
       };
-      cloud: {
-        fetch(
-          service:
-            | "elevenlabs"
-            | "openai"
-            | "anthropic"
-            | "openai-compatible"
-            | "anthropic-compatible",
-          path: string,
-          options?: {
-            method?: string;
-            headers?: Record<string, string>;
-            body?: string;
-            baseUrl?: string;
-          },
-        ): Promise<{ status: number; statusText: string; headers: Record<string, string>; body: ArrayBuffer }>;
-      };
       win: {
         minimize(): Promise<void>;
         toggleMaximize(): Promise<void>;
@@ -260,19 +229,6 @@ declare global {
       };
       crash: {
         report(payload: { message: string; stack?: string; type?: string; context?: unknown }): void;
-      };
-      mcp?: {
-        onRequest(
-          handler: (req: {
-            callId: string;
-            kind: "listTools" | "callTool";
-            name?: string;
-            args?: Record<string, unknown>;
-          }) => Promise<{ ok: boolean; result?: unknown; error?: string }>,
-        ): () => void;
-        getStatus(): Promise<OpenReelMcpStatus>;
-        rotateToken(): Promise<OpenReelMcpStatus>;
-        testConnection(): Promise<{ ok: boolean; message?: string; toolCount?: number }>;
       };
       media: {
         generateProxy(args: { srcPath: string; preset: "low" | "medium" | "high" }): Promise<{ outPath: string }>;

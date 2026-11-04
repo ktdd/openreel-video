@@ -106,9 +106,9 @@ describe("resolveMotionCreatorCompositionId", () => {
     ).toBe("starter");
   });
 
-  it("prefers timeline-inserted MCP compositions over starter scenes", () => {
+  it("prefers timeline-inserted compositions over other scenes", () => {
     const starter = composition("starter");
-    const mcpScene = composition("mcp-scene", [scene3dLayer("astronaut")]);
+    const timelineScene = composition("timeline-scene", [scene3dLayer("astronaut")]);
 
     expect(
       resolveMotionCreatorCompositionId({
@@ -116,7 +116,7 @@ describe("resolveMotionCreatorCompositionId", () => {
           motionInstances: [
             {
               id: "instance",
-              compositionId: "mcp-scene",
+              compositionId: "timeline-scene",
               startTime: 0,
               duration: 8,
               transform: DEFAULT_MOTION_TRANSFORM,
@@ -124,9 +124,9 @@ describe("resolveMotionCreatorCompositionId", () => {
             },
           ],
         }),
-        compositions: [starter, mcpScene],
+        compositions: [starter, timelineScene],
       }),
-    ).toBe("mcp-scene");
+    ).toBe("timeline-scene");
   });
 
   it("prefers active creation render bindings when no timeline instance exists", () => {

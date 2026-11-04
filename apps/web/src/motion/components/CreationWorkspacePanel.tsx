@@ -201,7 +201,7 @@ export function CreationWorkspacePanel(): JSX.Element {
             <EmptyState
               icon={PackageOpen}
               title="No creation scenes"
-              description="Agent-created products, characters, and 3D worlds will appear here once MCP tools create them."
+              description="Products, characters, and 3D worlds in this project appear here for editing and rendering."
             />
           )
         ) : (

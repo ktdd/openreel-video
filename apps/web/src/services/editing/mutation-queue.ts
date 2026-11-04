@@ -1,4 +1,4 @@
-/** Shared mutation ordering for manual transactions and temporary agent adapters. */
+/** Shared mutation ordering for local editing transactions. */
 let pending: Promise<unknown> = Promise.resolve();
 export function runExclusive<T>(operation: () => Promise<T>): Promise<T> {
   const result = pending.then(operation, operation);

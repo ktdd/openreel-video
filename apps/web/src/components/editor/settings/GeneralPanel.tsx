@@ -5,8 +5,7 @@ import { ToolcraftClickableCard as ClickableCard } from "@openreel/ui";
 import { ToolcraftNumberInputControl } from "@openreel/ui";
 import { ToolcraftSelectControl as Selector } from "@openreel/ui";
 import { ToolcraftText as Text } from "@openreel/ui";
-import { ToolcraftTextInputControl as TextInput } from "@openreel/ui";
-import { useSettingsStore, SERVICE_REGISTRY, type TtsProvider, type LlmProvider, type AggregatorProvider } from "../../../stores/settings-store";
+import { useSettingsStore } from "../../../stores/settings-store";
 import { useProjectStore } from "../../../stores/project-store";
 import { EDITING_FRAME_RATE_OPTIONS } from "../editing-frame-rate";
 
@@ -37,19 +36,8 @@ export const GeneralPanel: React.FC = () => {
   const {
     autoSave,
     autoSaveInterval,
-    defaultTtsProvider,
-    defaultLlmProvider,
-    llmBaseUrl,
-    llmModel,
-    defaultAggregator,
-    configuredServices,
     setAutoSave,
     setAutoSaveInterval,
-    setDefaultTtsProvider,
-    setDefaultLlmProvider,
-    setLlmBaseUrl,
-    setLlmModel,
-    setDefaultAggregator,
   } = useSettingsStore();
 
   const projectWidth = useProjectStore((s) => s.project.settings.width);
@@ -91,18 +79,6 @@ export const GeneralPanel: React.FC = () => {
     }
   }, [draftWidth, draftHeight, applyDimensions]);
 
-  const ttsProviders = SERVICE_REGISTRY.filter((s) => s.id === "elevenlabs");
-
-  const llmProviders = SERVICE_REGISTRY.filter(
-    (s) => s.id === "openai-compatible" || s.id === "anthropic-compatible",
-  );
-
-  const aggregatorProviders = SERVICE_REGISTRY.filter(
-    (s) =>
-      s.id === "kie-ai" ||
-      s.id === "freepik" ||
-      configuredServices.includes(s.id),
-  );
   return (
     <div className="space-y-6 pb-4">
       {/* Project Composition */}
@@ -311,116 +287,6 @@ export const GeneralPanel: React.FC = () => {
         )}
       </div>
 
-      <div className="h-px bg-border" />
-
-      {/* AI connections */}
-      <div className="space-y-4">
-        <Text type="body" color="primary" className="text-sm font-medium">
-          AI Connections
-        </Text>
-        <Text type="supporting" color="secondary" className="text-xs">
-          Connect a compatible endpoint you control. OpenReel does not choose a vendor or model for you.
-        </Text>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Text type="supporting" color="secondary" className="text-sm">
-              Text to Speech/Voice To Speech/Sound Effects
-            </Text>
-            <Selector
-              label="Text to Speech provider"
-              isLabelHidden
-              size="md"
-              width={180}
-              value={defaultTtsProvider}
-              onChange={(value) => setDefaultTtsProvider(value as TtsProvider)}
-              options={ttsProviders.map((s) => ({ label: s.label, value: s.id }))}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Text type="supporting" color="secondary" className="text-sm">
-              Creative tools API format
-            </Text>
-            <Selector
-              label="Creative tools API format"
-              isLabelHidden
-              size="md"
-              width={180}
-              value={defaultLlmProvider ?? ""}
-              onChange={(value) =>
-                setDefaultLlmProvider((value || null) as LlmProvider | null)
-              }
-              options={[
-                { label: "Choose API format…", value: "" },
-                ...llmProviders.map((s) => ({ label: s.label, value: s.id })),
-              ]}
-            />
-          </div>
-
-          {defaultLlmProvider ? (
-            <div className="space-y-3 rounded-lg border border-border bg-background-tertiary p-3">
-              <div>
-                <Text type="supporting" color="secondary" className="text-sm font-medium">
-                  {defaultLlmProvider === "anthropic-compatible"
-                    ? "Anthropic-compatible endpoint"
-                    : "OpenAI-compatible endpoint"}
-                </Text>
-                <Text type="supporting" color="secondary" className="mt-0.5 block text-xs">
-                  Enter your API host and the exact tool-capable model ID exposed by that host.
-                </Text>
-              </div>
-              <TextInput
-                label="Base URL"
-                value={llmBaseUrl}
-                onChange={setLlmBaseUrl}
-                placeholder={
-                  defaultLlmProvider === "anthropic-compatible"
-                    ? "https://gateway.example/v1"
-                    : "http://localhost:11434/v1"
-                }
-                width="100%"
-              />
-              <TextInput
-                label="Model ID"
-                value={llmModel}
-                onChange={setLlmModel}
-                placeholder="Enter any model ID from your endpoint"
-                width="100%"
-              />
-              <Text type="supporting" color="secondary" className="block text-[11px] leading-relaxed">
-                Used by voice scripts and shader generation. Configure timeline chat in the AI Editor settings tab.
-              </Text>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-dashed border-border bg-background-tertiary p-3">
-              <Text type="supporting" color="secondary" className="block text-xs">
-                Choose an API format to configure your host and model.
-              </Text>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Text type="supporting" color="secondary" className="text-sm">
-                AI Aggregator
-              </Text>
-              <Text type="supporting" color="secondary" className="mt-0.5 text-xs">
-                Video/image generation, upscaling, and creative AI tools
-              </Text>
-            </div>
-            <Selector
-              label="AI Aggregator provider"
-              isLabelHidden
-              size="md"
-              width={180}
-              value={defaultAggregator}
-              onChange={(value) => setDefaultAggregator(value as AggregatorProvider)}
-              options={aggregatorProviders.map((s) => ({ label: s.label, value: s.id }))}
-            />
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

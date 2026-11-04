@@ -55,7 +55,7 @@ export class PreviewProxyCache {
   }
 
   request(item: MediaItem, preset: PreviewProxyPreset): void {
-    if (!this.project || item.type !== "video" || item.isPlaceholder || item.isPending) return;
+    if (!this.project || item.type !== "video" || item.isPlaceholder) return;
     const current = this.project.mediaLibrary.items.find((candidate) => candidate.id === item.id);
     if (!current || !sameSource(item, current)) return;
     this.remove(item.id);

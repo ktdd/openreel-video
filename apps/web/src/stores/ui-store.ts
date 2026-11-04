@@ -9,8 +9,7 @@ export type PanelId =
   | "effects"
   | "audioMixer"
   | "colorGrading"
-  | "subtitles"
-  | "agentChat";
+  | "subtitles";
 
 export type SelectionType =
   | "clip"
@@ -198,7 +197,6 @@ const DEFAULT_PANELS: Record<PanelId, PanelState> = {
   audioMixer: { visible: false, width: 300 },
   colorGrading: { visible: false, width: 400 },
   subtitles: { visible: false, width: 300 },
-  agentChat: { visible: false, width: 380 },
 };
 
 const PERSISTED_UI_KEYS = [
@@ -609,13 +607,6 @@ export const useUIStore = create<UIState>()(
           const state = persisted as Record<string, unknown>;
           if (version === 0) {
             state.snapSettings = DEFAULT_SNAP_SETTINGS;
-          }
-          if (version < 2) {
-            const panels = (state.panels ?? {}) as Record<string, PanelState>;
-            if (!panels.agentChat) {
-              panels.agentChat = DEFAULT_PANELS.agentChat;
-            }
-            state.panels = panels;
           }
           if (version < 3 && state.desktopPage === "motion") {
             state.desktopPage = "edit";

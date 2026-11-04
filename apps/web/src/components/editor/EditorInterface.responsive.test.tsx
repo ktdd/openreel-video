@@ -16,9 +16,6 @@ vi.mock("./AssetsPanel", () => ({ AssetsPanel: () => <input aria-label="Media se
 vi.mock("./InspectorPanel", () => ({ InspectorPanel: () => <input aria-label="Clip title" /> }));
 vi.mock("./Preview", () => ({ Preview: () => <canvas aria-label="Video preview" /> }));
 vi.mock("./Timeline", () => ({ Timeline: () => <input aria-label="Timeline state" /> }));
-vi.mock("./chat/ChatPanel", () => ({ ChatPanel: ({ onClose }: { onClose: () => void }) =>
-  <div><input aria-label="AI message" /><button onClick={onClose}>Close AI</button></div>,
-}));
 vi.mock("./KeyframeEditorPanel", () => ({ KeyframeEditorPanel: () => null }));
 vi.mock("../audio-mixer", () => ({ AudioMixer: () => null }));
 vi.mock("./KeyboardShortcutsOverlay", () => ({ KeyboardShortcutsOverlay: () => null }));
@@ -36,7 +33,7 @@ describe("compact editing workspace", () => {
     resize(390);
     const panels = useUIStore.getState().panels;
     useUIStore.setState({ keyframeEditorOpen: false, selectedItems: [], panels: {
-      ...panels, agentChat: { ...panels.agentChat, visible: false },
+      ...panels,
       audioMixer: { ...panels.audioMixer, visible: false },
     } });
     vi.spyOn(useProjectStore.getState(), "initializeAutoSave").mockResolvedValue();
@@ -69,16 +66,24 @@ describe("compact editing workspace", () => {
     expect(title.value).toBe("My video");
   });
 
-  it("preserves AI drafts after switching panels and returns to timeline when AI closes", async () => {
+  it("has only manual workspace tabs and retains keyboard and pointer media resizing", () => {
     const view = render(<EditorInterface />);
-    fireEvent.click(view.getByRole("button", { name: "AI" }));
-    const input = await view.findByLabelText("AI message") as HTMLInputElement;
-    input.value = "Make this shorter";
-    fireEvent.click(view.getByRole("button", { name: "Timeline" }));
-    fireEvent.click(view.getByRole("button", { name: "AI" }));
-    expect(view.getByLabelText("AI message")).toBe(input);
-    expect(input.value).toBe("Make this shorter");
-    fireEvent.click(view.getByRole("button", { name: "Close AI" }));
-    expect(view.getByRole("button", { name: "Timeline" })).toHaveAttribute("aria-pressed", "true");
+    const nav = view.getByRole("navigation", { name: "Editor workspace" });
+    expect(nav.querySelectorAll("button")).toHaveLength(3);
+    expect(view.queryByRole("button", { name: /^AI$/ })).toBeNull();
+    expect(view.container.querySelector("#editor-panel-chat")).toBeNull();
+    resize(1600);
+    const separator = view.getByRole("separator", { name: "Resize media panel" });
+    const width = Number(separator.getAttribute("aria-valuenow"));
+    fireEvent.keyDown(separator, { key: "ArrowRight" });
+    expect(separator).toHaveAttribute("aria-valuenow", String(width + 20));
+    const root = view.container.querySelector(".editor-shell") as HTMLDivElement;
+    vi.spyOn(root, "getBoundingClientRect").mockReturnValue({ left: 0, right: 1600, width: 1600 } as DOMRect);
+    fireEvent.mouseDown(separator);
+    fireEvent.mouseMove(window, { clientX: 500 });
+    fireEvent.mouseUp(window);
+    expect(separator).toHaveAttribute("aria-valuenow", "500");
+    expect(document.body.style.cursor).toBe("");
+    expect(view.container.querySelector("#editor-panel-inspector")).not.toHaveAttribute("hidden");
   });
 });
