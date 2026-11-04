@@ -77,7 +77,7 @@ import type { ExportDeliveryMode } from "../../services/export-runner";
 import { formatFrameTimecode } from "../../utils/frame-timecode";
 
 const WEB_EXPORT_GUARDRAIL_MESSAGE =
-  "ProRes, transparency, and high bit depth require the desktop encoder. You can export an H.264 MP4 without transparency in this browser.";
+  "This browser export uses an 8-bit H.264 MP4 without transparency. For transparent motion output, use PNG Sequence in the render queue.";
 
 interface ExportDialogProps {
   isOpen: boolean;
@@ -173,9 +173,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
     ...settings,
     range: exportSection === "range" && validMarkedRange ? { ...validMarkedRange } : undefined,
   }), [exportSection, validMarkedRange]);
-  const isDesktop =
-    typeof window !== "undefined" && window.openreel?.platform === "desktop";
-  const [delivery, setDelivery] = useState<ExportDeliveryMode>(isDesktop ? "file" : "download");
+  const [delivery, setDelivery] = useState<ExportDeliveryMode>("download");
   const [capabilityError, setCapabilityError] = useState<string | null>(null);
   const [checkingCapability, setCheckingCapability] = useState(false);
   const [browserAudioCodec, setBrowserAudioCodec] = useState<string | null>(null);
@@ -314,15 +312,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
   const validationError = getExportValidationError(effectiveSettings, duration);
 
   const webExportAdjustment = useMemo(
-    () =>
-      isDesktop
-        ? null
-        : resolveWebCodecsExportLimits(effectiveSettings, duration),
-    [duration, effectiveSettings, isDesktop],
+    () => resolveWebCodecsExportLimits(effectiveSettings, duration),
+    [duration, effectiveSettings],
   );
 
   const matchSourceWebAdjustment = useMemo(() => {
-    if (isDesktop || !sourceMatch) return null;
+    if (!sourceMatch) return null;
     return resolveWebCodecsExportLimits(
       {
         ...customSettings,
@@ -335,7 +330,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
       },
       duration,
     );
-  }, [customSettings, duration, isDesktop, sourceMatch]);
+  }, [customSettings, duration, sourceMatch]);
 
   const [deviceProfile, setDeviceProfile] = useState<DeviceProfile | null>(
     null,
@@ -352,12 +347,12 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
     useState(false);
 
   const resolveBrowserSettings = useCallback((chosen: VideoExportSettings): VideoExportSettings => {
-    if (isDesktop || !exportSettingsRequireNativeEncoder(chosen)) return chosen;
+    if (!exportSettingsRequireNativeEncoder(chosen)) return chosen;
     return { ...chosen, format: "mp4", codec: "h264", colorDepth: 8, pixelFormat: "yuv420", proresProfile: undefined };
-  }, [isDesktop]);
+  }, []);
 
   useEffect(() => {
-    if (!isOpen || isDesktop || validationError) return;
+    if (!isOpen || validationError) return;
     let active = true;
     setCapabilityError(null);
     setCheckingCapability(true);
@@ -369,7 +364,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
       setCheckingCapability(false);
     });
     return () => { active = false; };
-  }, [isOpen, isDesktop, validationError, effectiveSettings, duration, resolveBrowserSettings, hasAudio]);
+  }, [isOpen, validationError, effectiveSettings, duration, resolveBrowserSettings, hasAudio]);
 
   useEffect(() => {
     if (isOpen) {
@@ -443,7 +438,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
   ).filter((preset) => {
     const settings = preset.settings as VideoExportSettings;
     return settings.width <= projectWidth && settings.height <= projectHeight &&
-      (isDesktop || !exportSettingsRequireNativeEncoder(settings));
+      !exportSettingsRequireNativeEncoder(settings);
   }).slice(0, 5);
 
   const filteredPresets =
@@ -453,11 +448,8 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
         ? presets.filter((p) => p.platform === selectedPlatform)
         : exportPresetsManager.getRecommendedPresets();
 
-  const isNativeExportAvailable = isDesktop;
-
   const guardrailActive =
     activeTab !== "reduce" &&
-    !isNativeExportAvailable &&
     exportSettingsRequireNativeEncoder(effectiveSettings);
   const guardrailBlocking = guardrailActive && !h264FallbackAcknowledged;
 
@@ -1172,58 +1164,6 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                         </div>
                       </div>
 
-                      {isDesktop && (
-                        <div className="col-span-2 border-t border-border pt-4">
-                          <Text
-                            type="supporting"
-                            color="secondary"
-                            weight="bold"
-                            display="block"
-                            className="mb-2 text-[11px]"
-                          >
-                            Export mode
-                          </Text>
-                          <div className="grid grid-cols-3 gap-2">
-                            {(
-                              [
-                                ["fast", "Fast", "Hardware, quickest"],
-                                [
-                                  "balanced",
-                                  "Balanced",
-                                  "Hardware, great quality + small",
-                                ],
-                                [
-                                  "smallest",
-                                  "Smallest",
-                                  "Software, smallest file",
-                                ],
-                              ] as const
-                            ).map(([value, label, hint]) => (
-                              <SelectableCard
-                                key={value}
-                                label={label}
-                                isSelected={customSettings.encodeMode === value}
-                                onChange={() =>
-                                  setCustomSettings({
-                                    ...customSettings,
-                                    encodeMode: value,
-                                  })
-                                }
-                                padding={0}
-                                variant="default"
-                                className="min-h-[58px] px-3 py-2.5 text-left"
-                              >
-                                <span className="block text-[11px] font-semibold text-fg">
-                                  {label}
-                                </span>
-                                <span className="mt-0.5 block text-[9px] leading-3 text-fg-muted">
-                                  {hint}
-                                </span>
-                              </SelectableCard>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </section>
 
@@ -1242,39 +1182,11 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                       </div>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
-                      {!isDesktop ? (
-                        <div className="space-y-1 text-[11px]">
-                          <p className="text-fg-muted">Audio format</p>
-                          <p className="min-h-[32px] rounded-md border border-border bg-bg-2 px-2 py-2 text-fg">{!hasAudio ? "No audio" : browserAudioCodec?.toUpperCase() ?? (customSettings.format === "webm" ? "Opus" : "Automatic")}</p>
-                          <p className="text-[10px] text-fg-muted">Compatible with this container</p>
-                        </div>
-                      ) : (
-                      <Selector
-                        label="Audio format"
-                        value={customSettings.audioSettings.format}
-                        onChange={(value) =>
-                          setCustomSettings({
-                            ...customSettings,
-                            audioSettings: {
-                              ...customSettings.audioSettings,
-                              format: value as
-                                | "mp3"
-                                | "wav"
-                                | "aac"
-                                | "flac"
-                                | "ogg",
-                            },
-                          })
-                        }
-                        options={[
-                          { value: "aac", label: "AAC" },
-                          { value: "mp3", label: "MP3" },
-                          { value: "wav", label: "WAV" },
-                        ]}
-                        size="sm"
-                        width="100%"
-                      />
-                      )}
+                      <div className="space-y-1 text-[11px]">
+                        <p className="text-fg-muted">Audio format</p>
+                        <p className="min-h-[32px] rounded-md border border-border bg-bg-2 px-2 py-2 text-fg">{!hasAudio ? "No audio" : browserAudioCodec?.toUpperCase() ?? (customSettings.format === "webm" ? "Opus" : "Automatic")}</p>
+                        <p className="text-[10px] text-fg-muted">Compatible with this container</p>
+                      </div>
                       <Selector
                         label="Sample rate"
                         value={String(customSettings.audioSettings.sampleRate)}
@@ -1570,7 +1482,6 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
             hasDivider
             className="flex-col items-stretch gap-3 px-5 py-3"
           >
-            {!isDesktop && (
               <div className="space-y-1.5">
                 <Selector label="Save video" value={delivery} onChange={(value) => setDelivery(value as ExportDeliveryMode)} options={[
                   { value: "download", label: "Download to this device" },
@@ -1578,10 +1489,7 @@ export const ExportDialog: React.FC<ExportDialogProps> = ({
                 ]} width="100%" />
                 <p className="text-[11px] text-fg-muted">Export uses your original media at the selected quality. Choose a file location to stream large exports directly to disk.</p>
               </div>
-            )}
-            {!isDesktop && (
               <p role="status" className="text-[11px] text-fg-muted">{checkingCapability ? "Checking this browser’s encoder support…" : capabilityError ? "Choose another format to export in this browser." : "Codec availability depends on this browser. Try H.264 / MP4 or VP9 / WebM with Opus audio."}</p>
-            )}
             {capabilityError && <div role="alert" className="rounded-md border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[11px] text-status-warning">{capabilityError}</div>}
             {validationError && (
               <div role="alert" className="rounded-md border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-[11px] text-status-warning">

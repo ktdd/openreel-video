@@ -1,47 +1,21 @@
-import { resolveCreationMotionSceneBinding } from "@openreel/core/creation/index";
-import { renderAuroraPreviewToImageBitmap } from "@openreel/core/motion/native-aurora-bridge";
 import type {
   MediaItem,
   MotionAsset,
   MotionRendererAssetResolver,
-  MotionScene3DRenderResult,
 } from "@openreel/core";
-import type { CreationProjectState } from "@openreel/core/creation/index";
 
 const imageBitmapCache = new Map<string, Promise<ImageBitmap | null>>();
 const videoElementCache = new Map<string, Promise<HTMLVideoElement | null>>();
 const videoObjectUrls = new Map<string, string>();
-const modelUrlCache = new Map<string, Promise<string | null>>();
-const modelObjectUrls = new Map<string, string>();
-
-const MODEL_MAX_BYTES = 256 * 1024 * 1024;
-
-type DesktopFetchUrl = (args: {
-  url: string;
-  maxBytes?: number;
-}) => Promise<{
-  ok: boolean;
-  status: number;
-  statusText: string;
-  contentType: string;
-  body: ArrayBuffer;
-  error?: string;
-}>;
-
-interface WebMotionAssetResolverOptions {
-  readonly creation?: CreationProjectState;
-}
 
 export function createWebMotionAssetResolver(
   mediaItems: readonly MediaItem[],
-  options: WebMotionAssetResolverOptions = {},
 ): MotionRendererAssetResolver {
   return {
     resolveImageAsset: (asset) => resolveImageAsset(asset, mediaItems),
     resolveVideoFrame: (asset, localTime) =>
       resolveVideoFrame(asset, mediaItems, localTime),
-    resolveModelUrl,
-    renderScene3D: (input) => renderCreationScene3D(input, options.creation),
+    resolveModelUrl: async (url) => url,
   };
 }
 
@@ -61,69 +35,6 @@ export function clearWebMotionAssetBitmapCache(): void {
     });
   }
   videoElementCache.clear();
-  for (const objectUrl of modelObjectUrls.values()) {
-    URL.revokeObjectURL(objectUrl);
-  }
-  modelObjectUrls.clear();
-  modelUrlCache.clear();
-}
-
-async function resolveModelUrl(url: string): Promise<string | null> {
-  if (!isRemoteHttpUrl(url)) return url;
-  const bridge = typeof window !== "undefined"
-    ? window.openreel?.media?.fetchUrl
-    : undefined;
-  if (typeof bridge !== "function") return url;
-
-  let cached = modelUrlCache.get(url);
-  if (!cached) {
-    cached = fetchModelObjectUrl(url, bridge);
-    modelUrlCache.set(url, cached);
-  }
-  return cached;
-}
-
-async function fetchModelObjectUrl(
-  url: string,
-  fetchUrl: DesktopFetchUrl,
-): Promise<string | null> {
-  try {
-    const res = await fetchUrl({ url, maxBytes: MODEL_MAX_BYTES });
-    if (!res.ok) return url;
-    const blob = new Blob([res.body], {
-      type: inferModelMime(url, res.contentType),
-    });
-    const objectUrl = URL.createObjectURL(blob);
-    modelObjectUrls.set(url, objectUrl);
-    return objectUrl;
-  } catch {
-    return url;
-  }
-}
-
-function isRemoteHttpUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
-
-function inferModelMime(url: string, contentType: string): string {
-  const mime = contentType.split(";")[0]?.trim();
-  if (mime && mime !== "application/octet-stream") return mime;
-  const pathname = safePathname(url).toLowerCase();
-  if (pathname.endsWith(".gltf")) return "model/gltf+json";
-  return "model/gltf-binary";
-}
-
-function safePathname(url: string): string {
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
 }
 
 async function resolveVideoFrame(
@@ -233,32 +144,6 @@ async function resolveImageAsset(
     imageBitmapCache.set(cacheKey, cached);
   }
   return cached;
-}
-
-async function renderCreationScene3D(
-  input: Parameters<NonNullable<MotionRendererAssetResolver["renderScene3D"]>>[0],
-  creation: CreationProjectState | undefined,
-): Promise<MotionScene3DRenderResult | null> {
-  const bound = resolveCreationMotionSceneBinding(
-    creation,
-    input.composition.id,
-    input.layer.id,
-  );
-  if (!bound) return null;
-  const image = await renderAuroraPreviewToImageBitmap({
-    scene: bound.scene,
-    assets: bound.assets,
-    width: input.width,
-    height: input.height,
-    background: input.backgroundColor,
-    timeSeconds: input.localTime,
-    quality: input.quality ? "preview" : "final",
-  });
-  if (!image) return null;
-  return {
-    image,
-    release: () => image.close(),
-  };
 }
 
 async function loadImageBitmap(

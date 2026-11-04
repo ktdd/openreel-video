@@ -397,11 +397,8 @@ export class AudioEngine {
         this.mediaBuffers.set(cacheKey, audioBuffer);
         return audioBuffer;
       }
-    } catch (error) {
-      if (error instanceof Error && error.name === "NoAudioStreamError") {
-        this.noAudioMedia.add(cacheKey);
-        return null;
-      }
+    } catch {
+      // Try the browser decoder below before treating the source as silent.
     }
 
     if (audioTrackIndex === 0) {
@@ -432,10 +429,7 @@ export class AudioEngine {
       const wavBlob = await extractAudioWav(mediaItem.blob, audioTrackIndex);
       const arrayBuffer = await wavBlob.arrayBuffer();
       return await context.decodeAudioData(arrayBuffer);
-    } catch (error) {
-      if (error instanceof Error && error.name === "NoAudioStreamError") {
-        throw error;
-      }
+    } catch {
       return null;
     }
   }

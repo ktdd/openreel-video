@@ -157,7 +157,7 @@ export class ExportEngine {
       : new WebCodecsBackend(this.mediabunny!);
 
     if (backend.normalizesProResToH264 && fullSettings.codec === "prores") {
-      return { success: false, error: this.createError("UNSUPPORTED_CODEC", "ProRes export requires the desktop encoder. Choose H.264 / MP4 for browser export.", "preparing") };
+      return { success: false, error: this.createError("UNSUPPORTED_CODEC", "This encoder does not support ProRes. Choose H.264 / MP4 for browser export.", "preparing") };
     }
 
     const { timeline } = project;

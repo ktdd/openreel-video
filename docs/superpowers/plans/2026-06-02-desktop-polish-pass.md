@@ -1,5 +1,7 @@
 # Desktop Polish Pass Implementation Plan
 
+> **Retired / superseded:** desktop chrome/pages/bootstrap are removed. Browser panels and export remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:subagent-driven-development (opus). Steps use checkbox (`- [ ]`).
 
 **Goal:** Polish the desktop editor per user feedback: OpenReel branding (app icon + rotating-logo loading screen + title-bar logo), drop Color/Deliver tabs in favor of a single editor + an **Export** button, make the editor panels **resizable** (canvas/timeline/media/inspector), adopt the SF-Symbols icon set for desktop chrome, and improve perceived load speed.

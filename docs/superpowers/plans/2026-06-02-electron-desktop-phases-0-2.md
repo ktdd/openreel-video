@@ -1,5 +1,7 @@
 # OpenReel Desktop (Electron) — Phases 0–2 Implementation Plan
 
+> **Retired / superseded:** the desktop app and renderer/IPC are removed. Historical checklist only; see [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Stand up an Electron desktop shell that runs the existing `apps/web` editor over an `app://` protocol, then offload video export to a bundled native FFmpeg sidecar in the Node main process.

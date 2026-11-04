@@ -1,5 +1,7 @@
 # OpenReel Desktop (Electron + Native Media Offload) — Design Spec
 
+> **Retired / superseded:** desktop UI, IPC and sidecar adapters are removed. Historical design only; see [archive status](../README.md).
+
 > **Architecture update (2026-07-31):** Cloud GPU endpoints and broker flows in
 > this draft are retired. Desktop processing and export are local-only.
 

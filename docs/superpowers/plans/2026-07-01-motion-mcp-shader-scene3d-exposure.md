@@ -1,5 +1,7 @@
 # Motion MCP Exposure: Shaders + Scene3D + Fill-Param Keyframing — Implementation Plan
 
+> **Historical / partly superseded:** MCP/agent interfaces are retired. Manual motion/3D, saved shaders and keyframes remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** Expose the shader-fill, shader-effect, and shader-library capabilities as MCP tools; add motion-native scene3d object editing; and make shader **fill** params keyframeable (shader **effect** params already are).

@@ -1,4 +1,3 @@
-import type { NativeHardwareInfo } from "./native-profile";
 
 export type DeviceTier = "low" | "mid" | "high";
 
@@ -432,18 +431,6 @@ export async function getDeviceProfile(
   forceRefresh = false
 ): Promise<DeviceProfile> {
   if (!forceRefresh && cachedProfile) {
-    return cachedProfile;
-  }
-
-  // Desktop: build the profile from real hardware specs (window.openreel.probeHardware)
-  // instead of the browser heuristics (navigator/WebGL/WebCodecs).
-  const bridge = (globalThis as unknown as {
-    openreel?: { platform?: string; probeHardware?: () => Promise<NativeHardwareInfo> };
-  }).openreel;
-  if (bridge?.platform === "desktop" && typeof bridge.probeHardware === "function") {
-    const info = await bridge.probeHardware();
-    const { buildProfileFromNativeSpecs } = await import("./native-profile");
-    cachedProfile = buildProfileFromNativeSpecs(info);
     return cachedProfile;
   }
 

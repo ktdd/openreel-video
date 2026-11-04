@@ -1,5 +1,7 @@
 # OpenReel web editor review and improvements
 
+> **Historical QA report.** Landing, template/tour, AI/agent and desktop references describe the pre-removal app, not current support. See [current workflows](../../../docs/editor-workflows.md) and [the removal plan](../../../docs/remove-ai-features.md). Findings below are retained as dated evidence.
+
 Screenshots, test footage, and local QA evidence are retained outside Git; this report records their findings and validation limits.
 
 Reviewed, implemented, verified, and deployed on October 10, 2026. This pass covers everyday editing, longer projects, and social videos. OpenReel already exposes many editing tools; the most valuable gaps in this review were dependable project portability, precise navigation, efficient caption correction, and agreement between preview and export.

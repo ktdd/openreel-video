@@ -1,5 +1,7 @@
 # Desktop Native Pro Redesign + Slimming — Design
 
+> **Retired / superseded:** desktop UI/build/IPC are removed. Retained deterministic backends remain independent. See [archive status](../README.md).
+
 **Date:** 2026-06-02
 **Status:** Proposed (awaiting review)
 **Relates to:** `2026-06-02-electron-desktop-native-offload-design.md` (Phase 0–4 Electron app), `2026-06-02-desktop-gpu-cloud-jobs-design.md`.

@@ -1,5 +1,7 @@
 # Phase 4: Headless / Cloud Agent — Status
 
+> **Retired / superseded:** headless agent workspaces/runners are removed. Historical status only; see [archive status](../README.md).
+
 > **Retired path (2026-07-31):** The GPU runner, broker, and remote export path
 > described below were removed. The headless agent now edits project files only;
 > app-hosted exports run locally.

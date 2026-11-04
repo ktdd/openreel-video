@@ -1,51 +1,29 @@
 # @openreel/creation-core
 
-Phase 0 native engine scaffold for the agent-native creation engine.
-
-This package holds the **C++20 native core** and its **C ABI boundary**
-(`include/creation_core.h`). The deterministic CPU reference implementation of
-every kernel lives in the TypeScript package
-[`@openreel/core/creation`](../core/src/creation) (geometry, sdf, rig, sim,
-render, material). The native build must produce results that match that
-reference for the golden tests.
+Deterministic **C++20 creation engine** with the C ABI in `include/creation_core.h`. Geometry, SDF, rigging, simulation, rendering and materials have TypeScript CPU reference implementations under [`@openreel/core/creation`](../core/src/creation). Agent and desktop-IPC integrations have been removed; the engine and its native/WASM/CPU bindings remain independent of them.
 
 ## Layout
 
-- `include/creation_core.h` — stable C ABI exposed to the host.
-- `src/creation_core.cpp` — native implementation (mirrors the TS reference).
-- `CMakeLists.txt` — native (desktop shared library) and WASM (emscripten) builds.
+- `include/creation_core.h`: host C ABI.
+- `src/`: native implementations, including the Aurora renderer.
+- `CMakeLists.txt`: native shared-library and Emscripten WASM builds.
+- [`@openreel/creation-bindings`](../creation-bindings): loading and CPU fallback.
 
-## Build
+## Build and verification
 
-Native (requires CMake + a C++20 toolchain):
+Use pinned Bun 1.4.3. Native builds require CMake and a C++20 compiler; WASM builds also require Emscripten:
 
-```bash
-pnpm --filter @openreel/creation-core build:native
+```sh
+bun run --filter @openreel/creation-core build:native
+bun run --filter @openreel/creation-core test:native
+bun run --filter @openreel/creation-core build:wasm
 ```
 
-WASM (requires emscripten):
+The browser/workspace checks do not rebuild or validate every native backend. The removed desktop app's Aurora golden files/test commands are not available. Retained CPU rendering and binding tests live in `packages/core/src/creation/render/render.test.ts` and `packages/creation-bindings/src/index.test.ts`:
 
-```bash
-pnpm --filter @openreel/creation-core build:wasm
+```sh
+bun run --filter @openreel/core test:run src/creation/render/render.test.ts
+bun run --filter @openreel/creation-bindings test:run
 ```
 
-## Loading
-
-[`@openreel/creation-bindings`](../creation-bindings) loads the compiled native
-addon / WASM module through this ABI and **falls back to the CPU reference**
-(`@openreel/core/creation`) when no native build is present — so the desktop app
-works on every platform and CI without the native toolchain.
-
-## Golden preview regression
-
-The desktop Aurora test suite keeps a committed preview golden at
-[`apps/desktop/test/goldens/aurora-preview-box.json`](../../apps/desktop/test/goldens/aurora-preview-box.json)
-and verifies the current renderer against it in
-[`apps/desktop/test/aurora-golden.test.ts`](../../apps/desktop/test/aurora-golden.test.ts).
-
-Refresh that baseline intentionally with:
-
-```bash
-cd apps/desktop
-UPDATE_AURORA_GOLDENS=1 ./node_modules/.bin/vitest run test/aurora-golden.test.ts
-```
+The binding falls back to the TypeScript CPU reference when an optional native/WASM implementation is unavailable. This is deterministic backend selection, not an inference or network fallback. See [manual editor workflows](../../docs/editor-workflows.md) and [the removal plan](../../docs/remove-ai-features.md).

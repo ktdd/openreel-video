@@ -3,8 +3,6 @@ import type { MediaItem } from "@openreel/core";
 import {
   extractAudioWav,
   getFFmpegFallback,
-  nativeMediaAvailable,
-  probeAudioStreamCountViaNative,
 } from "@openreel/core/media";
 import { getMediaBridge, initializeMediaBridge } from "../bridges/media-bridge";
 
@@ -17,9 +15,7 @@ export async function extractAudioTracks(media: MediaItem): Promise<MediaItem[]>
   let count = media.metadata.audioTrackCount ?? 1;
   if (count <= 1) {
     try {
-      count = nativeMediaAvailable()
-        ? await probeAudioStreamCountViaNative(media.blob)
-        : (await getFFmpegFallback().probeAudioStreams(media.blob)).audioStreamCount;
+      count = (await getFFmpegFallback().probeAudioStreams(media.blob)).audioStreamCount;
     } catch {
       // Older projects may lack a stream count. Extraction still validates stream 0.
     }

@@ -41,7 +41,6 @@ export * from "./motion-gpu-render";
 export * from "./motion-scene3d";
 export * from "./motion-three-renderer";
 export * from "./shaders";
-export * from "./native-aurora-bridge";
 export * from "./motion-shape-path";
 export * from "./motion-shape-modifiers";
 export * from "./motion-shape-contents";

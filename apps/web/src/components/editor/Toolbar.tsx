@@ -164,7 +164,7 @@ export const Toolbar: React.FC = () => {
 
       try {
         if (type === "wav") {
-          const writable = await showSavePicker(exportFilename(project.name, "wav"), "wav", { delivery: window.openreel?.platform === "desktop" ? "file" : "download" });
+          const writable = await showSavePicker(exportFilename(project.name, "wav"), "wav", { delivery: "download" });
 
           beginExport(writable);
 
@@ -202,7 +202,7 @@ export const Toolbar: React.FC = () => {
           };
 
           const preset = presets[type] ?? presets.mp4;
-          const writable = await showSavePicker(exportFilename(project.name, preset.ext), preset.ext, { delivery: window.openreel?.platform === "desktop" ? "file" : "download" });
+          const writable = await showSavePicker(exportFilename(project.name, preset.ext), preset.ext, { delivery: "download" });
 
           beginExport(writable);
 
@@ -218,7 +218,7 @@ export const Toolbar: React.FC = () => {
   );
 
   const handleCustomExport = useCallback(
-    async (settings: VideoExportSettings, delivery: ExportDeliveryMode = window.openreel?.platform === "desktop" ? "file" : "download") => {
+    async (settings: VideoExportSettings, delivery: ExportDeliveryMode = "download") => {
       closeModal();
       if (!hasTimelineContent) return;
 

@@ -7,7 +7,7 @@ export interface ProjectFont { family: string; weight: string; sample: string }
 
 function loadStylesheet(family: string): Promise<void> {
   const spec = GOOGLE_FONT_SPECS[family];
-  if (!spec || initialFamilies.has(family) || window.openreel?.platform === "desktop") return Promise.resolve();
+  if (!spec || initialFamilies.has(family)) return Promise.resolve();
   const pending = pendingStylesheets.get(family);
   if (pending) return pending;
   const promise = new Promise<void>((resolve, reject) => {

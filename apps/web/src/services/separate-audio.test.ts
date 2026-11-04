@@ -2,15 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { MediaItem } from "@openreel/core";
 import { extractAudioTracks } from "./separate-audio";
 
-const { extract, probe, nativeProbe, nativeAvailable, bridge } = vi.hoisted(() => ({
-  extract: vi.fn(), probe: vi.fn(), nativeProbe: vi.fn(), nativeAvailable: vi.fn(),
+const { extract, probe, bridge } = vi.hoisted(() => ({
+  extract: vi.fn(), probe: vi.fn(),
   bridge: { isInitialized: () => true, importFile: vi.fn() },
 }));
 vi.mock("@openreel/core/media", () => ({
   extractAudioWav: extract,
   getFFmpegFallback: () => ({ probeAudioStreams: probe }),
-  nativeMediaAvailable: nativeAvailable,
-  probeAudioStreamCountViaNative: nativeProbe,
 }));
 vi.mock("../bridges/media-bridge", () => ({
   getMediaBridge: () => bridge, initializeMediaBridge: vi.fn(),
@@ -26,7 +24,6 @@ const video = (count?: number): MediaItem => ({
 
 beforeEach(() => {
   vi.resetAllMocks();
-  nativeAvailable.mockReturnValue(false);
   probe.mockResolvedValue({ audioStreamCount: 2 });
   extract.mockImplementation(async (_blob, index) => new Blob([`stream-${index}`], { type: "audio/wav" }));
   bridge.importFile.mockImplementation(async (file: File) => ({
@@ -59,13 +56,6 @@ describe("recorded audio stream extraction", () => {
     const source = video();
     expect(await extractAudioTracks(source)).toHaveLength(2);
     expect(probe).toHaveBeenCalledWith(source.blob);
-  });
-
-  it("uses the native probe in desktop builds", async () => {
-    nativeAvailable.mockReturnValue(true);
-    nativeProbe.mockResolvedValue(3);
-    expect(await extractAudioTracks(video())).toHaveLength(3);
-    expect(probe).not.toHaveBeenCalled();
   });
 
   it("fails when a specific stream cannot be extracted instead of copying the first stream", async () => {

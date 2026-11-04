@@ -1,5 +1,7 @@
 # OpenReel next priorities: implementation and verification
 
+> **Historical / superseded priorities.** Do not restore retired AI, desktop, landing, templates, tours or recording workflows from this report. See [the removal plan](../../../docs/remove-ai-features.md) and [current workflows](../../../docs/editor-workflows.md). Original findings below are preserved.
+
 Screenshots, test footage, and local QA evidence are retained outside Git; this report records their findings and validation limits.
 
 Completed locally on October 2, 2026, following the [initial editor review](web-editor-review-2026-10-02.md). This pass implements preview proxies, a shorter selected-clip editing flow, a responsive workspace, and safer browser export delivery. Deployed to [app.openreel.video](https://app.openreel.video) on October 3, 2026. The live HTML and entry JavaScript match the verified production build, isolation headers are present, and the live editor opens successfully.

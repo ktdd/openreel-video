@@ -320,49 +320,6 @@ export async function createDownloadWritable(
   const ext = filename.split(".").pop() || "mp4";
   if (options?.delivery === "download") return createFallbackWritable(filename, mime);
 
-  if (typeof window.openreel?.fs?.showSaveDialog === "function") {
-    const chosen = await window.openreel.fs.showSaveDialog({
-      defaultPath: filename,
-      filters: [{ name: "Media file", extensions: [ext] }],
-    });
-    if (!chosen) {
-      throw new DOMException("User cancelled", "AbortError");
-    }
-    (window as { __openreelExportPath?: string }).__openreelExportPath = chosen;
-    const handleId = await window.openreel.fs.openWrite(chosen);
-    let cursor = 0;
-    return {
-      async seek(position: number) {
-        cursor = position;
-      },
-      async write(data: unknown) {
-        let bytes: ArrayBuffer | Uint8Array;
-        if (data instanceof ArrayBuffer) {
-          bytes = data;
-        } else if (data instanceof Uint8Array) {
-          bytes = data;
-        } else if (ArrayBuffer.isView(data)) {
-          bytes = new Uint8Array(
-            data.buffer as ArrayBuffer,
-            data.byteOffset,
-            data.byteLength,
-          );
-        } else {
-          return;
-        }
-        await window.openreel!.fs.writeChunk(handleId, bytes, cursor);
-        cursor += bytes.byteLength;
-      },
-      async close() {
-        await window.openreel!.fs.closeWrite(handleId);
-      },
-      async abort() {
-        await window.openreel!.fs.abortWrite(handleId);
-      },
-      async truncate() {},
-    } as unknown as FileSystemWritableFileStream;
-  }
-
   if ("showSaveFilePicker" in window) {
     let destinationChosen = false;
     try {
@@ -420,7 +377,7 @@ export interface UseExportRunner {
     writableStream: FileSystemWritableFileStream,
   ) => Promise<void>;
   runAudioExport: (settings: Partial<AudioExportSettings>, writable: FileSystemWritableFileStream) => Promise<void>;
-  showSavePicker: (filename: string, ext: string, opts?: { streamToFile?: boolean; delivery?: ExportDeliveryMode }) => Promise<FileSystemWritableFileStream>;
+  showSavePicker: (filename: string, ext: string, opts?: { delivery?: ExportDeliveryMode }) => Promise<FileSystemWritableFileStream>;
   reportProgress: (progress01: number, phase: string) => void;
   markComplete: () => void;
   beginExport: (writable?: FileSystemWritableFileStream) => () => void;
@@ -595,62 +552,9 @@ export function useExportRunner(options: ExportRunnerOptions): UseExportRunner {
     async (
       filename: string,
       ext: string,
-      opts?: { streamToFile?: boolean; delivery?: ExportDeliveryMode },
+      opts?: { delivery?: ExportDeliveryMode },
     ): Promise<FileSystemWritableFileStream> => {
       const mime = mimeForExt(ext);
-
-      if (typeof window.openreel?.fs?.showSaveDialog === "function") {
-        const chosen = await window.openreel.fs.showSaveDialog({
-          defaultPath: filename,
-          filters: [{ name: "Media file", extensions: [ext] }],
-        });
-        if (!chosen) {
-          throw new DOMException("User cancelled", "AbortError");
-        }
-        (window as { __openreelExportPath?: string }).__openreelExportPath = chosen;
-
-        // The WAV path and any WebCodecs export (streamToFile) mux directly to
-        // disk through the fs bridge. The native ffmpeg video path writes the
-        // file itself via __openreelExportPath, so it gets the no-op stub below.
-        if (ext === "wav" || opts?.streamToFile === true) {
-          const handleId = await window.openreel.fs.openWrite(chosen);
-          let cursor = 0;
-          return {
-            async seek(position: number) {
-              cursor = position;
-            },
-            async write(data: unknown) {
-              let bytes: ArrayBuffer | Uint8Array;
-              if (data instanceof ArrayBuffer) {
-                bytes = data;
-              } else if (data instanceof Uint8Array) {
-                bytes = data;
-              } else if (ArrayBuffer.isView(data)) {
-                bytes = new Uint8Array(data.buffer as ArrayBuffer, data.byteOffset, data.byteLength);
-              } else {
-                return;
-              }
-              await window.openreel!.fs.writeChunk(handleId, bytes, cursor);
-              cursor += bytes.byteLength;
-            },
-            async close() {
-              await window.openreel!.fs.closeWrite(handleId);
-            },
-            async abort() {
-              await window.openreel!.fs.abortWrite(handleId);
-            },
-            async truncate() {},
-          } as unknown as FileSystemWritableFileStream;
-        }
-
-        return {
-          async seek() {},
-          async write() {},
-          async close() {},
-          async abort() {},
-          async truncate() {},
-        } as unknown as FileSystemWritableFileStream;
-      }
 
       return createDownloadWritable(filename, mime, { delivery: opts?.delivery });
     },

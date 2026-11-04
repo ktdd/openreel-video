@@ -1,5 +1,7 @@
 # OpenReel Desktop — Design Spec
 
+> **Retired / superseded:** the desktop app and its renderer/IPC are removed. Historical design only; see [archive status](../README.md).
+
 > **⚠️ SUPERSEDED (2026-06-02).** This native Rust + wgpu + kael plan has been superseded by
 > [`2026-06-02-electron-desktop-native-offload-design.md`](./2026-06-02-electron-desktop-native-offload-design.md),
 > which reuses the existing `apps/web` React editor as an Electron renderer and offloads heavy

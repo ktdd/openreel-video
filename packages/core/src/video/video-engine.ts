@@ -75,9 +75,7 @@ import {
   type MotionRendererAssetResolver,
 } from "../motion/motion-renderer";
 import { MotionHighQualityRenderer } from "../motion/motion-gpu-render";
-import { renderAuroraPreviewToImageBitmap } from "../motion/native-aurora-bridge";
 import type { MotionAsset } from "../motion/types";
-import { resolveCreationMotionSceneBinding } from "../creation/render-binding";
 import { resolveCanvasFitDimensions } from "./canvas-fit";
 import {
   getMediaItemCapabilities,
@@ -1224,28 +1222,6 @@ export class VideoEngine {
     return {
       resolveImageAsset: async (asset: MotionAsset) =>
         this.resolveMotionImageAsset(project, asset),
-      renderScene3D: async (input) => {
-        const bound = resolveCreationMotionSceneBinding(
-          project.creation,
-          input.composition.id,
-          input.layer.id,
-        );
-        if (!bound) return null;
-        const image = await renderAuroraPreviewToImageBitmap({
-          scene: bound.scene,
-          assets: bound.assets,
-          width: input.width,
-          height: input.height,
-          background: input.backgroundColor,
-          timeSeconds: input.localTime,
-          quality: input.quality ? "preview" : "final",
-        });
-        if (!image) return null;
-        return {
-          image,
-          release: () => image.close(),
-        };
-      },
     };
   }
 

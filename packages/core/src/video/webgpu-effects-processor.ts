@@ -56,7 +56,7 @@ export class WebGPUEffectsProcessor {
   // Effect change tracking for re-render trigger
   private effectsChangeCallbacks: EffectsChangeCallback[] = [];
   private lastEffectsHash: Map<string, string> = new Map();
-  private pendingReRenders: Map<string, NodeJS.Timeout> = new Map();
+  private pendingReRenders: Map<string, ReturnType<typeof setTimeout>> = new Map();
 
   // Performance tracking
   private lastProcessingTime = 0;

@@ -1,5 +1,7 @@
 # Desktop Export: Quality, Size, Speed & Format — Design
 
+> **Retired / superseded:** desktop export adapters/UI are removed. Browser export and presets remain. See [archive status](../README.md).
+
 Date: 2026-06-03
 Status: Proposed (awaiting review)
 Scope: Desktop (Electron) video export pipeline only. Web export (WebCodecs) is unchanged except for the shared settings type.

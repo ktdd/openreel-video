@@ -1,5 +1,7 @@
 # AI Agent Video Editing — Design Spec
 
+> **Retired / superseded:** agents, chat, MCP and provider integration are removed. Historical design only; see [archive status](../README.md).
+
 > **Architecture update (2026-07-31):** Remote GPU job delegation and auth-broker
 > sections are superseded. Agent renders use the local app host; the headless CLI
 > edits project files without submitting remote GPU jobs.

@@ -6,7 +6,6 @@ import type { MediaItem, MotionAsset, MotionComposition } from "@openreel/core";
 import { createEmptyProject } from "../../stores/project/project-helpers";
 import { useNotificationStore } from "../../stores/notification-store";
 import { useProjectStore } from "../../stores/project-store";
-import { useUIStore } from "../../stores/ui-store";
 import { useMotionStore } from "../stores/motion-store";
 import { AssetPanel } from "./AssetPanel";
 
@@ -42,7 +41,6 @@ describe("AssetPanel", () => {
     window.localStorage.clear();
     window.location.hash = "";
     useNotificationStore.getState().clearAll();
-    useUIStore.setState({ desktopPage: "motion" });
     useMotionStore.setState({ playhead: 2.5, selectedLayerId: null, selectedLayerIds: [] });
     seedProject();
   });

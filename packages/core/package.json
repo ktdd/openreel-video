@@ -40,7 +40,6 @@
     "@ffmpeg/util": "^0.12.2",
     "@paper-design/shaders": "^0.0.76",
     "gsap": "^3.14.2",
-    "idb-keyval": "^6.2.2",
     "immer": "^11.0.1",
     "mediabunny": "^1.25.3",
     "polygon-clipping": "0.15.7",

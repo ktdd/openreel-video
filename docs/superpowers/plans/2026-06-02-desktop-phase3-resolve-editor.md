@@ -1,5 +1,7 @@
 # Desktop Phase 3 — Resolve Editor (functional Edit/Color/Deliver) Implementation Plan
 
+> **Retired / superseded:** desktop pages/bootstrap are removed. Browser editing remains. See [archive status](../README.md).
+
 > **Architecture update (2026-07-31):** The cloud GPU render queue referenced in
 > this historical plan has been removed. Deliver/export is local-only.
 

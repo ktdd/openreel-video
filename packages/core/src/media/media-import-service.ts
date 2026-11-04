@@ -20,36 +20,6 @@ import {
   type ProxySettings,
   type TranscodeOptions,
 } from "./ffmpeg-fallback";
-import {
-  nativeMediaAvailable,
-  proxyViaNative,
-  transcodeViaNative,
-  probeAudioStreamCountViaNative,
-} from "./native-media-bridge";
-
-function parseBitrateKbps(value: string | undefined, fallback: number): number {
-  if (!value) return fallback;
-  const m = /^(\d+(?:\.\d+)?)\s*([kKmM]?)/.exec(value.trim());
-  if (!m) return fallback;
-  const n = Number(m[1]);
-  const unit = m[2].toLowerCase();
-  return Math.round(unit === "m" ? n * 1000 : n);
-}
-
-function presetFromSettings(settings?: Partial<ProxySettings>): "low" | "medium" | "high" {
-  if (settings?.maxHeight) {
-    if (settings.maxHeight <= 540) return "low";
-    if (settings.maxHeight <= 720) return "medium";
-    return "high";
-  }
-  const scale = (settings as { scale?: number } | undefined)?.scale;
-  if (typeof scale === "number") {
-    if (scale >= 0.7) return "high";
-    if (scale >= 0.45) return "medium";
-    return "low";
-  }
-  return "medium";
-}
 
 export interface MediaImportOptions {
   generateThumbnails?: boolean;
@@ -335,14 +305,7 @@ export class MediaImportService {
     opts: Required<MediaImportOptions>,
     transcodeOpts?: TranscodeOptions,
   ): Promise<MediaImportResult> {
-    const container: "mp4" | "webm" | "mov" = transcodeOpts?.format === "mp4" ? "mp4" : "webm";
-    const compatibleBlob = nativeMediaAvailable()
-      ? await transcodeViaNative(file, {
-          container,
-          videoBitrateKbps: parseBitrateKbps(transcodeOpts?.videoBitrate, 2000),
-          audioBitrateKbps: parseBitrateKbps(transcodeOpts?.audioBitrate, 128),
-        })
-      : await this.ffmpegFallback.transcodeToCompatible(file, undefined, transcodeOpts);
+    const compatibleBlob = await this.ffmpegFallback.transcodeToCompatible(file, undefined, transcodeOpts);
     const format = transcodeOpts?.format || "webm";
     const ext = format === "mp4" ? ".mp4" : ".webm";
     const mime = format === "mp4" ? "video/mp4" : "video/webm";
@@ -517,13 +480,6 @@ export class MediaImportService {
     signal?: AbortSignal,
   ): Promise<Blob> {
     if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-    // Desktop: native FFmpeg sidecar (hardware encoders, no wasm).
-    if (nativeMediaAvailable()) {
-      const blob = await proxyViaNative(file, presetFromSettings(settings));
-      if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
-      return blob;
-    }
-
     // Try MediaBunny first (faster, hardware-accelerated)
     if (this.mediaEngine.isAvailable()) {
       try {
@@ -567,9 +523,6 @@ export class MediaImportService {
   private async probeAudioStreamsCompat(
     file: File | Blob,
   ): Promise<{ audioStreamCount: number }> {
-    if (nativeMediaAvailable()) {
-      return { audioStreamCount: await probeAudioStreamCountViaNative(file) };
-    }
     return this.ffmpegFallback.probeAudioStreams(file);
   }
 

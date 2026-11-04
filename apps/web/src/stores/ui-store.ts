@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { subscribeWithSelector, persist } from "zustand/middleware";
 import type { PreviewQuality } from "../components/editor/preview/preview-resolution";
-import { MOTION_CREATOR_ENABLED } from "../config/features";
 
 export type PanelId =
   | "mediaLibrary"
@@ -23,7 +22,6 @@ export type SelectionType =
   | "transition"
   | "motion-instance";
 
-export type DesktopPage = "edit" | "motion" | "color" | "deliver";
 
 export interface SelectionItem {
   type: SelectionType;
@@ -95,8 +93,6 @@ export interface UIState {
   motionPathClipId: string | null;
   keyframeEditorOpen: boolean;
   inspectorActiveTab: string;
-  desktopPage: DesktopPage;
-  setDesktopPage(page: DesktopPage): void;
   select: (item: SelectionItem, addToSelection?: boolean) => void;
   selectMultiple: (items: SelectionItem[]) => void;
   deselect: (itemId: string) => void;
@@ -202,7 +198,7 @@ const DEFAULT_PANELS: Record<PanelId, PanelState> = {
 const PERSISTED_UI_KEYS = [
   "snapSettings", "panels", "shortcuts", "theme", "showWaveforms",
   "showThumbnails", "showKeyframes", "autoScroll", "timelineMaximized",
-  "playbackQuality", "inspectorActiveTab", "desktopPage",
+  "playbackQuality", "inspectorActiveTab",
 ] as const;
 
 function pickUIPreferences(value: unknown): Partial<UIState> {
@@ -260,7 +256,6 @@ export const useUIStore = create<UIState>()(
 
         inspectorActiveTab: "transform",
 
-        desktopPage: "edit",
 
         exportState: {
           isExporting: false,
@@ -588,11 +583,6 @@ export const useUIStore = create<UIState>()(
           set({ inspectorActiveTab: tabId });
         },
 
-        setDesktopPage: (page) =>
-          set({
-            desktopPage:
-              page === "motion" && !MOTION_CREATOR_ENABLED ? "edit" : page,
-          }),
       }),
       {
         name: "openreel-ui-preferences",
@@ -607,9 +597,6 @@ export const useUIStore = create<UIState>()(
           const state = persisted as Record<string, unknown>;
           if (version === 0) {
             state.snapSettings = DEFAULT_SNAP_SETTINGS;
-          }
-          if (version < 3 && state.desktopPage === "motion") {
-            state.desktopPage = "edit";
           }
           return pickUIPreferences(state);
         },

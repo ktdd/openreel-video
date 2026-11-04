@@ -3,7 +3,6 @@ import { MediaImportService } from "./media-import-service";
 import type { MediaBunnyEngine } from "./mediabunny-engine";
 import type { FFmpegFallback } from "./ffmpeg-fallback";
 
-vi.mock("./native-media-bridge", () => ({ nativeMediaAvailable: () => false }));
 const setup = (width = 1920, height = 1080) => {
   const proxy = new Blob(["proxy"]);
   const engine = {

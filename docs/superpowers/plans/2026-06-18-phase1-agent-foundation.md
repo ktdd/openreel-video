@@ -1,5 +1,7 @@
 # Phase 1: Shared Agent Foundation — Status
 
+> **Retired / superseded:** the agent workspaces and runtime are removed. Historical status only; see [archive status](../README.md).
+
 **Branch:** `feat/agent-phase0-readiness` · **Status:** ✅ Complete
 **Commits:** `05ef3e5` (packages/agent), `62ffa10` (LiveEditorHost), `59ec192` (acceptance test)
 **Verification:** 32 `@openreel/agent` tests + 4 web LiveEditorHost tests green; agent + web + core typecheck clean; web lint clean.

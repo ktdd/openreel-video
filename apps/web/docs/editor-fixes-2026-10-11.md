@@ -1,5 +1,7 @@
 # Editor fixes — 11 October 2026
 
+> **Historical QA report.** Agent/tool-card references describe removed functionality. Retained manual editing follows current source/tests and [current workflows](../../../docs/editor-workflows.md); see [the removal plan](../../../docs/remove-ai-features.md). Original findings below are preserved.
+
 Screenshots, test footage, and local QA evidence are retained outside Git; this report records their findings and validation limits.
 
 The reported transition failure was a rejected adjacency/duration check. The screenshot does not include the project or original request, so the exact user's timeline cannot be reproduced from it.

@@ -1,5 +1,7 @@
 # Desktop Native Pro Redesign + Slimming — Implementation Plan (Phases 1–2)
 
+> **Retired / superseded:** desktop UI/build/IPC are removed. Deterministic creation backends remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Give the OpenReel desktop app a native shell (frameless window + per-platform chrome + native menu), a DaVinci Resolve-style charcoal/teal theme, a desktop-only boot path with an Edit/Color/Deliver workspace scaffold, AND slim it down (strip the 62MB ffmpeg.wasm on desktop, trim fonts, add electron-builder packaging).

@@ -17,7 +17,7 @@ test("web runtime has no chat, MCP editing, Kie generation, polling or job-state
   const paths = files(resolve(root, "apps/web/src"))
     .filter((path) => /\.(?:[cm]?[jt]sx?|css)$/.test(path) && !/\.(?:test|spec)\./.test(path) && !path.includes(`${resolve(root, "apps/web/src/test")}`));
   assert.ok(paths.length > 300);
-  for (const path of ["apps/web/src/App.tsx", "apps/web/src/desktop/DesktopApp.tsx", "apps/web/src/stores/ui-store.ts"]) {
+  for (const path of ["apps/web/src/App.tsx", "apps/web/src/main.tsx", "apps/web/src/stores/ui-store.ts"]) {
     assert.ok(paths.includes(resolve(root, path)), path);
   }
   const retired = /agentChat|ChatPanel|useChatStore|useChatHistoryStore|useAIConnectionStore|chat-history-store|chat-store|ai-connection-store|\bmcp\b|installMcpListener|OpenReelMcpStatus|mcpAutoAllowTrustedLocal|agentAutoConfirm|agentDryRun|ai-workspace|ai-chat-resizer|KieAI|kieai|kie-ai|kie\.ai|AIGenTab|addPlaceholderMedia|replacePlaceholderMedia|setKieAIItemState/i;

@@ -37,7 +37,7 @@ export async function checkBrowserExportCapability(
   includeAudio = true,
 ): Promise<BrowserExportCapability> {
   if (settings.codec === "prores" || (settings.colorDepth ?? 8) > 8 || (settings.pixelFormat && settings.pixelFormat !== "yuv420")) {
-    return { supported: false, reason: "ProRes, transparency, and high bit depth export require the desktop encoder. Choose H.264 for browser export." };
+    return { supported: false, reason: "ProRes, transparency, and high bit depth are unsupported by this browser export. Choose H.264." };
   }
   try {
     const library = mediaBunny ?? await import("mediabunny");

@@ -1,5 +1,7 @@
 # OpenReel Desktop — Phase 3 (Native Decode/Proxy/Transcode + Hardware-Driven Defaults) Implementation Plan
 
+> **Retired / superseded:** native media IPC/sidecar adapters and hardware probing are removed. Browser codec/FFmpeg paths remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** On desktop, route media proxy/transcode/audio-extraction/probe to the native FFmpeg sidecar (instead of `ffmpeg.wasm`) so large/4K/long source edits smoothly, and feed **real** hardware specs (`probeHardware()`) into the device-profile + export-estimator instead of browser heuristics — while leaving the web path unchanged.

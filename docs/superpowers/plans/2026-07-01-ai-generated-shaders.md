@@ -1,5 +1,7 @@
 # AI-Generated Shaders Implementation Plan
 
+> **Historical / partly superseded:** shader generation and agent tools are retired. Saved GLSL, validators, registries and renderers remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** Let AI author a new parameterized shader (GLSL + params) from a prompt, compile-validate it with a repair loop, register it into the live shader library at runtime, and persist it per-project — usable everywhere the built-in shaders are.

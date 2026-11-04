@@ -1,5 +1,7 @@
 # Motion MCP Exposure: Shaders + Scene3D Editing + Fill-Param Keyframing — Design
 
+> **Historical / partly superseded:** MCP/agent interfaces are retired. Manual motion/3D, saved shaders and keyframes remain. See [archive status](../README.md).
+
 **Date:** 2026-07-01
 **Status:** Design (pending user review)
 **Branch:** feat/new-design-update

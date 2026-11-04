@@ -93,14 +93,6 @@ vi.mock("@openreel/core", () => ({
   },
 }));
 
-vi.mock("@openreel/core/creation/index", () => ({
-  resolveCreationMotionSceneBinding: vi.fn(() => null),
-}));
-
-vi.mock("../services/native-ffmpeg-backend", () => ({
-  NativeFFmpegBackend: class {},
-}));
-
 function readUint16(data: Uint8Array, offset: number): number {
   return data[offset] | (data[offset + 1] << 8);
 }

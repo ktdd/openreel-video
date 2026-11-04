@@ -1,5 +1,5 @@
 import type { JSX } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -58,14 +58,9 @@ interface RenderQueuePanelProps {
 }
 
 const WEB_EXPORT_GUARDRAIL_MESSAGE =
-  "Web export can't produce ProRes or alpha — this will encode H.264 without transparency. Use the desktop app for ProRes/alpha.";
+  "This export will encode H.264 without transparency. Choose PNG Sequence for transparent output.";
 
 const WEB_NORMALIZED_RESULT_NOTE = "Encoded H.264 (ProRes unavailable on web)";
-
-function detectNativeExportAvailable(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.openreel?.platform === "desktop";
-}
 
 function formatRequiresNativeExport(format: MotionRenderQueueFormat): boolean {
   if (format === "png-sequence") return false;
@@ -120,9 +115,8 @@ export function RenderQueuePanel({
   );
   const [h264FallbackAcknowledged, setH264FallbackAcknowledged] =
     useState(false);
-  const isNativeExportAvailable = useMemo(detectNativeExportAvailable, []);
   const requiresNativeExport = formatRequiresNativeExport(selectedFormat);
-  const guardrailActive = requiresNativeExport && !isNativeExportAvailable;
+  const guardrailActive = requiresNativeExport;
   const guardrailBlocking = guardrailActive && !h264FallbackAcknowledged;
 
   useEffect(() => {
@@ -385,7 +379,6 @@ export function RenderQueuePanel({
                 <RenderQueueRow
                   key={item.id}
                   item={item}
-                  nativeExportAvailable={isNativeExportAvailable}
                   disabled={isRunning && item.status === "rendering"}
                   canMoveUp={index > 0}
                   canMoveDown={index < renderQueue.length - 1}
@@ -405,7 +398,6 @@ export function RenderQueuePanel({
 
 function RenderQueueRow({
   item,
-  nativeExportAvailable,
   disabled,
   canMoveUp,
   canMoveDown,
@@ -415,7 +407,6 @@ function RenderQueueRow({
   onMoveDown,
 }: {
   readonly item: MotionRenderQueueItem;
-  readonly nativeExportAvailable: boolean;
   readonly disabled: boolean;
   readonly canMoveUp: boolean;
   readonly canMoveDown: boolean;
@@ -430,7 +421,6 @@ function RenderQueueRow({
   const isCancelable = item.status === "queued" || item.status === "rendering";
   const wasNormalizedToH264 =
     item.status === "complete" &&
-    !nativeExportAvailable &&
     formatRequiresNativeExport(item.format);
   const resultDetail = item.error
     ? item.error

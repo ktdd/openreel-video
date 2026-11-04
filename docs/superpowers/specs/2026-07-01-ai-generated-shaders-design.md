@@ -1,5 +1,7 @@
 # AI-Generated Shaders — Design
 
+> **Historical / partly superseded:** prompt generation and agent tools are retired. Saved GLSL execution/editing remains. See [archive status](../README.md).
+
 **Date:** 2026-07-01
 **Status:** Design (pending user review)
 **Branch:** feat/new-design-update

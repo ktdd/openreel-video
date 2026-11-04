@@ -178,7 +178,6 @@ import {
   createMotionLayerOfType,
   type CreatableMotionLayerType,
 } from "../motion-layer-factory";
-import { startNativeAuroraStagePreviewSession } from "../native-aurora-preview-session";
 import { ColorInput, IconButton, NumberInput } from "./primitives";
 
 interface StageCanvasProps {
@@ -412,8 +411,8 @@ export function StageCanvas({ composition }: StageCanvasProps): JSX.Element {
     [composition, motionCompositions],
   );
   const assetResolver = useMemo(
-    () => createWebMotionAssetResolver(mediaItems, { creation }),
-    [creation, mediaItems],
+    () => createWebMotionAssetResolver(mediaItems),
+    [mediaItems],
   );
 
   const pendingCompositionRef = useRef<MotionComposition | null>(null);
@@ -2814,7 +2813,6 @@ export function StageCanvas({ composition }: StageCanvasProps): JSX.Element {
               resolution={activePreviewResolution}
               background={composition.backgroundColor}
               time={playhead}
-              isPlaying={isPlaying}
             />
           ) : null}
           {rootLayers.map((layer) => (
@@ -5344,7 +5342,6 @@ function CreationCpuStagePreview({
   resolution,
   background,
   time,
-  isPlaying,
 }: {
   fallback: CreationStagePreviewFallback;
   width: number;
@@ -5352,7 +5349,6 @@ function CreationCpuStagePreview({
   resolution: MotionStagePreviewResolution;
   background: string;
   time: number;
-  isPlaying: boolean;
 }): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -5372,31 +5368,7 @@ function CreationCpuStagePreview({
       timeSeconds: time,
     });
 
-    const disposePreviewSession = isPlaying
-      ? null
-      : startNativeAuroraStagePreviewSession({
-          fallback,
-          width: previewSize.width,
-          height: previewSize.height,
-          background,
-          timeSeconds: time,
-          onEvent: (event) => {
-            if (event.kind !== "update") return;
-            const image = new Image();
-            image.decoding = "async";
-            image.onload = () => {
-              if (canvasRef.current !== canvas) return;
-              ctx.clearRect(0, 0, previewSize.width, previewSize.height);
-              ctx.drawImage(image, 0, 0, previewSize.width, previewSize.height);
-            };
-            image.src = event.result.dataUri;
-          },
-        });
-
-    return () => {
-      disposePreviewSession?.();
-    };
-  }, [background, fallback, height, isPlaying, resolution, time, width]);
+  }, [background, fallback, height, resolution, time, width]);
 
   return (
     <canvas

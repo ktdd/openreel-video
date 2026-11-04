@@ -5,7 +5,6 @@ import type { MotionComposition } from "@openreel/core";
 import { createEmptyProject } from "../stores/project/project-helpers";
 import { useProjectStore } from "../stores/project-store";
 import { useNotificationStore } from "../stores/notification-store";
-import { useUIStore } from "../stores/ui-store";
 import { MotionCreatorShell } from "./MotionCreatorShell";
 import { useMotionStore } from "./stores/motion-store";
 
@@ -132,7 +131,6 @@ describe("MotionCreatorShell layout", () => {
     window.localStorage.clear();
     window.location.hash = "";
     useNotificationStore.getState().clearAll();
-    useUIStore.setState({ desktopPage: "motion" });
     useMotionStore.setState({
       leftTab: "layers",
       rightTab: "properties",
@@ -317,7 +315,6 @@ describe("MotionCreatorShell layout", () => {
         motionInstanceId: instance?.id,
       },
     });
-    expect(useUIStore.getState().desktopPage).toBe("edit");
     expect(window.location.hash).toBe("#/editor");
     expect(useNotificationStore.getState().notifications[0]).toMatchObject({
       type: "success",

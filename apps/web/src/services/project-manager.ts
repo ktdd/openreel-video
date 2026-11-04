@@ -31,21 +31,6 @@ interface FileHandleWithPermissions extends FileSystemFileHandle {
   requestPermission?: (options: { mode: string }) => Promise<string>;
 }
 
-type NativeFileRef = { kind: "native"; path: string };
-type ProjectFileRef = FileSystemFileHandle | NativeFileRef;
-
-function isDesktopFs(): boolean {
-  return typeof window !== "undefined" && !!window.openreel?.fs;
-}
-
-function isNativeRef(ref: unknown): ref is NativeFileRef {
-  return (
-    !!ref &&
-    typeof ref === "object" &&
-    (ref as NativeFileRef).kind === "native"
-  );
-}
-
 const PROJECT_DB_NAME = "openreel-projects";
 const PROJECT_DB_VERSION = 1;
 const PROJECTS_STORE = "projects";
@@ -57,7 +42,7 @@ export interface RecentProject {
   name: string;
   lastOpened: number;
   thumbnail?: string;
-  fileHandle?: ProjectFileRef;
+  fileHandle?: FileSystemFileHandle;
   duration?: number;
   trackCount?: number;
 }
@@ -68,7 +53,7 @@ type EventCallback = (data?: unknown) => void;
 class ProjectManager {
   private db: IDBDatabase | null = null;
   private listeners: Map<ProjectManagerEvent, Set<EventCallback>> = new Map();
-  private currentFileHandle: ProjectFileRef | null = null;
+  private currentFileHandle: FileSystemFileHandle | null = null;
 
   private parseProjectContent(content: string): Project {
     const trimmed = content.trim();
@@ -182,22 +167,6 @@ class ProjectManager {
   }
 
   async saveProjectAs(project: Project): Promise<boolean> {
-    if (isDesktopFs()) {
-      const filePath = await window.openreel!.fs.showSaveDialog({
-        defaultPath: `${project.name}.oreel`,
-        filters: [{ name: "OpenReel Project", extensions: ["oreel", "json"] }],
-      });
-      if (!filePath) return false;
-      await window.openreel!.fs.writeFile(
-        filePath,
-        JSON.stringify(project, null, 2),
-      );
-      this.currentFileHandle = { kind: "native", path: filePath };
-      await this.addToRecent(project, this.currentFileHandle);
-      this.emit("projectSaved", { project });
-      return true;
-    }
-
     if (!("showSaveFilePicker" in window)) {
       return this.downloadProject(project);
     }
@@ -235,15 +204,9 @@ class ProjectManager {
 
   private async saveToFileHandle(
     project: Project,
-    handle: ProjectFileRef,
+    handle: FileSystemFileHandle,
   ): Promise<boolean> {
     const data = JSON.stringify(project, null, 2);
-    if (isNativeRef(handle)) {
-      await window.openreel!.fs.writeFile(handle.path, data);
-      this.emit("projectSaved", { project });
-      return true;
-    }
-
     const writable = await handle.createWritable();
     try {
       await writable.write(data);
@@ -279,25 +242,6 @@ class ProjectManager {
   }
 
   async openProject(): Promise<Project | null> {
-    if (isDesktopFs()) {
-      const filePath = await window.openreel!.fs.showOpenDialog({
-        filters: [{ name: "OpenReel Project", extensions: ["oreel", "json"] }],
-      });
-      if (!filePath) return null;
-      const content = await window.openreel!.fs.readFile(filePath);
-      let project: Project;
-      try {
-        project = this.parseProjectContent(content);
-      } catch (error) {
-        console.error("[ProjectManager] Open (native) failed:", error);
-        return null;
-      }
-      this.currentFileHandle = { kind: "native", path: filePath };
-      await this.addToRecent(project, this.currentFileHandle);
-      this.emit("projectOpened", { project });
-      return project;
-    }
-
     if ("showOpenFilePicker" in window) {
       try {
         const win = window as WindowWithFilePicker;
@@ -365,23 +309,6 @@ class ProjectManager {
     recentProject: RecentProject,
   ): Promise<Project | null> {
     if (recentProject.fileHandle) {
-      if (isNativeRef(recentProject.fileHandle)) {
-        try {
-          const content = await window.openreel!.fs.readFile(
-            recentProject.fileHandle.path,
-          );
-          const project = this.parseProjectContent(content);
-          this.currentFileHandle = recentProject.fileHandle;
-          await this.updateRecentTimestamp(recentProject.id);
-          this.emit("projectOpened", { project });
-          return project;
-        } catch (error) {
-          console.error("[ProjectManager] Open recent (native) failed:", error);
-          await this.removeFromRecent(recentProject.id);
-          return null;
-        }
-      }
-
       try {
         const handle = recentProject.fileHandle as FileHandleWithPermissions;
         const permission = await handle.queryPermission?.({ mode: "read" });
@@ -460,7 +387,7 @@ class ProjectManager {
 
   async addToRecent(
     project: Project,
-    fileHandle?: ProjectFileRef,
+    fileHandle?: FileSystemFileHandle,
   ): Promise<void> {
     if (!this.db) return;
 
@@ -553,7 +480,7 @@ class ProjectManager {
     });
   }
 
-  getCurrentFileHandle(): ProjectFileRef | null {
+  getCurrentFileHandle(): FileSystemFileHandle | null {
     return this.currentFileHandle;
   }
 

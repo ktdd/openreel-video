@@ -1,5 +1,7 @@
 # Phase 0: App Readiness — Implementation Plan
 
+> **Historical / superseded:** this belonged to the retired agent program. Keep retained deterministic editing, not the removed agent/desktop integrations. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make OpenReel's editing surface fully reachable through one undoable, serialized action seam with a plug-and-play action registry, a single capability manifest, a correct unified undo facade, headless-capable core, and `project` as the single source of truth — the prerequisites for the AI agent / MCP layer.

@@ -1,5 +1,7 @@
 # Phase 5: Hardening, Polish & Agent-Relevant Features — Status
 
+> **Historical / superseded:** agent/desktop portions are retired, not current support. Retained manual utilities follow current source/tests. See [archive status](../README.md).
+
 **Branch:** `feat/agent-phase0-readiness` · **Status:** ✅ Complete
 **Verification:** all four packages typecheck clean; **48 agent + 22 runner + 118 desktop + 333 web tests** green (incl. ~30 new Phase-5 tests); desktop tsup, runner CLI, and web vite builds all succeed.
 

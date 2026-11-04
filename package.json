@@ -15,6 +15,7 @@
         "test:watch": "bun run --filter '@openreel/*' test",
         "lint": "bun run --filter '@openreel/*' lint",
         "check:retired-cloud-gpu": "node scripts/check-retired-cloud-gpu.mjs",
+        "check:no-ai": "node scripts/check-no-ai.mjs && node scripts/check-retired-cloud-gpu.mjs",
         "typecheck": "bun run --filter '@openreel/*' typecheck",
         "clean": "bun run --filter '@openreel/*' clean"
     },
@@ -61,6 +62,7 @@
         "packages/*"
     ],
     "devDependencies": {
-        "@astryxdesign/cli": "^0.1.1"
+        "@astryxdesign/cli": "^0.1.1",
+        "@types/node": "^22.0.0"
     }
 }

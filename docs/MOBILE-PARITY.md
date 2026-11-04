@@ -1,5 +1,7 @@
 # Mobile / Cross-Platform Parity Matrix
 
+> **Historical / superseded.** This describes removed mobile/desktop apps and pre-removal web functionality, not the supported feature set of this browser-only fork. In particular, person segmentation and automatic captions are removed, not available offline. See [the removal plan](remove-ai-features.md) and [current workflows](editor-workflows.md). Historical findings below are unchanged.
+
 Scope: the timeline-semantics that were unified across the recent iOS correctness
 work, compared against Android and the web app. This documents where the three
 platforms agree and where they intentionally differ.

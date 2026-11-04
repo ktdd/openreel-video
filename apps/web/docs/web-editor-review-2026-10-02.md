@@ -1,5 +1,7 @@
 # OpenReel web editor review and improvements
 
+> **Historical QA report.** Landing, template/tour, AI/agent and desktop references describe the pre-removal app, not current support. See [current workflows](../../../docs/editor-workflows.md) and [the removal plan](../../../docs/remove-ai-features.md). Findings below are retained as dated evidence.
+
 Screenshots, test footage, and local QA evidence are retained outside Git; this report records their findings and validation limits.
 
 Reviewed on October 2, 2026. This review covers opening the browser editor, importing footage, editing on the timeline, recovering work, using shortcuts, and choosing export settings. The aim is to make dependable browser editing easier for a first-time user while retaining the controls experienced editors need.

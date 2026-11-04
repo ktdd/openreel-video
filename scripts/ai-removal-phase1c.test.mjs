@@ -46,7 +46,7 @@ test("multicam-only direct dependencies are removed without dropping shared medi
   const { dependencies } = JSON.parse(readFileSync(resolve(root, "packages/core/package.json"), "utf8"));
   assert.equal(dependencies["onnxruntime-web"], undefined);
   assert.equal(dependencies.yaml, undefined);
-  for (const name of ["mediabunny", "idb-keyval", "@ffmpeg/ffmpeg"]) {
+  for (const name of ["mediabunny", "@ffmpeg/ffmpeg"]) {
     assert.ok(dependencies[name], name);
   }
 });

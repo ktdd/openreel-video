@@ -22,7 +22,7 @@ test("web, desktop, server and retained packages have no agent or generative-ser
     .flatMap((path) => files(resolve(root, path)))
     .filter((path) => /\.[cm]?[jt]sx?$/.test(path) && !/\.(?:test|spec)\./.test(path));
   assert.ok(paths.length > 500);
-  for (const path of ["apps/web/src/App.tsx", "apps/web/src/desktop/DesktopApp.tsx", "apps/web/public/sw.js", "packages/core/src/index.ts"]) {
+  for (const path of ["apps/web/src/App.tsx", "apps/web/src/main.tsx", "apps/web/public/sw.js", "packages/core/src/index.ts"]) {
     assert.ok(paths.includes(resolve(root, path)), path);
   }
   for (const path of paths) {

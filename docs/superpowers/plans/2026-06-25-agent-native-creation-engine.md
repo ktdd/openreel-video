@@ -1,5 +1,7 @@
 # OpenReel Agent-Native Creation Engine Plan
 
+> **Historical / partly superseded:** agent tools/workspaces and desktop IPC are retired. Deterministic creation engines and native/WASM/CPU bindings remain. See [archive status](../README.md).
+
 **Date:** 2026-06-25
 **Status:** In progress
 **Goal:** Make OpenReel the place where agents and professionals can create detailed, editable 3D assets, scenes, interfaces, product intros, characters, simulations, and motion experiences without relying on random external GLB downloads or external DCC apps for the normal workflow.

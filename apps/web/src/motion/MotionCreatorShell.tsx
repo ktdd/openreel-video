@@ -31,7 +31,6 @@ import { Icon } from "@/icons/Icon";
 import { useRouter } from "../hooks/use-router";
 import { useProjectStore } from "../stores/project-store";
 import { toast } from "../stores/notification-store";
-import { useUIStore } from "../stores/ui-store";
 import { AnimationPresetsPanel } from "./components/AnimationPresetsPanel";
 import { AssetPanel } from "./components/AssetPanel";
 import { CreationWorkspacePanel } from "./components/CreationWorkspacePanel";
@@ -316,7 +315,6 @@ export function MotionCreatorShell({
   const insertMotionInstance = useProjectStore(
     (state) => state.insertMotionInstance,
   );
-  const setDesktopPage = useUIStore((state) => state.setDesktopPage);
   const parentCompositionId =
     compositionNavigationStack[compositionNavigationStack.length - 1] ?? null;
   const parentComposition = parentCompositionId
@@ -673,7 +671,6 @@ export function MotionCreatorShell({
         "Motion scene added",
         `${composition.name} is on the editor timeline.`,
       );
-      setDesktopPage("edit");
       navigate("editor");
     } catch (error) {
       toast.error(
@@ -729,16 +726,6 @@ export function MotionCreatorShell({
       setExportProgress(null);
     }
   }, [composition, isExportingScene, project, setExportActive]);
-
-  useEffect(() => {
-    const openMotionExport = () => {
-      void exportCurrentScene();
-    };
-    window.addEventListener("openreel:menu:export", openMotionExport);
-    return () => {
-      window.removeEventListener("openreel:menu:export", openMotionExport);
-    };
-  }, [exportCurrentScene]);
 
   useEffect(() => {
     const groupId = getInspectorGroupIdForTab(rightTab);

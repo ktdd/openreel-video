@@ -18,8 +18,7 @@ export interface WebCodecsBackendOptions {
   hardwareAcceleration?: HardwarePreference;
   videoCodecs?: VideoCodecName[];
   // The resolution clamp (export-engine) exists to bound browser-tab memory.
-  // On desktop, frames stream to disk one at a time and the hardware encoder
-  // handles high resolutions, so callers can opt out to export at full size.
+  // Specialized callers may opt out after establishing their own memory bound.
   clampResolution?: boolean;
 }
 

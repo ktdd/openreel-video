@@ -526,8 +526,7 @@ export class AutoSaveManager {
   /**
    * Whether the given project has edits that have not been persisted to the
    * latest auto-save slot. Returns false for a pristine session (no edits yet)
-   * and once the pending edits have been flushed. Used by the desktop
-   * unsaved-changes guard on quit/close.
+   * and once the pending edits have been flushed.
    */
   hasUnsavedChanges(project: Project): boolean {
     if (!this.isDirty) {

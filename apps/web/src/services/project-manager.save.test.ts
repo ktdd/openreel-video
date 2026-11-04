@@ -6,11 +6,9 @@ const project = createEmptyProject("My video");
 
 beforeEach(() => {
   (projectManager as unknown as { currentFileHandle: unknown }).currentFileHandle = null;
-  delete window.openreel;
 });
 afterEach(() => {
   delete (window as Window & { showSaveFilePicker?: unknown }).showSaveFilePicker;
-  delete window.openreel;
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
@@ -104,17 +102,6 @@ describe("ProjectManager save outcomes", () => {
     writable.abort.mockRejectedValueOnce(new Error("Already closed"));
 
     await expect(projectManager.saveProjectAs(project)).rejects.toThrow("Write failed");
-  });
-
-  it("rejects failures while overwriting an existing native file", async () => {
-    const writeFile = vi.fn(async () => {});
-    window.openreel = {
-      fs: { showSaveDialog: vi.fn(async () => "/tmp/video.oreel"), writeFile },
-    } as unknown as NonNullable<Window["openreel"]>;
-    await expect(projectManager.saveProjectAs(project)).resolves.toBe(true);
-    writeFile.mockRejectedValueOnce(new Error("Read-only folder"));
-
-    await expect(projectManager.saveProject(project)).rejects.toThrow("Read-only folder");
   });
 
   it("rejects a failed download and releases its temporary URL and link", async () => {

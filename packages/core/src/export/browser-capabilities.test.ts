@@ -26,9 +26,9 @@ describe("browser export preflight", () => {
     await expect(checkBrowserExportCapability(DEFAULT_VIDEO_SETTINGS, library("avc", null))).resolves.toMatchObject({ supported: false, reason: expect.stringContaining("cannot encode audio") });
     await expect(checkBrowserExportCapability({ ...DEFAULT_VIDEO_SETTINGS, format: "webm", codec: "vp9" }, library("vp9", "opus"))).resolves.toMatchObject({ supported: true, audioCodec: "opus" });
   });
-  it("rejects native-only export requirements explicitly", async () => {
+  it("rejects unsupported browser export requirements explicitly", async () => {
     for (const settings of [{ codec: "prores" }, { colorDepth: 10 }, { pixelFormat: "rgb" }] as const) {
-      await expect(checkBrowserExportCapability({ ...DEFAULT_VIDEO_SETTINGS, ...settings }, library())).resolves.toMatchObject({ supported: false, reason: expect.stringContaining("desktop") });
+      await expect(checkBrowserExportCapability({ ...DEFAULT_VIDEO_SETTINGS, ...settings }, library())).resolves.toMatchObject({ supported: false, reason: expect.stringContaining("unsupported by this browser export") });
     }
   });
   it("validates empty and nonfinite settings before browser clamping", () => {

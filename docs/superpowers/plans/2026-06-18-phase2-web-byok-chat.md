@@ -1,5 +1,7 @@
 # Phase 2: Web Built-in Chat (BYOK) — Status
 
+> **Retired / superseded:** chat, providers and credential clients are removed. Historical status only; see [archive status](../README.md).
+
 **Branch:** `feat/agent-phase0-readiness` · **Status:** ✅ Complete
 **Verification:** 12 `chat-store` tests + 326 web tests + 32 `@openreel/agent` tests green; agent + web typecheck clean; web lint clean (touched files); `vite build` succeeds (agent package bundles into the browser).
 

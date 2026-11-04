@@ -40,7 +40,7 @@ Also exercise:
 - Cancel during rendering: no partial download and no later success status. Retry after cancellation settles.
 - Choose a file location: cancelling the picker creates no fallback download. A permission/write failure is shown and may be retried.
 - Unsupported codec: the dialog explains the browser limitation; do not silently encode a different codec. Select another supported format.
-- ProRes/high bit depth: browser export requires explicit H.264 fallback; acknowledged output is MP4 with an `.mp4` filename. Desktop retains native options.
+- ProRes/high bit depth: browser export requires explicit H.264 fallback; acknowledged output is MP4 with an `.mp4` filename. Desktop/native-IPC export is removed; transparent motion output is available as PNG Sequence in the render queue.
 - Missing original: relink the original before exporting. A preview proxy alone cannot authorize full-quality export.
 
 Encoder availability differs by browser and operating system. Capability checks query the selected codec/container and output size. Unavailable HEVC, AV1, ProRes, or audio encoders must be reported honestly rather than presented as completed exports.

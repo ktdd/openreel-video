@@ -12,21 +12,16 @@ import type { CreationProjectState } from "@openreel/core/creation/index";
 import {
   DEFAULT_MOTION_INSTANCE_TRANSFORM,
   DEFAULT_VIDEO_SETTINGS,
-  getAudioEngine,
   getExportEngine,
-  trackHasAudioItems,
-  isMotionLayerContentVisible,
   MotionHighQualityRenderer,
   motionEngine,
   motionRenderer,
 } from "@openreel/core";
-import { resolveCreationMotionSceneBinding } from "@openreel/core/creation/index";
 import {
   createDownloadWritable,
   mimeForExt,
 } from "../services/export-runner";
 import { createWebMotionAssetResolver } from "./motion-asset-resolver";
-import { NativeFFmpegBackend } from "../services/native-ffmpeg-backend";
 import { createStoredZip, type ZipStoreEntry } from "./zip-store";
 
 export interface ExportMotionCompositionFrameOptions {
@@ -181,7 +176,6 @@ export interface ExportMotionCompositionSceneResult {
 }
 
 let motionFrameRenderer: MotionHighQualityRenderer | null = null;
-const NATIVE_AURORA_AUDIO_CHUNK_DURATION_SECONDS = 15;
 
 function getMotionFrameRenderer(): MotionHighQualityRenderer {
   if (!motionFrameRenderer) {
@@ -195,7 +189,6 @@ export async function exportMotionCompositionFramePng({
   time,
   compositionLibrary = [composition],
   mediaItems = [],
-  creation,
   filename,
 }: ExportMotionCompositionFrameOptions): Promise<ExportMotionCompositionFrameResult> {
   const safeTime = clampTime(time, composition.duration);
@@ -207,7 +200,7 @@ export async function exportMotionCompositionFramePng({
 
   const bitmap = await getMotionFrameRenderer().render(composition, safeTime, {
     compositionLibrary: library,
-    assetResolver: createWebMotionAssetResolver(mediaItems, { creation }),
+    assetResolver: createWebMotionAssetResolver(mediaItems),
     supersample: 2,
   });
 
@@ -233,7 +226,6 @@ export async function renderMotionCompositionFrameToDataUrl({
   time,
   compositionLibrary = [composition],
   mediaItems = [],
-  creation,
   scale,
 }: RenderMotionCompositionFrameToDataUrlOptions): Promise<RenderMotionCompositionFrameToDataUrlResult> {
   const safeTime = clampTime(time, composition.duration);
@@ -246,7 +238,7 @@ export async function renderMotionCompositionFrameToDataUrl({
 
   const bitmap = await getMotionFrameRenderer().render(composition, safeTime, {
     compositionLibrary: library,
-    assetResolver: createWebMotionAssetResolver(mediaItems, { creation }),
+    assetResolver: createWebMotionAssetResolver(mediaItems),
     supersample,
   });
 
@@ -285,10 +277,6 @@ function blobToDataUrl(blob: Blob): Promise<string> {
   });
 }
 
-function hasNativeMotionExportBackend(): boolean {
-  return typeof window !== "undefined" && window.openreel?.platform === "desktop";
-}
-
 function motionExportFormatRequiresNative(
   descriptor: MotionExportFormatDescriptor,
 ): boolean {
@@ -300,7 +288,7 @@ function resolveEncodedMotionFormat(
   descriptor: MotionExportFormatDescriptor,
 ): { readonly format: MotionExportFormat; readonly normalizedToH264: boolean } {
   const willNormalize =
-    motionExportFormatRequiresNative(descriptor) && !hasNativeMotionExportBackend();
+    motionExportFormatRequiresNative(descriptor);
   return willNormalize
     ? { format: "mp4", normalizedToH264: true }
     : { format: descriptor.id, normalizedToH264: false };
@@ -344,93 +332,6 @@ function buildMotionSceneExportSettings(
   return { ...base, format: "mp4", codec: "h264", pixelFormat: "yuv420" };
 }
 
-type NativeAuroraSceneLayer = Extract<MotionComposition["layers"][number], { type: "scene3d" }>;
-
-interface NativeAuroraExportCandidate {
-  readonly layer: NativeAuroraSceneLayer;
-  readonly binding: NonNullable<ReturnType<typeof resolveCreationMotionSceneBinding>>;
-}
-
-function getDesktopAuroraSequenceBridge() {
-  const bridge =
-    window.openreel?.platform === "desktop" ? window.openreel.aurora : undefined;
-  if (
-    !bridge?.startSequenceSession ||
-    !bridge.cancelSequenceSession ||
-    !bridge.onSequenceEvent
-  ) {
-    return null;
-  }
-  return bridge;
-}
-
-function isNativeAuroraSceneLayerCompatible(
-  composition: MotionComposition,
-  layer: NativeAuroraSceneLayer,
-): boolean {
-  const transform = layer.transform;
-  return (
-    layer.startTime === 0 &&
-    layer.duration >= composition.duration &&
-    !layer.parentId &&
-    !layer.keyframes.length &&
-    !(layer.expressions?.length) &&
-    !(layer.effects?.length) &&
-    !(layer.masks?.length) &&
-    !layer.trackMatte &&
-    !layer.blendMode &&
-    !layer.motionBlur &&
-    !layer.autoOrient &&
-    !(layer.variableBindings?.length) &&
-    (layer.width === undefined || layer.width === composition.width) &&
-    (layer.height === undefined || layer.height === composition.height) &&
-    transform.position.x === composition.width / 2 &&
-    transform.position.y === composition.height / 2 &&
-    (transform.position.z ?? 0) === 0 &&
-    transform.scale.x === 1 &&
-    transform.scale.y === 1 &&
-    transform.rotation === 0 &&
-    (transform.rotation3d?.x ?? 0) === 0 &&
-    (transform.rotation3d?.y ?? 0) === 0 &&
-    (transform.rotation3d?.z ?? 0) === 0 &&
-    transform.anchor.x === 0.5 &&
-    transform.anchor.y === 0.5 &&
-    transform.opacity === 1 &&
-    (transform.perspective ?? 1000) === 1000 &&
-    (transform.transformStyle ?? "flat") === "flat"
-  );
-}
-
-function resolveNativeAuroraExportCandidate(
-  project: Project,
-  composition: MotionComposition,
-): NativeAuroraExportCandidate | null {
-  if (!getDesktopAuroraSequenceBridge()) return null;
-  if (composition.duration <= 0 || composition.frameRate <= 0) return null;
-
-  const visibleRenderableLayers = composition.layers.filter(
-    (layer) =>
-      layer.visible &&
-      layer.type !== "group" &&
-      layer.type !== "null" &&
-      isMotionLayerContentVisible(composition, layer),
-  );
-  if (visibleRenderableLayers.length !== 1) return null;
-
-  const layer = visibleRenderableLayers[0];
-  if (layer.type !== "scene3d") return null;
-  if (!isNativeAuroraSceneLayerCompatible(composition, layer)) return null;
-
-  const binding = resolveCreationMotionSceneBinding(
-    project.creation,
-    composition.id,
-    layer.id,
-  );
-  if (!binding) return null;
-
-  return { layer, binding };
-}
-
 function createExportProgress(
   phase: ExportProgress["phase"],
   progress: number,
@@ -446,234 +347,6 @@ function createExportProgress(
     currentFrame,
     totalFrames,
   };
-}
-
-async function prepareNativeAuroraOutputPath(
-  filename: string,
-  extension: MotionExportFormatDescriptor["extension"],
-): Promise<void> {
-  const showSaveDialog = window.openreel?.fs?.showSaveDialog;
-  if (typeof showSaveDialog !== "function") {
-    throw new Error("Native Aurora export is only available in the desktop app.");
-  }
-  const chosen = await showSaveDialog({
-    defaultPath: filename,
-    filters: [{ name: "Media file", extensions: [extension] }],
-  });
-  if (!chosen) {
-    throw new DOMException("User cancelled", "AbortError");
-  }
-  (window as { __openreelExportPath?: string }).__openreelExportPath = chosen;
-}
-
-async function encodeMotionSceneAudioToNativeBackend(
-  project: Project,
-  backend: NativeFFmpegBackend,
-  totalFrames: number,
-  onProgress?: (progress: ExportProgress) => void,
-): Promise<void> {
-  const timelineDuration = Math.max(0, project.timeline.duration);
-  if (timelineDuration <= 0) return;
-
-  const hasAudio = project.timeline.tracks.some(
-    (track) => !track.muted && trackHasAudioItems(project, track.id),
-  );
-  if (!hasAudio) return;
-
-  const audioEngine = getAudioEngine();
-  if (!audioEngine.isInitialized()) {
-    await audioEngine.initialize();
-  }
-
-  const chunkDuration = NATIVE_AURORA_AUDIO_CHUNK_DURATION_SECONDS;
-  const totalChunks = Math.max(1, Math.ceil(timelineDuration / chunkDuration));
-
-  try {
-    let chunkIndex = 0;
-    for (let startTime = 0; startTime < timelineDuration; startTime += chunkDuration) {
-      const currentChunkDuration = Math.min(
-        chunkDuration,
-        timelineDuration - startTime,
-      );
-      const rendered = await audioEngine.renderAudio(
-        project,
-        startTime,
-        currentChunkDuration,
-      );
-      await backend.addAudioBuffer(rendered.buffer);
-      chunkIndex += 1;
-      onProgress?.(
-        createExportProgress(
-          "encoding",
-          chunkIndex / totalChunks,
-          0,
-          totalFrames,
-        ),
-      );
-      await new Promise((resolve) => window.setTimeout(resolve, 0));
-    }
-  } finally {
-    audioEngine.clearCache();
-  }
-}
-
-async function exportMotionCompositionSceneWithNativeAurora(
-  composition: MotionComposition,
-  descriptor: MotionExportFormatDescriptor,
-  exportProject: Project,
-  settings: VideoExportSettings,
-  resolvedFilename: string,
-  candidate: NativeAuroraExportCandidate,
-  onProgress?: (progress: ExportProgress) => void,
-): Promise<ExportMotionCompositionSceneResult> {
-  const bridge = getDesktopAuroraSequenceBridge();
-  if (!bridge) {
-    throw new Error("Native Aurora export requires the desktop bridge.");
-  }
-
-  await prepareNativeAuroraOutputPath(resolvedFilename, descriptor.extension);
-
-  const totalFrames = Math.max(
-    1,
-    Math.ceil(composition.duration * composition.frameRate),
-  );
-  const backend = new NativeFFmpegBackend(
-    () => (window as { __openreelExportPath?: string }).__openreelExportPath ?? "",
-  );
-  const requestedSessionId = `aurora-export-${composition.id}-${Math.random()
-    .toString(36)
-    .slice(2, 10)}`;
-  let activeSessionId = requestedSessionId;
-  let sequenceStarted = false;
-  let renderedFrames = 0;
-  let renderStartMs = 0;
-  let resolveDone: (() => void) | null = null;
-  let rejectDone: ((error: Error) => void) | null = null;
-  let settled = false;
-  const done = new Promise<void>((resolve, reject) => {
-    resolveDone = resolve;
-    rejectDone = reject;
-  });
-  let processing = Promise.resolve();
-
-  const settleError = (error: unknown): void => {
-    if (settled) return;
-    settled = true;
-    rejectDone?.(error instanceof Error ? error : new Error(String(error)));
-  };
-  const settleDone = (): void => {
-    if (settled) return;
-    settled = true;
-    resolveDone?.();
-  };
-
-  const unsubscribe = bridge.onSequenceEvent((event) => {
-    if (event.sessionId !== activeSessionId && event.sessionId !== requestedSessionId) {
-      return;
-    }
-    if (settled) return;
-    processing = processing
-      .catch(() => undefined)
-      .then(async () => {
-        if (settled) return;
-        if (event.kind === "error") {
-          throw new Error(event.error);
-        }
-        const bitmap = await createImageBitmap(
-          new ImageData(
-            new Uint8ClampedArray(event.result.rgba),
-            event.result.width,
-            event.result.height,
-          ),
-        );
-        await backend.addVideoFrame(bitmap, event.timeSeconds);
-        renderedFrames = event.frameIndex + 1;
-
-        const elapsedSeconds = (performance.now() - renderStartMs) / 1000;
-        const estimatedTimeRemaining =
-          event.progress > 0
-            ? (elapsedSeconds * (1 - event.progress)) / event.progress
-            : 0;
-        onProgress?.(
-          createExportProgress(
-            "rendering",
-            event.progress,
-            renderedFrames,
-            event.totalFrames,
-            estimatedTimeRemaining,
-          ),
-        );
-
-        if (event.done) {
-          settleDone();
-        }
-      });
-    processing.catch((error) => settleError(error));
-  });
-
-  try {
-    onProgress?.(createExportProgress("preparing", 0, 0, totalFrames));
-    await backend.start(settings, exportProject);
-    await encodeMotionSceneAudioToNativeBackend(
-      exportProject,
-      backend,
-      totalFrames,
-      onProgress,
-    );
-    await backend.closeAudio();
-
-    renderStartMs = performance.now();
-    const started = await bridge.startSequenceSession({
-      sessionId: requestedSessionId,
-      scene: candidate.binding.scene,
-      assets: [...candidate.binding.assets],
-      width: composition.width,
-      height: composition.height,
-      frameRate: composition.frameRate,
-      durationSeconds: composition.duration,
-      background: composition.backgroundColor,
-      quality: "final",
-    });
-    activeSessionId = started.sessionId;
-    sequenceStarted = true;
-
-    await done;
-    await processing;
-    onProgress?.(
-      createExportProgress(
-        "muxing",
-        1,
-        renderedFrames || totalFrames,
-        totalFrames,
-      ),
-    );
-    await backend.finalize();
-    onProgress?.(
-      createExportProgress(
-        "complete",
-        1,
-        renderedFrames || totalFrames,
-        totalFrames,
-      ),
-    );
-
-    return {
-      filename: resolvedFilename,
-      width: composition.width,
-      height: composition.height,
-      duration: composition.duration,
-      framesRendered: renderedFrames || totalFrames,
-      encodedFormat: descriptor.id,
-    };
-  } catch (error) {
-    if (sequenceStarted) {
-      await bridge.cancelSequenceSession(activeSessionId).catch(() => undefined);
-    }
-    await backend.abort().catch(() => undefined);
-    throw error;
-  } finally {
-    unsubscribe();
-  }
 }
 
 export async function exportMotionCompositionScene({
@@ -734,18 +407,6 @@ export async function exportMotionCompositionScene({
     encodedFormat,
     scale,
   );
-  const nativeCandidate = resolveNativeAuroraExportCandidate(project, composition);
-  if (nativeCandidate) {
-    return exportMotionCompositionSceneWithNativeAurora(
-      composition,
-      descriptor,
-      exportProject,
-      settings,
-      resolvedFilename,
-      nativeCandidate,
-      onProgress,
-    );
-  }
   const writable = await createDownloadWritable(
     resolvedFilename,
     mimeForExt(descriptor.extension),
@@ -829,7 +490,6 @@ async function exportMotionCompositionScenePngSequence({
   resolvedRange,
   scale,
   mediaItems,
-  creation,
   isCanceled,
   onProgress,
 }: ExportPngSequenceParams): Promise<ExportMotionCompositionSceneResult> {
@@ -838,7 +498,7 @@ async function exportMotionCompositionScenePngSequence({
   )
     ? compositionLibrary
     : [composition, ...compositionLibrary];
-  const assetResolver = createWebMotionAssetResolver(mediaItems, { creation });
+  const assetResolver = createWebMotionAssetResolver(mediaItems);
   const supersample = clampSupersample(scale * 2);
   const frameRate = Math.max(1, composition.frameRate);
   const totalFrames = resolvedRange.frameCount;

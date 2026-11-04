@@ -1,5 +1,7 @@
 # OpenReel Desktop — Phase 4 (BYOK keychain + AI routing + share-link origin) Implementation Plan
 
+> **Retired / superseded:** desktop, provider/keychain clients and AI routing are removed. Browser sharing remains. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans (inline) or subagent-driven-development. Steps use checkbox (`- [ ]`).
 
 **Goal:** On desktop, store the user's own AI provider keys in the OS keychain and make AI calls **directly from the main process** (key never reaches the renderer), routed transparently through the existing `secure-storage`/`apiFetch` seams; and fix share/deep-link URLs to use the public web origin instead of `app://`.

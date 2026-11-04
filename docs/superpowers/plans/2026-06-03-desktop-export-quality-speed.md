@@ -1,5 +1,7 @@
 # Desktop Export Quality/Size/Speed/Format Implementation Plan
 
+> **Retired / superseded:** desktop export adapters/UI are removed. Browser export and presets remain. See [archive status](../README.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Give desktop (Electron) exports a Fast/Balanced/Smallest mode, quality-based rate control, and correct H.264/HEVC/AV1/ProRes output — producing smaller files at equal-or-better quality across more formats, reliably.

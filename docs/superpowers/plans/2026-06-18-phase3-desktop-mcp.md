@@ -1,5 +1,7 @@
 # Phase 3: Desktop MCP Server — Status
 
+> **Retired / superseded:** desktop and MCP integration are removed. Historical status only; see [archive status](../README.md).
+
 **Branch:** `feat/agent-phase0-readiness` · **Status:** ✅ Complete (E2E with a real MCP client + packaged build noted below)
 **Verification:** desktop + web typecheck clean; 114 desktop tests (incl. 28 new MCP tests) + 338 web tests green; `tsup` builds main + preload + shim (shebang + exec bit preserved); `vite build` succeeds.
 

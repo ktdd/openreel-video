@@ -1,36 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { stripFfmpegPlugin } from "./vite-plugins/strip-ffmpeg";
-import { pruneFontsPlugin } from "./vite-plugins/prune-fonts";
-
-const isDesktop = process.env.OPENREEL_DESKTOP === "1";
-
-function desktopHtmlPlugin() {
-  return {
-    name: "openreel-desktop-html",
-    transformIndexHtml(html: string) {
-      if (!isDesktop) return html;
-      let out = html
-        .replace(/href="\/favicon\.svg"/g, 'href="./favicon.svg"')
-        .replace(/href="\/manifest\.json"/g, 'href="./manifest.json"')
-        .replace(/href="\/icons\/icon-192\.png"/g, 'href="./icons/icon-192.png"');
-      out = out.replace(
-        /<link rel="preconnect"[^>]*>\s*/g,
-        "",
-      );
-      out = out.replace(
-        /<link href="https:\/\/fonts\.googleapis\.com[^>]*>\s*/g,
-        '<link href="./fonts/google-fonts.css" rel="stylesheet" />',
-      );
-      return out;
-    },
-  };
-}
 
 export default defineConfig({
-  base: isDesktop ? "./" : "/",
-  plugins: [react(), desktopHtmlPlugin(), stripFfmpegPlugin(isDesktop), pruneFontsPlugin(isDesktop)],
+  base: "/",
+  plugins: [react()],
   assetsInclude: ["**/*.wasm"],
   resolve: {
     dedupe: ["react", "react-dom"],
