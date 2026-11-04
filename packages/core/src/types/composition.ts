@@ -268,33 +268,3 @@ export interface Variable {
   step?: number;
   options?: string[];
 }
-
-export type TemplateCategory =
-  | "social"
-  | "logo"
-  | "explainer"
-  | "callout"
-  | "title"
-  | "transition";
-
-export interface Template {
-  id: string;
-  name: string;
-  description?: string;
-  category: TemplateCategory;
-  tags?: string[];
-  thumbnailUrl: string;
-  previewUrl?: string;
-  composition: Composition;
-  variables: Variable[];
-  createdAt?: number;
-  updatedAt?: number;
-  author?: string;
-  version?: string;
-}
-
-export interface TemplatePreset {
-  id: string;
-  name: string;
-  templates: Template[];
-}

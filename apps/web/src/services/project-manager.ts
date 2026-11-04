@@ -62,120 +62,6 @@ export interface RecentProject {
   trackCount?: number;
 }
 
-export interface ProjectTemplate {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  settings: Partial<ProjectSettings>;
-  thumbnail?: string;
-  tracks?: Array<{ type: string; name: string }>;
-}
-
-const DEFAULT_TEMPLATES: ProjectTemplate[] = [
-  {
-    id: "blank",
-    name: "Blank Project",
-    description: "Start from scratch with no pre-configured tracks",
-    category: "General",
-    settings: { width: 1920, height: 1080, frameRate: 30 },
-  },
-  {
-    id: "youtube-landscape",
-    name: "YouTube Landscape",
-    description: "1920x1080 at 30fps - Standard YouTube format",
-    category: "Social Media",
-    settings: { width: 1920, height: 1080, frameRate: 30 },
-    tracks: [
-      { type: "video", name: "Main Video" },
-      { type: "audio", name: "Background Music" },
-      { type: "audio", name: "Voiceover" },
-    ],
-  },
-  {
-    id: "youtube-short",
-    name: "YouTube Shorts",
-    description: "1080x1920 at 60fps - Vertical short-form content",
-    category: "Social Media",
-    settings: { width: 1080, height: 1920, frameRate: 60 },
-    tracks: [
-      { type: "video", name: "Main Video" },
-      { type: "audio", name: "Audio" },
-      { type: "text", name: "Captions" },
-    ],
-  },
-  {
-    id: "tiktok",
-    name: "TikTok",
-    description: "1080x1920 at 60fps - Optimized for TikTok",
-    category: "Social Media",
-    settings: { width: 1080, height: 1920, frameRate: 60 },
-    tracks: [
-      { type: "video", name: "Main" },
-      { type: "audio", name: "Sound" },
-    ],
-  },
-  {
-    id: "instagram-reel",
-    name: "Instagram Reel",
-    description: "1080x1920 at 30fps - Instagram Reels format",
-    category: "Social Media",
-    settings: { width: 1080, height: 1920, frameRate: 30 },
-    tracks: [
-      { type: "video", name: "Video" },
-      { type: "audio", name: "Audio" },
-    ],
-  },
-  {
-    id: "instagram-post",
-    name: "Instagram Post",
-    description: "1080x1080 at 30fps - Square format for posts",
-    category: "Social Media",
-    settings: { width: 1080, height: 1080, frameRate: 30 },
-    tracks: [{ type: "video", name: "Video" }],
-  },
-  {
-    id: "cinematic-4k",
-    name: "Cinematic 4K",
-    description: "3840x2160 at 24fps - Film-like quality",
-    category: "Professional",
-    settings: { width: 3840, height: 2160, frameRate: 24 },
-    tracks: [
-      { type: "video", name: "A-Roll" },
-      { type: "video", name: "B-Roll" },
-      { type: "audio", name: "Dialogue" },
-      { type: "audio", name: "Music" },
-      { type: "audio", name: "SFX" },
-    ],
-  },
-  {
-    id: "podcast",
-    name: "Podcast Video",
-    description: "1920x1080 at 30fps - Audio-focused with waveform visualizer",
-    category: "Audio",
-    settings: { width: 1920, height: 1080, frameRate: 30 },
-    tracks: [
-      { type: "video", name: "Background" },
-      { type: "audio", name: "Host" },
-      { type: "audio", name: "Guest" },
-      { type: "graphics", name: "Waveform" },
-    ],
-  },
-  {
-    id: "tutorial",
-    name: "Screen Recording",
-    description: "1920x1080 at 60fps - Perfect for tutorials",
-    category: "Educational",
-    settings: { width: 1920, height: 1080, frameRate: 60 },
-    tracks: [
-      { type: "video", name: "Screen" },
-      { type: "video", name: "Webcam" },
-      { type: "audio", name: "Narration" },
-      { type: "text", name: "Annotations" },
-    ],
-  },
-];
-
 type ProjectManagerEvent = "recentUpdated" | "projectSaved" | "projectOpened";
 type EventCallback = (data?: unknown) => void;
 
@@ -254,37 +140,17 @@ class ProjectManager {
   async createProject(
     options: {
       name?: string;
-      templateId?: string;
       settings?: Partial<ProjectSettings>;
     } = {},
   ): Promise<Project> {
-    const template = options.templateId
-      ? DEFAULT_TEMPLATES.find((t) => t.id === options.templateId) ||
-        DEFAULT_TEMPLATES[0]
-      : DEFAULT_TEMPLATES[0];
-
     const settings: ProjectSettings = {
       width: 1920,
       height: 1080,
       frameRate: 30,
       sampleRate: 48000,
       channels: 2,
-      ...template.settings,
       ...options.settings,
     };
-
-    const tracks =
-      template.tracks?.map((t, i) => ({
-        id: `track-${Date.now()}-${i}`,
-        type: t.type as "video" | "audio" | "image" | "text" | "graphics",
-        name: t.name,
-        clips: [],
-        transitions: [],
-        locked: false,
-        hidden: false,
-        muted: false,
-        solo: false,
-      })) || [];
 
     const project: Project = {
       id: uuidv4(),
@@ -294,7 +160,7 @@ class ProjectManager {
       settings,
       timeline: {
         duration: 0,
-        tracks,
+        tracks: [],
         markers: [],
         subtitles: [],
       },
@@ -685,20 +551,6 @@ class ProjectManager {
 
       tx.onerror = () => resolve();
     });
-  }
-
-  getTemplates(): ProjectTemplate[] {
-    return [...DEFAULT_TEMPLATES];
-  }
-
-  getTemplatesByCategory(): Map<string, ProjectTemplate[]> {
-    const map = new Map<string, ProjectTemplate[]>();
-    for (const template of DEFAULT_TEMPLATES) {
-      const existing = map.get(template.category) || [];
-      existing.push(template);
-      map.set(template.category, existing);
-    }
-    return map;
   }
 
   getCurrentFileHandle(): ProjectFileRef | null {

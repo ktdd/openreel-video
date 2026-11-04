@@ -7645,7 +7645,6 @@ export const Preview: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      data-tour="preview"
       tabIndex={0}
       aria-label="Preview canvas"
       onKeyDown={handlePreviewKeyDown}

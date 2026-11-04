@@ -254,6 +254,16 @@ describe("ProjectStore", () => {
     });
   });
 
+  it("creates blank motion compositions at project dimensions without a starter catalog", async () => {
+    useProjectStore.getState().createNewProject("Vertical", { width: 1080, height: 1920, frameRate: 24 });
+    const composition = await useProjectStore.getState().createMotionComposition("Blank motion");
+    expect(composition).toMatchObject({
+      name: "Blank motion", width: 1080, height: 1920, frameRate: 24,
+      layers: [], assets: [], variables: [],
+    });
+    expect(useProjectStore.getState().project.motionCompositions).toContainEqual(composition);
+  });
+
   describe("requireOpenProject guard", () => {
     it("rejects executeAction when no project is open", async () => {
       useProjectStore.setState({ hasOpenProject: false });

@@ -13,7 +13,6 @@ export type MotionLeftTab =
   | "start"
   | "layers"
   | "assets"
-  | "templates"
   | "creation";
 export type MotionRightTab =
   | "properties"

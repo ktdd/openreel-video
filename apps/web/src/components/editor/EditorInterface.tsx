@@ -12,7 +12,6 @@ import { KeyframeEditorPanel } from "./KeyframeEditorPanel";
 import { AudioMixer } from "../audio-mixer";
 import { KeyboardShortcutsOverlay } from "./KeyboardShortcutsOverlay";
 import { PanelErrorBoundary } from "../ErrorBoundary";
-import { SpotlightTour, MoGraphTour } from "./tour";
 import { useProjectStore } from "../../stores/project-store";
 import { useUIStore } from "../../stores/ui-store";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
@@ -542,8 +541,6 @@ export const EditorInterface: React.FC = () => {
         onClose={() => setShowShortcutsOverlay(false)}
       />
 
-      <SpotlightTour />
-      <MoGraphTour />
     </div>
   );
 };

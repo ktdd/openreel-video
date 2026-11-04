@@ -3,7 +3,7 @@ import {
   Image as ImageIcon, Film, Music, Plus, Upload, Trash2,
   Square, Circle, Triangle, Star, ArrowRight, Hexagon, FileCode, AlertTriangle,
   RefreshCw, Palette, Sparkles, Video,
-  Type, Shapes, Wand2, LayoutTemplate, Zap, Shuffle,
+  Type, Shapes, Wand2, Zap, Shuffle,
 } from "@/icons/lucide-compat";
 import {
   BACKGROUND_PRESETS,
@@ -18,7 +18,6 @@ import type { MediaItem } from "@openreel/core";
 import { AspectRatioMatchDialog } from "./dialogs/AspectRatioMatchDialog";
 import { AIGenTab } from "./AIGenTab";
 import { RecipesTab } from "./panels/RecipesTab";
-import { TemplatesTab } from "./panels/TemplatesTab";
 import {
   EffectsPanel,
   TransitionsPanel,
@@ -57,8 +56,7 @@ type AssetsTab =
   | "effects"
   | "transitions"
   | "ai"
-  | "recipes"
-  | "templates";
+  | "recipes";
 
 const ASSETS_TABS: ReadonlyArray<{
   value: AssetsTab;
@@ -99,11 +97,6 @@ const ASSETS_TABS: ReadonlyArray<{
     value: "recipes",
     label: "Recipes",
     description: "Apply clip-scoped looks, overlays, and text stacks.",
-  },
-  {
-    value: "templates",
-    label: "Project Templates",
-    description: "Load full-project starter layouts and presets.",
   },
 ] as const;
 
@@ -199,7 +192,6 @@ const TAB_ICONS: Record<AssetsTab, React.ElementType> = {
   transitions: Shuffle,
   ai: Sparkles,
   recipes: Wand2,
-  templates: LayoutTemplate,
 };
 
 const PanelIconButton: React.FC<{
@@ -678,7 +670,7 @@ export const AssetsPanel: React.FC = () => {
   const { retryTask } = useKieAIStore();
 
   // UI store
-  const { select, isSelected, startDrag, openModal } = useUIStore();
+  const { select, isSelected, startDrag } = useUIStore();
 
   // Count missing assets
   const missingAssetsCount = mediaItems.filter(
@@ -1030,25 +1022,6 @@ export const AssetsPanel: React.FC = () => {
                     <path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2" />
                   </svg>
                   Import
-                </button>
-                <button
-                  type="button"
-                  aria-label="Record"
-                  onClick={() => openModal("recorder")}
-                  className="flex-1 flex items-center justify-center gap-[7px] bg-bg border border-border rounded-[9px] p-[10px] font-medium text-[13px] text-fg-2"
-                >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="var(--fg-3)"
-                    strokeWidth="1.9"
-                  >
-                    <circle cx="12" cy="12" r="8" />
-                    <circle cx="12" cy="12" r="3" fill="var(--fg-3)" stroke="none" />
-                  </svg>
-                  Record
                 </button>
                 <button
                   type="button"
@@ -1512,12 +1485,6 @@ export const AssetsPanel: React.FC = () => {
             <RecipesTab />
           </div>
         );
-      case "templates":
-        return (
-          <div className="flex min-h-0 flex-1 flex-col border-t border-border/70 bg-background-secondary content-area-fix">
-            <TemplatesTab />
-          </div>
-        );
       default:
         return null;
     }
@@ -1525,7 +1492,6 @@ export const AssetsPanel: React.FC = () => {
 
   return (
     <div
-      data-tour="assets"
       className="w-full h-full bg-bg-1 overflow-hidden flex flex-row relative"
     >
       {/* ── Vertical tool rail (icon + label, left) ───────────── */}

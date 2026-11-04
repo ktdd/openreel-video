@@ -102,7 +102,7 @@ function hasShortcutFocus(event: KeyboardEvent): boolean {
   // Let focused controls keep their native keyboard activation/navigation.
   const control = target.closest('button, a[href], [role="button"], [role="tab"]');
   if (control) {
-    const timelineItem = control.matches('[role="button"]:not(button)') && control.closest('[data-tour="timeline"]');
+    const timelineItem = control.matches('[role="button"]:not(button)') && control.closest('[data-editor-panel="timeline"]');
     if ([" ", "Enter"].includes(event.key)) return false;
     if (!timelineItem && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(event.key)) return false;
   }

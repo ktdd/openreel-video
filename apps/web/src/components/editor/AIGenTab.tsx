@@ -5,7 +5,6 @@ import {
   Palette,
   Music,
   Video,
-  Layers,
   ChevronRight,
   Wand2,
   FileStack,
@@ -18,12 +17,11 @@ import { AutoCaptionPanel } from "./inspector/AutoCaptionPanel";
 import { TextToSpeechPanel } from "./inspector/TextToSpeechPanel";
 import { FilterPresetsPanel } from "./inspector/FilterPresetsPanel";
 import { MusicLibraryPanel } from "./inspector/MusicLibraryPanel";
-import { TemplatesBrowserPanel } from "./inspector/TemplatesBrowserPanel";
 import { MultiCameraPanel } from "./inspector/MultiCameraPanel";
 import { useTtsAudioStore } from "../../stores/tts-store";
 import { toast } from "../../stores/notification-store";
 
-type FeatureId = "templates" | "captions" | "tts" | "filters" | "music" | "multicam" | null;
+type FeatureId = "captions" | "tts" | "filters" | "music" | "multicam" | null;
 
 interface FeatureCardProps {
   icon: React.ElementType;
@@ -123,8 +121,6 @@ export const AIGenTab: React.FC = () => {
 
   const renderActivePanel = () => {
     switch (activeFeature) {
-      case "templates":
-        return <TemplatesBrowserPanel />;
       case "captions":
         return <AutoCaptionPanel />;
       case "tts":
@@ -199,19 +195,7 @@ export const AIGenTab: React.FC = () => {
           />
         </FeatureSection>
 
-        <FeatureSection title="Templates & Presets" icon={FileStack}>
-          <FeatureCard
-            icon={Layers}
-            title="Project Templates"
-            description="Start with pre-built project structures"
-            iconColor="text-green-400"
-            iconBg="bg-green-500/20"
-            activeBorder="border-green-500/50"
-            activeBg="bg-green-500/10"
-            activeRing="ring-green-500/30"
-            isActive={activeFeature === "templates"}
-            onClick={() => handleFeatureClick("templates")}
-          />
+        <FeatureSection title="Presets" icon={FileStack}>
           <FeatureCard
             icon={Palette}
             title="Filter Presets"

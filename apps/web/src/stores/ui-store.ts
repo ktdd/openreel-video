@@ -92,8 +92,6 @@ export interface UIState {
   dragData: Record<string, unknown> | null;
   cropMode: boolean;
   cropClipId: string | null;
-  showWelcomeScreen: boolean;
-  skipWelcomeScreen: boolean;
   motionPathMode: boolean;
   motionPathClipId: string | null;
   keyframeEditorOpen: boolean;
@@ -139,8 +137,6 @@ export interface UIState {
   ) => void;
   endDrag: () => void;
   setCropMode: (enabled: boolean, clipId?: string) => void;
-  setShowWelcomeScreen: (show: boolean) => void;
-  setSkipWelcomeScreen: (skip: boolean) => void;
   setMotionPathMode: (enabled: boolean, clipId?: string) => void;
   setKeyframeEditorOpen: (open: boolean) => void;
   toggleKeyframeEditor: () => void;
@@ -205,6 +201,25 @@ const DEFAULT_PANELS: Record<PanelId, PanelState> = {
   agentChat: { visible: false, width: 380 },
 };
 
+const PERSISTED_UI_KEYS = [
+  "snapSettings", "panels", "shortcuts", "theme", "showWaveforms",
+  "showThumbnails", "showKeyframes", "autoScroll", "timelineMaximized",
+  "playbackQuality", "inspectorActiveTab", "desktopPage",
+] as const;
+
+function pickUIPreferences(value: unknown): Partial<UIState> {
+  if (!value || typeof value !== "object") return {};
+  const saved = value as Partial<UIState>;
+  const preferences: Partial<UIState> = Object.fromEntries(
+    PERSISTED_UI_KEYS.filter((key) => saved[key] !== undefined)
+      .map((key) => [key, saved[key]]),
+  );
+  if (["templates", "template-variables"].includes(preferences.inspectorActiveTab ?? "")) {
+    preferences.inspectorActiveTab = "transform";
+  }
+  return preferences;
+}
+
 export const useUIStore = create<UIState>()(
   subscribeWithSelector(
     persist(
@@ -248,9 +263,6 @@ export const useUIStore = create<UIState>()(
         inspectorActiveTab: "transform",
 
         desktopPage: "edit",
-
-        showWelcomeScreen: true,
-        skipWelcomeScreen: false,
 
         exportState: {
           isExporting: false,
@@ -583,21 +595,16 @@ export const useUIStore = create<UIState>()(
             desktopPage:
               page === "motion" && !MOTION_CREATOR_ENABLED ? "edit" : page,
           }),
-
-        setShowWelcomeScreen: (show: boolean) => {
-          set({ showWelcomeScreen: show });
-        },
-
-        setSkipWelcomeScreen: (skip: boolean) => {
-          set({
-            skipWelcomeScreen: skip,
-            showWelcomeScreen: skip ? false : get().showWelcomeScreen,
-          });
-        },
       }),
       {
         name: "openreel-ui-preferences",
-        version: 3,
+        version: 4,
+        // Do not spread retired persisted fields (including startup preferences
+        // and modal state) back into the live store.
+        merge: (persisted, current: UIState): UIState => ({
+          ...current,
+          ...pickUIPreferences(persisted),
+        }),
         migrate: (persisted: unknown, version: number) => {
           const state = persisted as Record<string, unknown>;
           if (version === 0) {
@@ -613,23 +620,9 @@ export const useUIStore = create<UIState>()(
           if (version < 3 && state.desktopPage === "motion") {
             state.desktopPage = "edit";
           }
-          return state;
+          return pickUIPreferences(state);
         },
-        partialize: (state) => ({
-          snapSettings: state.snapSettings,
-          panels: state.panels,
-          shortcuts: state.shortcuts,
-          theme: state.theme,
-          showWaveforms: state.showWaveforms,
-          showThumbnails: state.showThumbnails,
-          showKeyframes: state.showKeyframes,
-          autoScroll: state.autoScroll,
-          timelineMaximized: state.timelineMaximized,
-          playbackQuality: state.playbackQuality,
-          skipWelcomeScreen: state.skipWelcomeScreen,
-          inspectorActiveTab: state.inspectorActiveTab,
-          desktopPage: state.desktopPage,
-        }),
+        partialize: (state: UIState) => pickUIPreferences(state),
       },
     ),
   ),

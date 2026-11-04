@@ -3,11 +3,8 @@ import { shareBaseOrigin } from "../services/share-origin";
 import { MOTION_CREATOR_ENABLED } from "../config/features";
 
 export type AppRoute =
-  | "welcome"
   | "editor"
   | "new"
-  | "templates"
-  | "recent"
   | "share"
   | "motion";
 
@@ -40,13 +37,10 @@ function parseHash(hash: string): RouterState {
   }
 
   const pathParts = path.split("/");
-  let route: AppRoute = (pathParts[0] || "welcome") as AppRoute;
+  let route: AppRoute = (pathParts[0] || "editor") as AppRoute;
   const validRoutes: AppRoute[] = [
-    "welcome",
     "editor",
     "new",
-    "templates",
-    "recent",
     "share",
     "motion",
   ];
@@ -60,7 +54,7 @@ function parseHash(hash: string): RouterState {
   }
 
   return {
-    route: validRoutes.includes(route) ? route : "welcome",
+    route: validRoutes.includes(route) ? route : "editor",
     params,
   };
 }
@@ -93,7 +87,7 @@ export function useRouter() {
     if (typeof window !== "undefined") {
       return parseHash(window.location.hash);
     }
-    return { route: "welcome", params: {} };
+    return { route: "editor", params: {} };
   });
 
   useEffect(() => {

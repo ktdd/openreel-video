@@ -10,7 +10,6 @@ import {
   PhotoEngine,
   ExportEngine,
   SpeechToTextEngine,
-  TemplateEngine,
   SoundLibraryEngine,
   ChromaKeyEngine,
   MultiCamEngine,
@@ -73,7 +72,6 @@ export interface EngineState {
   photoEngine: PhotoEngine | null;
   exportEngine: ExportEngine | null;
   speechToTextEngine: SpeechToTextEngine | null;
-  templateEngine: TemplateEngine | null;
   soundLibraryEngine: SoundLibraryEngine | null;
   chromaKeyEngine: ChromaKeyEngine | null;
   multiCamEngine: MultiCamEngine | null;
@@ -100,7 +98,6 @@ export interface EngineState {
   getPhotoEngine: () => PhotoEngine | null;
   getExportEngine: () => ExportEngine | null;
   getSpeechToTextEngine: () => Promise<SpeechToTextEngine>;
-  getTemplateEngine: () => Promise<TemplateEngine>;
   getSoundLibraryEngine: () => Promise<SoundLibraryEngine>;
   getChromaKeyEngine: () => Promise<ChromaKeyEngine>;
   getMultiCamEngine: () => Promise<MultiCamEngine>;
@@ -201,7 +198,6 @@ export const useEngineStore = create<EngineState>()(
     photoEngine: null,
     exportEngine: null,
     speechToTextEngine: null,
-    templateEngine: null,
     soundLibraryEngine: null,
     chromaKeyEngine: null,
     multiCamEngine: null,
@@ -380,8 +376,6 @@ export const useEngineStore = create<EngineState>()(
     getExportEngine: () => get().exportEngine,
     getSpeechToTextEngine: () =>
       getOrCreateEngine("speechToText", () => new SpeechToTextEngine()),
-    getTemplateEngine: () =>
-      getOrCreateEngine("template", () => new TemplateEngine()),
     getSoundLibraryEngine: () =>
       getOrCreateEngine("soundLibrary", () => new SoundLibraryEngine()),
     getChromaKeyEngine: () =>

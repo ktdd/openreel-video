@@ -77,7 +77,7 @@ describe("editor keyboard shortcut dispatch", () => {
   it("keeps frame navigation available on a focused timeline clip", () => {
     const step = listen("playback.frameForward");
     const play = listen("playback.playPause");
-    document.body.innerHTML = '<div data-tour="timeline"><div role="button" tabindex="0">Video clip</div></div>';
+    document.body.innerHTML = '<div data-editor-panel="timeline"><div role="button" tabindex="0">Video clip</div></div>';
     const clip = document.querySelector('[role="button"]')!;
     press("ArrowRight", {}, clip);
     press(" ", { code: "Space" }, clip);

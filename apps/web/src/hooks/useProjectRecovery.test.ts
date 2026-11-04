@@ -29,6 +29,20 @@ vi.mock("../stores/project-store", () => ({
 describe("Project recovery cleanup", () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
+  it("releases startup when autosave storage cannot be read", async () => {
+    autoSaveManager.checkForRecovery.mockRejectedValueOnce(new Error("Storage unavailable"));
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      const { result } = renderHook(() => useProjectRecovery());
+      await waitFor(() => expect(result.current.isChecking).toBe(false));
+      expect(result.current.showDialog).toBe(false);
+      expect(result.current.availableSaves).toEqual([]);
+      expect(clearAllStorage).not.toHaveBeenCalled();
+    } finally {
+      warning.mockRestore();
+    }
+  });
+
   it("clears recovery snapshots without deleting imported media or saved projects", async () => {
     const { result } = renderHook(() => useProjectRecovery());
     await waitFor(() => expect(result.current.showDialog).toBe(true));

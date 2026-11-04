@@ -242,7 +242,6 @@ export interface ProjectState {
 
   createMotionComposition: (
     name?: string,
-    presetId?: string,
   ) => Promise<MotionComposition | null>;
   upsertMotionComposition: (
     composition: MotionComposition,

@@ -374,26 +374,6 @@ export interface AudioTrackConfig {
   loop?: boolean;
 }
 
-export interface TemplateVariable {
-  name: string;
-  type: "string" | "number" | "color" | "image" | "boolean";
-  default: unknown;
-  label?: string;
-  description?: string;
-  options?: unknown[];
-  min?: number;
-  max?: number;
-}
-
-export interface AnimationTemplate extends AnimationSchema {
-  templateId: string;
-  templateName: string;
-  category: string;
-  tags: string[];
-  thumbnail?: string;
-  editableVariables: TemplateVariable[];
-}
-
 export const DEFAULT_PROJECT_CONFIG: ProjectConfig = {
   name: "Untitled Animation",
   width: 1920,

@@ -12,7 +12,6 @@ import { FILTER_PRESETS } from "../video/filter-presets";
 import { SPEED_MIN, SPEED_MAX } from "../video/speed-engine";
 import { SPEED_CURVE_PRESETS } from "../video/speed-presets";
 import { TEXT_ANIMATION_PRESETS } from "../text/text-animation-presets";
-import { MOTION_PRESETS } from "../motion/motion-presets";
 import { MOTION_ANIMATABLE_PROPERTIES } from "../motion/motion-keyframes";
 import { MOTION_TEXT_ANIMATOR_PRESETS } from "../motion/motion-text-animators";
 import { MOTION_PARTICLE_PRESETS } from "../motion/motion-particle-presets";
@@ -55,8 +54,6 @@ export interface MotionAnimatablePropertySummary {
 
 export interface MotionCapabilities {
   readonly layerTypes: readonly string[];
-  readonly presets: readonly PresetSummary[];
-  readonly presetCategories: readonly string[];
   readonly animatableProperties: readonly MotionAnimatablePropertySummary[];
   readonly easings: readonly string[];
   readonly blendModes: readonly string[];
@@ -200,12 +197,6 @@ const MOTION_VARIABLE_BINDING_TARGETS: readonly MotionVariableBindingTarget[] = 
 
 const MOTION_CAPABILITIES: MotionCapabilities = {
   layerTypes: MOTION_LAYER_TYPES,
-  presets: MOTION_PRESETS.map((preset) => ({
-    id: preset.id,
-    name: preset.name,
-    category: preset.category,
-  })),
-  presetCategories: [...new Set(MOTION_PRESETS.map((preset) => preset.category))],
   animatableProperties: MOTION_ANIMATABLE_PROPERTIES.map((descriptor) => ({
     property: descriptor.property,
     label: descriptor.label,

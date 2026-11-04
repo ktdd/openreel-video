@@ -6,14 +6,10 @@ import {
 } from "@openreel/ui";
 import { Icon } from "@/icons/Icon";
 import {
-  House,
   Sun,
   Moon,
   SunMoon,
   Settings,
-  Circle,
-  Play,
-  Sparkles,
   HelpCircle,
   FileCode,
   Command,
@@ -22,13 +18,6 @@ import { useProjectStore } from "../../stores/project-store";
 import { useUIStore } from "../../stores/ui-store";
 import { useThemeStore } from "../../stores/theme-store";
 import { useSettingsStore } from "../../stores/settings-store";
-import { useRouter } from "../../hooks/use-router";
-import {
-  startTour,
-  ONBOARDING_KEY,
-  startMoGraphTour,
-  MOGRAPH_TOUR_KEY,
-} from "./tour";
 
 const RailButton: React.FC<{
   label: string;
@@ -59,7 +48,6 @@ export const EditorActionRail: React.FC = () => {
   } = useUIStore();
   const { mode: themeMode, toggleTheme } = useThemeStore();
   const { openSettings } = useSettingsStore();
-  const { navigate } = useRouter();
 
   const themeLabel =
     themeMode === "auto"
@@ -79,22 +67,9 @@ export const EditorActionRail: React.FC = () => {
 
   return (
     <nav
-      data-tour="toolbar"
       aria-label="Editor tools"
       className="flex w-12 shrink-0 flex-col items-center gap-1 border-r border-border bg-bg-1 py-3"
     >
-      <Tooltip content="Back to home" placement="end">
-        <IconButton
-          label="Back to home"
-          icon={<House size={16} aria-hidden />}
-          size="sm"
-          variant="ghost"
-          onClick={() => navigate("welcome")}
-        />
-      </Tooltip>
-
-      <div className="my-1.5 h-px w-6 bg-border" />
-
       <RailButton
         label="Search tools, effects, or ask AI"
         icon="magnifyingglass"
@@ -171,34 +146,6 @@ export const EditorActionRail: React.FC = () => {
             label: "Settings & API keys",
             icon: <Settings size={14} aria-hidden />,
             onClick: () => openSettings(),
-          },
-          {
-            label: "Screen recorder",
-            icon: (
-              <Circle
-                size={14}
-                className="fill-current text-status-error"
-                aria-hidden
-              />
-            ),
-            onClick: () => openModal("recorder"),
-          },
-          { type: "divider" },
-          {
-            label: "Editor tour",
-            icon: <Play size={14} aria-hidden />,
-            onClick: () => {
-              localStorage.removeItem(ONBOARDING_KEY);
-              startTour();
-            },
-          },
-          {
-            label: "Animation & effects tour",
-            icon: <Sparkles size={14} className="text-accent" aria-hidden />,
-            onClick: () => {
-              localStorage.removeItem(MOGRAPH_TOUR_KEY);
-              startMoGraphTour();
-            },
           },
           { type: "divider" },
           {

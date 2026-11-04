@@ -81,8 +81,6 @@ export { PhotoLayersSection } from "./PhotoLayersSection";
 export { RetouchingSection } from "./RetouchingSection";
 
 // Templates & History
-export { TemplatesBrowserPanel } from "./TemplatesBrowserPanel";
-export { TemplateVariablesPanel } from "./TemplateVariablesPanel";
 export { HistoryPanel } from "./HistoryPanel";
 
 // Markers & Scenes

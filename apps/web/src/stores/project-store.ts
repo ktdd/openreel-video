@@ -43,7 +43,6 @@ import {
   ActionHistory,
   getBuiltInEditingTemplate,
   getBuiltInEditingTemplates,
-  getMotionPreset,
   getTrackItems,
   motionEngine,
   normalizeGeneratedShaders,
@@ -316,7 +315,6 @@ export interface ProjectState {
   // Motion Creator actions
   createMotionComposition: (
     name?: string,
-    presetId?: string,
   ) => Promise<MotionComposition | null>;
   upsertMotionComposition: (
     composition: MotionComposition,
@@ -3287,17 +3285,14 @@ export const useProjectStore = create<ProjectState>()(
         return true;
       },
 
-      createMotionComposition: async (name?: string, presetId?: string) => {
+      createMotionComposition: async (name?: string) => {
         const { project, actionExecutor } = get();
-        const preset = presetId ? getMotionPreset(presetId) : undefined;
-        const composition = preset
-          ? { ...preset.create(), name: name ?? preset.name }
-          : motionEngine.createStarterComposition({
-              name,
-              width: project.settings.width,
-              height: project.settings.height,
-              frameRate: project.settings.frameRate,
-            });
+        const composition = motionEngine.createComposition({
+          name,
+          width: project.settings.width,
+          height: project.settings.height,
+          frameRate: project.settings.frameRate,
+        });
 
         const projectCopy = cloneProjectForEdit(project);
         const action: Action = {

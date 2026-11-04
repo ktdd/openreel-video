@@ -7859,9 +7859,17 @@ describe("executeTool", () => {
   it("exposes the motion capability catalog", async () => {
     const host = new HeadlessHost(makeEmptyProject());
     const caps = await executeTool("get_capabilities", {}, host);
-    const motion = (caps.data as { motion?: { presets: unknown[]; layerTypes: string[] } }).motion;
+    const motion = (caps.data as { motion?: { layerTypes: string[] } }).motion;
     expect(motion?.layerTypes).toContain("particle");
-    expect((motion?.presets.length ?? 0)).toBeGreaterThan(0);
+    expect(motion).not.toHaveProperty("presets");
+    expect(motion).not.toHaveProperty("presetCategories");
+  });
+
+  it("no longer exposes the retired motion-template tool", async () => {
+    const host = new HeadlessHost(makeEmptyProject());
+    const result = await executeTool("apply_motion_template", { templateId: "legacy" }, host);
+    expect(result.ok).toBe(false);
+    expect(host.getProject().motionCompositions ?? []).toHaveLength(0);
   });
 
   it("exposes ui-build discovery info in the motion capability catalog", async () => {

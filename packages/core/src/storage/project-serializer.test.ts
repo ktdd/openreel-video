@@ -4,6 +4,7 @@ import type {
   MotionAudioClip,
   MotionComposition,
   MotionVideoLayer,
+  MotionTextLayer,
 } from "../motion/types";
 import { DEFAULT_MOTION_TRANSFORM } from "../motion/types";
 import type { MotionShaderDef } from "../motion/shaders/types";
@@ -270,6 +271,60 @@ describe("normalizeProjectCreationFields", () => {
 });
 
 describe("ProjectSerializer round-trip", () => {
+  it("preserves instantiated template text, animation and generic variable bindings", () => {
+    const serializer = new ProjectSerializer(new MemoryStorageEngine());
+    const layer: MotionTextLayer = {
+      id: "legacy-template-title", type: "text", name: "Template headline",
+      startTime: 0, duration: 5, visible: true, locked: false,
+      transform: DEFAULT_MOTION_TRANSFORM,
+      keyframes: [{ id: "fade-in", time: 0, property: "transform.opacity", value: 0, easing: "linear" }],
+      text: "My saved title",
+      style: { fontFamily: "Inter", fontSize: 72, fontWeight: 700, color: "#ffffff", align: "center", lineHeight: 1.2 },
+      variableBindings: [{ id: "title-binding", variableId: "title", target: "text.content" }],
+    };
+    const composition = makeComposition({
+      layers: [layer],
+      variables: [{ id: "title", name: "Headline", type: "text", value: "My saved title" }],
+    });
+    const imported = serializer.importFromJson(serializer.exportToJson(makeProject({ motionCompositions: [composition] })));
+    expect(imported.motionCompositions?.[0].layers).toEqual([layer]);
+    expect(imported.motionCompositions?.[0].variables).toEqual(composition.variables);
+    expect(serializer.importFromJson(serializer.exportToJson(imported))).toEqual(imported);
+  });
+
+  it("keeps previously recorded media as ordinary relinkable project content", async () => {
+    const serializer = new ProjectSerializer(new MemoryStorageEngine());
+    const recording = new Blob(["recorded video bytes"], { type: "video/webm" });
+    const project = makeProject({
+      motionCompositions: [makeComposition({
+        layers: [makeVideoLayer()],
+        assets: [{ id: "asset-1", type: "video", name: "Recording", mediaId: "recording-1" }],
+      })],
+      mediaLibrary: {
+        items: [{
+          id: "recording-1", name: "Screen_20260501.webm", type: "video",
+          blob: recording, fileHandle: null, thumbnailUrl: null, waveformData: null,
+          sourceFile: { name: "Screen_20260501.webm", size: 1024, lastModified: 1 },
+          metadata: { duration: 5, width: 1920, height: 1080, frameRate: 30, codec: "vp9", sampleRate: 48000, channels: 2, fileSize: 1024 },
+        }],
+      },
+    });
+    const imported = serializer.importFromJson(serializer.exportToJson(project));
+    expect(imported.mediaLibrary.items[0]).toMatchObject({
+      id: "recording-1", name: "Screen_20260501.webm", type: "video",
+      sourceFile: project.mediaLibrary.items[0].sourceFile,
+      metadata: project.mediaLibrary.items[0].metadata,
+    });
+    const reopened = serializer.importFromJson(serializer.exportToJson(imported));
+    expect(reopened.mediaLibrary.items).toEqual(imported.mediaLibrary.items);
+    expect(reopened.motionCompositions?.[0].assets[0].mediaId).toBe("recording-1");
+    expect(reopened.motionCompositions?.[0].layers[0].id).toBe("layer-video-1");
+    await serializer.saveProject(project);
+    const restored = await serializer.loadProject(project.id);
+    expect(restored?.mediaLibrary.items[0].blob).toBe(recording);
+    expect(restored?.mediaLibrary.items[0].id).toBe("recording-1");
+  });
+
   it("writes the universal-track reader requirement and preserves it", () => {
     const serializer = new ProjectSerializer(new MemoryStorageEngine());
     const project = makeProject({

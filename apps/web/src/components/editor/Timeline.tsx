@@ -968,7 +968,7 @@ export const Timeline: React.FC = () => {
 
   return (
     <div
-      data-tour="timeline"
+      data-editor-panel="timeline"
       className="h-full bg-tl-bg flex flex-col min-h-0 relative overflow-hidden"
     >
       {/* ── Timeline toolbar (mock: 48px line-icon tools + emerald zoom slider) ── */}

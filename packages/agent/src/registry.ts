@@ -43,7 +43,6 @@ import {
   MOTION_ANIMATABLE_PROPERTIES,
   type MotionAnimatableProperty,
 } from "@openreel/core/motion/motion-keyframes";
-import { getMotionPreset } from "@openreel/core/motion/motion-presets";
 import {
   createMotionVariable,
   updateMotionCompositionVariable,
@@ -22838,36 +22837,6 @@ const TOOLS: RegisteredTool[] = [
         ? ok(`Added ${layer.type} layer "${layer.name}"`, {
             compositionId: composition.id,
             layerId: layer.id,
-          })
-        : result;
-    },
-  },
-  {
-    name: "apply_motion_template",
-    domain: "motion",
-    title: "Apply motion template",
-    description:
-      "Create a new Motion Creator composition from a built-in motion template/preset.",
-    inputSchema: obj({ templateId: str, name: str }, ["templateId"]),
-    readOnly: false,
-    destructive: false,
-    expensive: false,
-    handler: async (args, host) => {
-      host.requireOpenProject();
-      const preset = getMotionPreset(String(args.templateId));
-      if (!preset) return fail("Motion template not found", "NOT_FOUND");
-      const composition = {
-        ...preset.create(),
-        name: typeof args.name === "string" ? args.name : preset.name,
-        modifiedAt: Date.now(),
-      };
-      const result = await applyMotionAction(host, "motion/createComposition", {
-        composition,
-      });
-      return result.ok
-        ? ok(`Created "${composition.name}" from ${preset.name}`, {
-            compositionId: composition.id,
-            composition,
           })
         : result;
     },

@@ -45,6 +45,16 @@ function mockDownload() {
 }
 
 describe("ProjectManager save outcomes", () => {
+  it("creates blank projects with explicit settings and no project-template API", async () => {
+    const blank = await projectManager.createProject();
+    expect(blank.settings).toMatchObject({ width: 1920, height: 1080, frameRate: 30 });
+    expect(blank.timeline.tracks).toEqual([]);
+    const custom = await projectManager.createProject({ name: "Vertical", settings: { width: 1080, height: 1920, frameRate: 24 } });
+    expect(custom.settings).toMatchObject({ width: 1080, height: 1920, frameRate: 24 });
+    expect(custom.timeline.tracks).toEqual([]);
+    expect(projectManager).not.toHaveProperty("getTemplates");
+    expect(projectManager).not.toHaveProperty("getTemplatesByCategory");
+  });
   it("returns false for a cancelled picker without emitting a save", async () => {
     mockPicker(undefined, new DOMException("Cancelled", "AbortError"));
     const saved = vi.fn();

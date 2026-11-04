@@ -854,7 +854,6 @@ export const InspectorPanel: React.FC = () => {
 
   return (
     <div
-      data-tour="inspector"
       className="w-full min-w-0 bg-bg-1 flex flex-col h-full overflow-hidden"
     >
       {selectedClip && tabIds.length > 0 && (

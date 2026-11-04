@@ -2,8 +2,7 @@ export * from "./project";
 export * from "./timeline";
 export * from "./actions";
 export * from "./effects";
-export * from "./template";
-export * from "./scriptable-template";
+export * from "./project-presets";
 export * from "./sound-library";
 export * from "./result";
 
@@ -16,9 +15,6 @@ export type {
   Composition,
   VariableType,
   Variable,
-  TemplateCategory as CompositionTemplateCategory,
-  Template as CompositionTemplate,
-  TemplatePreset as CompositionTemplatePreset,
 } from "./composition";
 
 export * from "./transform-3d";

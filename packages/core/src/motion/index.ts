@@ -55,7 +55,6 @@ export * from "./motion-variables";
 export * from "./motion-variable-bindings";
 export * from "./motion-tracking";
 export * from "./motion-optical-flow";
-export * from "./motion-presets";
 export * from "./motion-template-types";
 export * from "./importers/svg-importer";
 export * from "./importers/lottie-importer";

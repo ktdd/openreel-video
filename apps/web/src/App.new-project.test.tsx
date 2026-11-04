@@ -1,6 +1,7 @@
 import "./test/install-local-storage-mock";
 import { act, cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { StrictMode } from "react";
 import App from "./App";
 import { useProjectStore } from "./stores/project-store";
 import { useUIStore } from "./stores/ui-store";
@@ -19,9 +20,8 @@ vi.mock("./hooks/useKieAIPoller", () => ({ useKieAIPoller: () => undefined }));
 vi.mock("./components/MobileBlocker", () => ({ MobileBlocker: () => null }));
 vi.mock("./components/Toast", () => ({ ToastContainer: () => null }));
 vi.mock("./components/editor/EditorInterface", () => ({ EditorInterface: () => <p>Editor</p> }));
-vi.mock("./components/welcome", () => ({ WelcomeScreen: () => <p>Welcome</p> }));
 vi.mock("./pages/SharePage", () => ({ SharePage: () => <p>Shared video</p> }));
-vi.mock("./components/welcome/RecoveryDialog", () => ({ RecoveryDialog: ({ saves, onRecover, onDismiss }: {
+vi.mock("./components/editor/RecoveryDialog", () => ({ RecoveryDialog: ({ saves, onRecover, onDismiss }: {
   saves: AutoSaveMetadata[]; onRecover: (id: string) => void; onDismiss: () => void;
 }) => <div role="dialog"><button onClick={() => onRecover(saves[0].id)}>Recover Project</button><button onClick={onDismiss}>Start Fresh</button></div> }));
 
@@ -37,7 +37,8 @@ describe("new-project links", () => {
     recovery.recover.mockResolvedValue(false);
     recovery.dismiss.mockImplementation(() => { recovery.showDialog = false; });
     useProjectStore.setState({ hasOpenProject: false, project: createEmptyProject("Unopened placeholder") });
-    useUIStore.setState({ skipWelcomeScreen: false, activeModal: null });
+    localStorage.clear();
+    useUIStore.setState({ activeModal: null });
   });
   afterEach(() => { cleanup(); vi.restoreAllMocks(); window.location.hash = ""; });
 
@@ -52,6 +53,21 @@ describe("new-project links", () => {
     await waitFor(() => expect(create).toHaveBeenCalledOnce());
     expect(create).toHaveBeenCalledWith(expect.any(String), { width, height, frameRate });
     expect(useProjectStore.getState().hasOpenProject).toBe(true);
+  });
+
+  it("honors a later explicit new-project route without duplicate creation", async () => {
+    window.location.hash = "#/editor";
+    const create = vi.spyOn(useProjectStore.getState(), "createNewProject");
+    const view = render(<StrictMode><App /></StrictMode>);
+    expect(await view.findByText("Editor")).toBeInTheDocument();
+    expect(create).toHaveBeenCalledOnce();
+    act(() => {
+      window.location.hash = "#/new?dimensions=1080x1920&fps=24";
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+    await waitFor(() => expect(create).toHaveBeenCalledTimes(2));
+    expect(await view.findByText("Editor")).toBeInTheDocument();
+    expect(useProjectStore.getState().project.settings).toMatchObject({ width: 1080, height: 1920, frameRate: 24 });
   });
 
   it("opens a real fresh project for a bare editor URL once recovery checking settles", async () => {
@@ -126,8 +142,8 @@ describe("new-project links", () => {
     expect(recovery.clearAll).not.toHaveBeenCalled();
   });
 
-  it("preserves an already open project at a bare editor URL", async () => {
-    window.location.hash = "#/editor";
+  it.each(["#/editor", "#/welcome", "#/templates", "#/recent", "#/unknown"])("preserves an already open project at %s", async (hash) => {
+    window.location.hash = hash;
     const opened = createEmptyProject("Already open");
     useProjectStore.setState({ hasOpenProject: true, project: opened });
     const create = vi.spyOn(useProjectStore.getState(), "createNewProject");
@@ -136,11 +152,52 @@ describe("new-project links", () => {
     expect(create).not.toHaveBeenCalled(); expect(useProjectStore.getState().project).toBe(opened);
   });
 
-  it.each(["#/welcome", "#/templates", "#/recent", "#/share/video-1"])("does not create an editor project for %s", async (hash) => {
-    window.location.hash = hash;
+  it("keeps recovery available when the save reader throws", async () => {
+    window.location.hash = "#/new?dimensions=1080x1080&fps=24";
+    recovery.showDialog = true; recovery.availableSaves = [savedProject];
+    recovery.recover.mockRejectedValueOnce(new Error("Unreadable save"));
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     const create = vi.spyOn(useProjectStore.getState(), "createNewProject");
     const view = render(<App />);
-    expect(await view.findByText(hash.startsWith("#/share") ? "Shared video" : "Welcome")).toBeInTheDocument();
-    expect(create).not.toHaveBeenCalled(); expect(useProjectStore.getState().hasOpenProject).toBe(false);
+    await act(async () => { fireEvent.click(view.getByRole("button", { name: "Recover Project" })); });
+    expect(warning).toHaveBeenCalled();
+    expect(create).not.toHaveBeenCalled();
+    expect(view.getByRole("dialog")).toBeInTheDocument();
+    fireEvent.click(view.getByRole("button", { name: "Start Fresh" })); view.rerender(<App />);
+    expect(await view.findByText("Editor")).toBeInTheDocument();
+    expect(create).toHaveBeenCalledOnce();
+  });
+
+  it.each(["", "#/welcome", "#/templates", "#/recent", "#/unknown"])("opens directly into editing for %s without a landing flash", async (hash) => {
+    window.location.hash = hash;
+    const create = vi.spyOn(useProjectStore.getState(), "createNewProject");
+    const view = render(<StrictMode><App /></StrictMode>);
+    expect(view.queryByText("Welcome")).toBeNull();
+    expect(await view.findByText("Editor")).toBeInTheDocument();
+    expect(create).toHaveBeenCalledOnce();
+    expect(useProjectStore.getState().project.settings).toMatchObject({ width: 1920, height: 1080, frameRate: 30 });
+    view.rerender(<StrictMode><App /></StrictMode>);
+    expect(create).toHaveBeenCalledOnce();
+  });
+
+  it.each([false, true])("ignores the retired skip preference (%s)", async (skipWelcomeScreen) => {
+    window.location.hash = "#/welcome";
+    localStorage.setItem("openreel-ui-preferences", JSON.stringify({ version: 3, state: { skipWelcomeScreen } }));
+    await useUIStore.persist.rehydrate();
+    const view = render(<App />);
+    expect(view.queryByText("Welcome")).toBeNull();
+    expect(await view.findByText("Editor")).toBeInTheDocument();
+    expect(useUIStore.getState()).not.toHaveProperty("skipWelcomeScreen");
+    expect(JSON.parse(localStorage.getItem("openreel-ui-preferences")!).state).not.toHaveProperty("skipWelcomeScreen");
+  });
+
+  it("keeps shared videos independent of project creation and recovery UI", async () => {
+    window.location.hash = "#/share/video-1";
+    recovery.showDialog = true; recovery.availableSaves = [savedProject];
+    const create = vi.spyOn(useProjectStore.getState(), "createNewProject");
+    const view = render(<App />);
+    expect(await view.findByText("Shared video")).toBeInTheDocument();
+    expect(view.queryByRole("dialog")).toBeNull();
+    expect(create).not.toHaveBeenCalled();
   });
 });

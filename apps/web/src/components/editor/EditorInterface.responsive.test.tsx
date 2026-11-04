@@ -22,7 +22,6 @@ vi.mock("./chat/ChatPanel", () => ({ ChatPanel: ({ onClose }: { onClose: () => v
 vi.mock("./KeyframeEditorPanel", () => ({ KeyframeEditorPanel: () => null }));
 vi.mock("../audio-mixer", () => ({ AudioMixer: () => null }));
 vi.mock("./KeyboardShortcutsOverlay", () => ({ KeyboardShortcutsOverlay: () => null }));
-vi.mock("./tour", () => ({ SpotlightTour: () => null, MoGraphTour: () => null }));
 
 function resize(width: number) {
   act(() => {

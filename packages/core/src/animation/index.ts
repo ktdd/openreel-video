@@ -72,8 +72,6 @@ export type {
   KeyframeDefinition,
   AudioConfig,
   AudioTrackConfig,
-  TemplateVariable,
-  AnimationTemplate,
 } from "./animation-schema";
 
 export {

@@ -44,7 +44,6 @@ import { MotionStartPanel } from "./components/MotionStartPanel";
 import { MotionSyncPanel } from "./components/MotionSyncPanel";
 import { MotionToolRail } from "./components/MotionToolRail";
 import { MotionTrackingPanel } from "./components/MotionTrackingPanel";
-import { MotionTemplateBrowser } from "./components/MotionTemplateBrowser";
 import { MotionTimeline } from "./components/MotionTimeline";
 import { Button, IconButton, SectionDefaultsContext } from "./components/primitives";
 import { PropertiesPanel } from "./components/PropertiesPanel";
@@ -67,7 +66,6 @@ const LEFT_TABS: Array<{ id: MotionLeftTab; label: string; icon: LucideIcon }> =
   { id: "start", label: "Start", icon: Sparkles },
   { id: "layers", label: "Layers", icon: Layers },
   { id: "assets", label: "Media", icon: Library },
-  { id: "templates", label: "Kits", icon: Sparkles },
   { id: "creation", label: "Scenes", icon: Box },
 ];
 
@@ -855,7 +853,6 @@ export function MotionCreatorShell({
                 {leftTab === "layers" ? <LayerPanel composition={composition} /> : null}
                 {leftTab === "creation" ? <CreationWorkspacePanel /> : null}
                 {leftTab === "assets" ? <AssetPanel composition={composition} /> : null}
-                {leftTab === "templates" ? <MotionTemplateBrowser /> : null}
               </div>
             </aside>
 

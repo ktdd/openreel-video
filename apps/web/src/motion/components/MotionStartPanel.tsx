@@ -10,7 +10,6 @@ import {
   Radar,
   Scissors,
   Shapes,
-  Sparkles,
   Type,
   Wand2,
   Waves,
@@ -82,12 +81,6 @@ export function MotionStartPanel({
     {
       title: "Open",
       actions: [
-        {
-          label: "Templates",
-          detail: "Logo reveals, kinetic type, product shots",
-          icon: Sparkles,
-          run: () => openLeft("templates"),
-        },
         {
           label: "Assets",
           detail: "Footage, images, SVG, Lottie",
