@@ -69,7 +69,7 @@ These unit tests mock FFmpeg, MediaBunny and browser worker/bitmap APIs. They co
 ```sh
 bun run check:no-ai
 bun run check:retired-cloud-gpu
-node --test scripts/check-no-ai.test.mjs scripts/ai-removal-phase*.test.mjs scripts/browser-runtime-config.test.mjs
+node --test scripts/*.test.mjs
 ```
 
-These source/configuration checks and the service-worker VM regression tests complement request logging; they do not prove every browser/codec workflow works offline. Repeat import/edit/preview/export after assets are available as part of Phase 5's release gate. See [the removal plan](remove-ai-features.md) and [manual editor workflows](editor-workflows.md).
+These source/configuration checks, `scripts/service-worker.test.mjs` VM regressions and `scripts/validate-ai-removal-release.test.mjs` harness checks complement request logging; the Node tests do not launch a browser or prove every browser/codec workflow works offline. Broader browser verification remains deferred; when requested, repeat import/edit/preview/export after assets are available. See [the removal summary and verification limits](remove-ai-features.md) and [manual editor workflows](editor-workflows.md).

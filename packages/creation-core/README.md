@@ -26,4 +26,4 @@ bun run --filter @openreel/core test:run src/creation/render/render.test.ts
 bun run --filter @openreel/creation-bindings test:run
 ```
 
-The binding falls back to the TypeScript CPU reference when an optional native/WASM implementation is unavailable. This is deterministic backend selection, not an inference or network fallback. See [manual editor workflows](../../docs/editor-workflows.md) and [the removal plan](../../docs/remove-ai-features.md).
+The binding falls back to the TypeScript CPU reference when an optional native/WASM implementation is unavailable. This is deterministic backend selection, not an inference or network fallback. See [manual editor workflows](../../docs/editor-workflows.md) and [the removal summary](../../docs/remove-ai-features.md).

@@ -44,4 +44,4 @@ Focused configuration regressions (initial theme, dependency/config removal, fon
 node --test scripts/browser-runtime-config.test.mjs
 ```
 
-See [the removal plan](remove-ai-features.md) and its phase evidence for verified behavior versus remaining release gates. `README.md`/`CONTRIBUTING.md` and dated design/QA reports retain upstream/historical information; they do not restore removed features.
+See [the removal summary](remove-ai-features.md) for retained boundaries and remaining verification limits. Detailed phase reports and pre-removal baselines are available in Git history. `README.md`/`CONTRIBUTING.md` and dated design/QA reports retain upstream/historical information; they do not restore removed features.

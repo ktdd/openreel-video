@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -90,12 +90,15 @@ test("audited unused packages are pruned, shared content/render dependencies rem
   for (const name of ["gsap", "@paper-design/shaders", "mediabunny", "three", "@ffmpeg/ffmpeg"]) assert.ok(core.dependencies[name], name);
 });
 
-test("active docs retire agent setup and point to the manual editor", () => {
+test("obsolete agent guides remain absent and active guidance points to the manual browser editor", () => {
   for (const path of ["docs/AGENT-GUIDE.md", "docs/AGENT-CAPABILITIES.md", "docs/ai-editing.md"]) {
+    assert.equal(existsSync(resolve(root, path)), false, path);
+  }
+  for (const path of ["AGENTS.md", "llm.txt"]) {
     const text = readFileSync(resolve(root, path), "utf8");
-    assert.match(text, /Retired/);
     assert.doesNotMatch(text, /verify-ai-workspace|agent-runner run|Connect a model/);
     assert.match(text, /editor-workflows\.md/);
+    assert.match(text, /OFFLINE\.md/);
   }
 });
 

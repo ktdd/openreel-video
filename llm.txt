@@ -4,7 +4,7 @@ Local-first browser video and motion editor, built with TypeScript, React, Zusta
 
 Authoritative development map and commands: AGENTS.md.
 Manual editing workflows: docs/editor-workflows.md.
-Removal scope and evidence: docs/remove-ai-features.md and docs/ai-removal-phase*.md.
+Completed removal scope, retained boundaries and verification limits: docs/remove-ai-features.md. Detailed phase reports and pre-removal baselines are available in Git history.
 Offline behavior and media asset hosting: docs/OFFLINE.md.
 UI conventions: ASTRYX.md and packages/ui source.
 
@@ -12,6 +12,6 @@ Removed: desktop app/UI/IPC, landing/template browsers, tours, Screen recorder, 
 
 Preserve manual titles/captions/SRT/VTT, chroma key/manual masks, heuristic reframe, DSP audio/beat tools, Recipes, export presets, current-format persistence/recovery/relinking, portable edits/sharing, saved GLSL and deterministic creation/native/WASM/CPU backends. Ordinary fonts/FFmpeg and explicitly used connected services may use the network. PostHog/analytics has been removed; hosted share-viewer routes redirect to the editor.
 
-Checks: bun install --frozen-lockfile; bun run typecheck; bun run test; bun run lint; bun run build; bun run check:no-ai. Guard tests: node --test scripts/check-no-ai.test.mjs scripts/ai-removal-phase*.test.mjs scripts/browser-runtime-config.test.mjs.
+Checks: bun install --frozen-lockfile; bun run typecheck; bun run test; bun run lint; bun run build; bun run check:no-ai. Script regression tests: node --test scripts/*.test.mjs (consolidated guard, runtime configuration, service worker and release harness; no browser launch).
 
-Do not invoke Python: it is not installed. Write verification artifacts under ignored .codex-audit/, not the project root. README.md, CONTRIBUTING.md and dated design/QA documents retain upstream/historical material; use current scripts/source and the removal plan instead of their removed-app/agent instructions.
+Do not invoke Python: it is not installed. Write verification artifacts under ignored .codex-audit/, not the project root. README.md, CONTRIBUTING.md and dated design/QA documents retain upstream/historical material; use current scripts/source and the removal summary instead of their removed-app/agent instructions.

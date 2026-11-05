@@ -65,9 +65,37 @@ test("unused vendored font files are absent while both referenced 3D fonts remai
   assert.match(read("apps/web/src/services/project-fonts.ts"), /ensureProjectFonts/);
 });
 
-test("current project guidance points to browser docs, not deleted mobile/design archives", () => {
-  for (const path of ["AGENTS.md", "llm.txt", "docs/editor-workflows.md", "docs/OFFLINE.md", "scripts/filters/README.md"]) {
-    assert.doesNotMatch(read(path), /(?:docs\/)?superpowers\/|MOBILE-(?:OFFLINE|PARITY)\.md/, path);
+test("procedural music and sound library is deleted while ordinary audio tools remain", () => {
+  for (const path of [
+    "apps/web/src/components/editor/inspector/MusicLibraryPanel.tsx",
+    "packages/core/src/audio/sound-library-engine.ts",
+    "packages/core/src/audio/sound-generator.ts",
+    "packages/core/src/types/sound-library.ts",
+  ]) assert.equal(existsSync(resolve(root, path)), false, path);
+  for (const path of [
+    "apps/web/src/components/editor/AssetsPanel.tsx",
+    "apps/web/src/components/editor/inspector/index.ts",
+    "apps/web/src/stores/engine-store.ts",
+    "packages/core/src/audio/index.ts",
+    "packages/core/src/types/index.ts",
+  ]) assert.doesNotMatch(read(path), /MusicLibraryPanel|SoundLibraryEngine|soundLibrary|sound-library|sound-generator/, path);
+  assert.doesNotMatch(read("apps/web/src/components/editor/AssetsPanel.tsx"), /value:\s*"audio"/);
+  for (const path of [
+    "packages/core/src/audio/audio-engine.ts",
+    "packages/core/src/audio/audio-effects-engine.ts",
+    "packages/core/src/audio/beat-detection-engine.ts",
+    "apps/web/src/components/editor/inspector/VoiceOverPanel.tsx",
+    "apps/web/src/components/editor/inspector/tabs/AudioTab.tsx",
+    "apps/web/src/components/editor/ExportAudioDialog.tsx",
+  ]) assert.ok(existsSync(resolve(root, path)), path);
+});
+
+test("current guidance points to browser docs, not deleted design archives or phase reports", () => {
+  for (const path of [
+    "AGENTS.md", "llm.txt", "docs/editor-workflows.md", "docs/OFFLINE.md",
+    "docs/remove-ai-features.md", "packages/creation-core/README.md", "scripts/filters/README.md",
+  ]) {
+    assert.doesNotMatch(read(path), /(?:docs\/)?superpowers\/|MOBILE-(?:OFFLINE|PARITY)\.md|ai-removal-phase/, path);
   }
   for (const path of ["AGENTS.md", "llm.txt", "docs/editor-workflows.md"]) assert.match(read(path), /OFFLINE\.md/, path);
 });

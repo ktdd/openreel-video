@@ -10,7 +10,7 @@ This is a Bun workspace (`apps/*` and `packages/*` in root `package.json`). Pack
 
 - `apps/web`: main video editor. `src/components/editor` contains editor UI; `src/stores` has Zustand project, timeline, UI, and engine state; `src/bridges` connects UI/state to core engines; `src/services` handles app services; shared media/export workers live in core. `src/motion` is the motion-creation workspace. `src/App.tsx` is the app entry. Desktop renderer UI, native-sidecar IPC adapters and desktop build modes have been removed; the entry renders only the browser app.
 - `packages/core`: shared editor engines and types. Start in `src/timeline`, `editing`, `media`, `playback`, `video`, `audio`, `effects`, `export`, `storage`, `motion`, or `creation`, as appropriate. AssemblyScript WASM sources live under `src/wasm`.
-- `apps/web/src/services/editing`: retained manual editing transactions, portable edit JSON/presets and creation synchronization. Agent workspaces, generative services and their provider settings were removed in Phase 2; see `docs/ai-removal-phase2.md`. On-device transcription/segmentation was removed in Phase 3; see `docs/ai-removal-phase3.md`. Caption content/editing and deterministic reframing remain.
+- `apps/web/src/services/editing`: retained manual editing transactions, portable edit JSON/presets and creation synchronization. Agent workspaces, generative services/provider settings and on-device transcription/segmentation have been removed; caption content/editing and deterministic reframing remain. See `docs/remove-ai-features.md` for the completed removal scope, retained boundaries and verification limits.
 - `packages/creation-core`: C++20 native creation engine; `packages/creation-bindings` provides native/WASM bindings with a TypeScript CPU fallback in `@openreel/core/creation`. See `packages/creation-core/README.md`.
 - `packages/fxpkg`: effect package types, validation, compiler, and related utilities. `packages/ui` contains shared UI components.
 - `docs/editor-workflows.md`: current manual workflows; `docs/OFFLINE.md`: browser offline boundaries and media asset hosting. Historical mobile parity/design archives have been removed; current source/tests define retained deterministic features. `scripts` contains verification and utility scripts.
@@ -28,7 +28,7 @@ bun run test                        # one-shot workspace Vitest suites
 bun run test:watch                  # workspace watch-mode tests
 bun run lint                        # workspace lint scripts
 bun run check:no-ai                 # runtime/config absence + retired cloud-GPU guard
-node --test scripts/check-no-ai.test.mjs scripts/ai-removal-phase*.test.mjs scripts/browser-runtime-config.test.mjs
+node --test scripts/*.test.mjs      # consolidated guards, runtime config, service worker, release harness
 bun run --filter @openreel/web test:run src/path/to/example.test.ts
 bun run --filter @openreel/core typecheck
 ```
