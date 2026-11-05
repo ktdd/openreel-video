@@ -12,12 +12,14 @@ import {
   getDeviceProfile,
   estimateExportTime,
   trackHasAudioItems,
+  trackHasVisualItems,
   type VideoExportSettings,
   type AudioExportSettings,
   type DeviceProfile,
   type TimeEstimate,
 } from "@openreel/core";
 import { ExportDialog } from "./ExportDialog";
+import { ExportAudioDialog } from "./ExportAudioDialog";
 import { CompressDialog } from "./CompressDialog";
 import { deriveSourceExportMatch } from "../../services/export-source-match";
 import { useExportRunner, extForFormat, exportFilename, type ExportDeliveryMode } from "../../services/export-runner";
@@ -63,10 +65,15 @@ export const Toolbar: React.FC = () => {
   const [isCompressOpen, setIsCompressOpen] = useState(false);
   const sourceMatch = useMemo(() => deriveSourceExportMatch(project), [project]);
   const hasTimelineContent = (project.timeline?.duration ?? 0) > 0;
+  const isAudioOnly = useMemo(
+    () => !project.timeline.tracks.some((track) => trackHasVisualItems(project, track.id)),
+    [project],
+  );
 
   useEffect(() => {
-    if (!hasTimelineContent) setIsExportOpen(false);
-  }, [hasTimelineContent]);
+    if (!hasTimelineContent || isAudioOnly) setIsExportOpen(false);
+    if (isAudioOnly) setIsCompressOpen(false);
+  }, [hasTimelineContent, isAudioOnly]);
 
   // Local editable project name (committed onBlur / Enter)
   const [projectNameDraft, setProjectNameDraft] = useState(project.name);
@@ -104,8 +111,9 @@ export const Toolbar: React.FC = () => {
       isExporting: exportState.isExporting,
       progress: exportState.progress,
       phase: exportState.phase,
+      mediaType: exportState.mediaType,
     });
-  }, [exportState.isExporting, exportState.progress, exportState.phase, setGlobalExportState]);
+  }, [exportState.isExporting, exportState.progress, exportState.phase, exportState.mediaType, setGlobalExportState]);
 
   useEffect(() => {
     if (isExportOpen && !deviceProfile) {
@@ -148,13 +156,13 @@ export const Toolbar: React.FC = () => {
   const handleExport = useCallback(
     async (type: ExportType) => {
       setIsExportOpen(false);
-      if (!hasTimelineContent) return;
+      if (!hasTimelineContent || isAudioOnly) return;
 
       try {
         if (type === "wav") {
           const writable = await showSavePicker(exportFilename(project.name, "wav"), "wav", { delivery: "download" });
 
-          beginExport(writable);
+          beginExport(writable, "audio");
 
           const audioSettings: Partial<AudioExportSettings> = {
             format: "wav",
@@ -198,13 +206,13 @@ export const Toolbar: React.FC = () => {
         failExport(error);
       }
     },
-    [project, hasTimelineContent, runExport, runAudioExport, showSavePicker, beginExport, markComplete, finishExportSoon, failExport],
+    [project, hasTimelineContent, isAudioOnly, runExport, runAudioExport, showSavePicker, beginExport, markComplete, finishExportSoon, failExport],
   );
 
   const handleCustomExport = useCallback(
     async (settings: VideoExportSettings, delivery: ExportDeliveryMode = "download") => {
       closeModal();
-      if (!hasTimelineContent) return;
+      if (!hasTimelineContent || isAudioOnly) return;
 
       try {
         const ext = extForFormat(settings.format);
@@ -231,9 +239,26 @@ export const Toolbar: React.FC = () => {
         failExport(error);
       }
     },
-    [project, hasTimelineContent, closeModal, runExport, showSavePicker, beginExport, finishExportSoon, failExport],
+    [project, hasTimelineContent, isAudioOnly, closeModal, runExport, showSavePicker, beginExport, finishExportSoon, failExport],
   );
 
+  const handleCustomAudioExport = useCallback(
+    async (settings: AudioExportSettings, delivery: ExportDeliveryMode = "download") => {
+      closeModal();
+      if (!hasTimelineContent) return;
+      try {
+        const ext = settings.format;
+        const writable = await showSavePicker(exportFilename(project.name, ext), ext, { delivery });
+        beginExport(writable, "audio");
+        await runAudioExport(settings, writable);
+        markComplete();
+        finishExportSoon();
+      } catch (error) {
+        failExport(error);
+      }
+    },
+    [project.name, hasTimelineContent, closeModal, showSavePicker, beginExport, runAudioExport, markComplete, finishExportSoon, failExport],
+  );
 
   const projectRes = `${project.settings.width}×${project.settings.height}`;
   const aspectRatio = project.settings.width / project.settings.height;
@@ -356,10 +381,11 @@ export const Toolbar: React.FC = () => {
               onClick={openExportDialog}
               disabled={!hasTimelineContent}
               title={hasTimelineContent ? "Choose export settings" : "Add media or text to the timeline to export"}
-              className="rounded-l-[8px] rounded-r-none bg-accent px-[18px] py-[9px] text-[13px] font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`${isAudioOnly ? "rounded-[8px]" : "rounded-l-[8px] rounded-r-none"} bg-accent px-[18px] py-[9px] text-[13px] font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               Export
             </button>
+            {!isAudioOnly && (
             <DropdownMenu
               isMenuOpen={hasTimelineContent && isExportOpen}
               onOpenChange={(open) => setIsExportOpen(open && hasTimelineContent)}
@@ -457,27 +483,39 @@ export const Toolbar: React.FC = () => {
                 {project.settings.frameRate}fps
               </Text>
             </DropdownMenu>
+            )}
           </div>
         )}
       </div>
 
       {/* ─── Auxiliary popups & dialogs ───────────────────────── */}
       <CompressDialog
-        isOpen={isCompressOpen}
+        isOpen={!isAudioOnly && isCompressOpen}
         onClose={() => setIsCompressOpen(false)}
       />
-      <ExportDialog
-        isOpen={isExportDialogOpen}
-        onClose={closeModal}
-        onExport={handleCustomExport}
-        duration={project.timeline?.duration ?? 0}
-        projectWidth={project.settings?.width ?? 1920}
-        projectHeight={project.settings?.height ?? 1080}
-        frameRate={project.settings?.frameRate ?? 30}
-        sourceMatch={sourceMatch}
-        hasAudio={project.timeline.tracks.some((track) => trackHasAudioItems(project, track.id))}
-        markedRange={loopEnd > loopStart ? { startTime: loopStart, endTime: loopEnd } : null}
-      />
+      {isAudioOnly ? (
+        <ExportAudioDialog
+          isOpen={isExportDialogOpen}
+          onClose={closeModal}
+          onExport={handleCustomAudioExport}
+          duration={project.timeline?.duration ?? 0}
+          hasAudio={project.timeline.tracks.some((track) => !track.muted && trackHasAudioItems(project, track.id))}
+          markedRange={loopEnd > loopStart ? { startTime: loopStart, endTime: loopEnd } : null}
+        />
+      ) : (
+        <ExportDialog
+          isOpen={isExportDialogOpen}
+          onClose={closeModal}
+          onExport={handleCustomExport}
+          duration={project.timeline?.duration ?? 0}
+          projectWidth={project.settings?.width ?? 1920}
+          projectHeight={project.settings?.height ?? 1080}
+          frameRate={project.settings?.frameRate ?? 30}
+          sourceMatch={sourceMatch}
+          hasAudio={project.timeline.tracks.some((track) => trackHasAudioItems(project, track.id))}
+          markedRange={loopEnd > loopStart ? { startTime: loopStart, endTime: loopEnd } : null}
+        />
+      )}
 
       <SettingsDialog />
 

@@ -33,11 +33,13 @@ export interface VideoExportSettings {
 }
 
 export interface AudioExportSettings {
-  format: "mp3" | "wav" | "aac" | "flac" | "ogg";
+  format: "mp3" | "wav" | "aac" | "flac" | "ogg" | "opus";
   sampleRate: 44100 | 48000 | 96000;
   bitDepth: 16 | 24 | 32;
   bitrate: number;
   channels: 1 | 2;
+  /** Timeline seconds; the Out point is exclusive. Omit to export everything. */
+  range?: { startTime: number; endTime: number };
 }
 
 export interface ImageExportSettings {

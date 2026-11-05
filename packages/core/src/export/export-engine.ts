@@ -26,7 +26,7 @@ import { getWavEncoder } from "../wasm/wav";
 import type { EncoderBackend, EncoderBackendFactory } from "./encoder-backend";
 import { WebCodecsBackend } from "./webcodecs-backend";
 import { resolveWebCodecsExportLimits } from "./webcodecs-limits";
-import { checkBrowserExportCapability, getVideoExportValidationError, getMissingExportMedia } from "./browser-capabilities";
+import { checkBrowserExportCapability, getVideoExportValidationError, getAudioExportValidationError, getMissingExportMedia } from "./browser-capabilities";
 import {
   getMediaItemCapabilities,
   trackHasAudioItems,
@@ -45,6 +45,7 @@ export class ExportEngine {
     framesRendered: number;
   } | null = null;
   private exportWorker: Worker | null = null;
+  private audioFFmpeg: import("../media/ffmpeg-fallback").FFmpegFallback | null = null;
 
   async initialize(): Promise<void> {
     if (this.initialized) return;
@@ -455,38 +456,26 @@ export class ExportEngine {
       ...settings,
     };
 
-    if (!this.mediabunny && fullSettings.format !== "wav") {
-      return {
-        success: false,
-        error: this.createError(
-          "UNSUPPORTED_CODEC",
-          `Audio export to ${fullSettings.format} format requires MediaBunny. WAV format is available as a fallback.`,
-          "preparing",
-        ),
-      };
+    const timelineDuration = this.calculateTimelineDuration(project.timeline);
+    const validationError = getAudioExportValidationError(fullSettings, timelineDuration);
+    if (validationError) {
+      return { success: false, error: this.createError("INVALID_SETTINGS", validationError, "preparing") };
     }
-
-    const { timeline } = project;
-    const timelineDuration = this.calculateTimelineDuration(timeline);
-
-    if (timelineDuration <= 0) {
-      return {
-        success: false,
-        error: this.createError(
-          "AUDIO_ENCODE_FAILED",
-          "Timeline is empty. Add clips before exporting.",
-          "preparing",
-        ),
-      };
+    const missingMedia = getMissingExportMedia(project, fullSettings.range);
+    if (missingMedia.length) {
+      return { success: false, error: this.createError("INVALID_SETTINGS", `Relink missing media before exporting: ${missingMedia.join(", ")}`, "preparing") };
     }
+    const exportStart = fullSettings.range?.startTime ?? 0;
+    const exportDuration = Math.min(fullSettings.range?.endTime ?? timelineDuration, timelineDuration) - exportStart;
 
     if (this.currentExport) return { success: false, error: this.createError("INVALID_SETTINGS", "An export is already running. Wait for it to finish or cancel it before retrying.", "preparing") };
-    this.abortController = new AbortController();
+    const controller = new AbortController();
+    this.abortController = controller;
     this.currentExport = { startTime: Date.now(), framesRendered: 0 };
 
     try {
       yield this.createProgress("preparing", 0, 1, 0, 0);
-      const audioBuffer = await this.renderTimelineAudio(project, 0, undefined, fullSettings);
+      const audioBuffer = await this.renderTimelineAudio(project, exportStart, exportDuration, fullSettings);
       if (this.abortController?.signal.aborted) throw this.createError("CANCELLED", "Export cancelled by user", "rendering");
 
       if (!audioBuffer) {
@@ -499,14 +488,32 @@ export class ExportEngine {
 
       yield this.createProgress("encoding", 0.5, 1, 0, 0);
 
-      // Encode based on format
       let blob: Blob;
-
       if (fullSettings.format === "wav") {
         blob = this.encodeWav(audioBuffer, fullSettings);
       } else {
-        // Use MediaBunny for other formats
-        blob = await this.encodeAudioWithMediaBunny(audioBuffer, fullSettings);
+        const nativeBlob = await this.encodeAudioWithMediaBunny(audioBuffer, fullSettings, controller.signal);
+        if (controller.signal.aborted) throw this.createError("CANCELLED", "Export cancelled by user", "encoding");
+        if (nativeBlob) {
+          blob = nativeBlob;
+        } else {
+          // A dedicated instance keeps cancelling an export from interrupting
+          // unrelated media imports or transcodes using the shared fallback.
+          if (!this.audioFFmpeg) {
+            const { FFmpegFallback } = await import("../media/ffmpeg-fallback");
+            this.audioFFmpeg = new FFmpegFallback();
+          }
+          blob = await this.audioFFmpeg.convertAudio(
+            this.encodeWav(audioBuffer, { ...fullSettings, bitDepth: 32 }),
+            fullSettings.format,
+            {
+              bitrate: `${fullSettings.bitrate}k`,
+              sampleRate: fullSettings.sampleRate,
+              channels: fullSettings.channels,
+              signal: controller.signal,
+            },
+          );
+        }
       }
 
       if (this.abortController?.signal.aborted) throw this.createError("CANCELLED", "Export cancelled by user", "encoding");
@@ -520,10 +527,13 @@ export class ExportEngine {
           framesRendered: 1,
           averageSpeed: 1,
           fileSize: blob.size,
-          averageBitrate: (blob.size * 8) / timelineDuration,
+          averageBitrate: (blob.size * 8) / exportDuration,
         },
       };
     } catch (error) {
+      if (controller.signal.aborted) {
+        return { success: false, error: this.createError("CANCELLED", "Export cancelled by user", "encoding") };
+      }
       if (error && typeof error === "object" && "code" in error) {
         return { success: false, error: error as ExportError };
       }
@@ -1048,58 +1058,48 @@ export class ExportEngine {
   private async encodeAudioWithMediaBunny(
     buffer: AudioBuffer,
     settings: AudioExportSettings,
-  ): Promise<Blob> {
-    const {
-      Output,
-      BufferTarget,
-      Mp3OutputFormat,
-      AudioSampleSource,
-      AudioSample,
-      getFirstEncodableAudioCodec,
-    } = this.mediabunny!;
-    let outputFormat;
-    switch (settings.format) {
-      case "mp3":
-        outputFormat = new Mp3OutputFormat();
-        break;
-      case "aac":
-      case "flac":
-      case "ogg":
-      default:
-        return this.encodeWav(buffer, settings);
-    }
-
-    const target = new BufferTarget();
-    const output = new Output({ format: outputFormat, target });
-
-    const audioCodec = await getFirstEncodableAudioCodec(
-      outputFormat.getSupportedAudioCodecs(),
-    );
-
-    const audioSource = new AudioSampleSource({
-      codec: audioCodec || "mp3",
+    signal: AbortSignal,
+  ): Promise<Blob | null> {
+    if (!this.mediabunny || settings.format === "flac" || settings.format === "wav") return null;
+    const { Output, BufferTarget, Mp3OutputFormat, AdtsOutputFormat, OggOutputFormat, AudioSampleSource, AudioSample, canEncodeAudio } = this.mediabunny;
+    const codec = settings.format === "ogg" ? "vorbis" : settings.format;
+    const supported = await canEncodeAudio(codec, {
+      numberOfChannels: settings.channels,
+      sampleRate: settings.sampleRate,
       bitrate: settings.bitrate * 1000,
     });
+    if (signal.aborted) throw this.createError("CANCELLED", "Export cancelled by user", "encoding");
+    if (!supported) return null;
 
-    output.addAudioTrack(audioSource);
-    await output.start();
-    const audioSamples = AudioSample.fromAudioBuffer(buffer, 0);
-    for (const sample of audioSamples) {
-      await audioSource.add(sample);
-      sample.close();
+    const outputFormat = settings.format === "mp3" ? new Mp3OutputFormat()
+      : settings.format === "aac" ? new AdtsOutputFormat() : new OggOutputFormat();
+    const target = new BufferTarget();
+    const output = new Output({ format: outputFormat, target });
+    const audioSource = new AudioSampleSource({ codec, bitrate: settings.bitrate * 1000 });
+    const cancel = () => { void output.cancel().catch(() => undefined); };
+    signal.addEventListener("abort", cancel, { once: true });
+    try {
+      output.addAudioTrack(audioSource);
+      await output.start();
+      const samples = AudioSample.fromAudioBuffer(buffer, 0);
+      try {
+        for (const sample of samples) {
+          if (signal.aborted) throw this.createError("CANCELLED", "Export cancelled by user", "encoding");
+          await audioSource.add(sample);
+        }
+      } finally {
+        for (const sample of samples) sample.close();
+      }
+      audioSource.close();
+      await output.finalize();
+      if (!target.buffer?.byteLength) throw new Error("Audio encoding produced an empty file");
+      return new Blob([target.buffer], { type: this.getAudioMimeType(settings.format) });
+    } catch (error) {
+      await output.cancel().catch(() => undefined);
+      throw error;
+    } finally {
+      signal.removeEventListener("abort", cancel);
     }
-
-    audioSource.close();
-    await output.finalize();
-
-    const resultBuffer = target.buffer;
-    if (!resultBuffer) {
-      throw new Error("Audio encoding failed");
-    }
-
-    return new Blob([resultBuffer], {
-      type: this.getAudioMimeType(settings.format),
-    });
   }
 
   private encodeWav(buffer: AudioBuffer, settings: AudioExportSettings): Blob {
@@ -1188,6 +1188,8 @@ export class ExportEngine {
         return "audio/flac";
       case "ogg":
         return "audio/ogg";
+      case "opus":
+        return "audio/ogg; codecs=opus";
       default:
         return "audio/mpeg";
     }
@@ -1327,6 +1329,8 @@ export class ExportEngine {
   dispose(): void {
     this.cancel();
     this.terminateWorker();
+    this.audioFFmpeg?.terminate();
+    this.audioFFmpeg = null;
     this.mediabunny = null;
     this.videoEngine = null;
     this.audioEngine = null;

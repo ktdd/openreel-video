@@ -16,7 +16,6 @@ import { useUIStore } from "../../stores/ui-store";
 import { useTimelineStore } from "../../stores/timeline-store";
 import type { MediaItem } from "@openreel/core";
 import { AspectRatioMatchDialog } from "./dialogs/AspectRatioMatchDialog";
-import { MusicLibraryPanel } from "./inspector/MusicLibraryPanel";
 import { FilterPresetsPanel } from "./inspector/FilterPresetsPanel";
 import { RecipesTab } from "./panels/RecipesTab";
 import {
@@ -52,7 +51,6 @@ type AssetsTab =
   | "graphics"
   | "effects"
   | "transitions"
-  | "audio"
   | "recipes";
 
 const ASSETS_TABS: ReadonlyArray<{
@@ -84,11 +82,6 @@ const ASSETS_TABS: ReadonlyArray<{
     value: "transitions",
     label: "Transitions",
     description: "Drag transitions onto a clip's edge.",
-  },
-  {
-    value: "audio",
-    label: "Audio",
-    description: "Browse music and sound effects.",
   },
   {
     value: "recipes",
@@ -187,7 +180,6 @@ const TAB_ICONS: Record<AssetsTab, React.ElementType> = {
   graphics: Shapes,
   effects: Zap,
   transitions: Shuffle,
-  audio: Music,
   recipes: Wand2,
 };
 
@@ -1342,12 +1334,6 @@ export const AssetsPanel: React.FC = () => {
         return (
           <div className="flex min-h-0 flex-1 flex-col border-t border-border/70 bg-bg-1">
             <TransitionsPanel />
-          </div>
-        );
-      case "audio":
-        return (
-          <div className="min-h-0 flex-1 overflow-y-auto border-t border-border/70 p-4">
-            <MusicLibraryPanel />
           </div>
         );
       case "recipes":

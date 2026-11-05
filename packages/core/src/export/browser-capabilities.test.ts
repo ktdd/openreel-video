@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { checkBrowserExportCapability, getMissingExportMedia, getVideoExportValidationError } from "./browser-capabilities";
-import { DEFAULT_VIDEO_SETTINGS } from "./types";
+import { checkBrowserExportCapability, getAudioExportValidationError, getMissingExportMedia, getVideoExportValidationError } from "./browser-capabilities";
+import { DEFAULT_AUDIO_SETTINGS, DEFAULT_VIDEO_SETTINGS, type AudioExportSettings } from "./types";
 import type { Project } from "../types/project";
 
 function library(video: string | null = "avc", audio: string | null = "aac") {
@@ -8,6 +8,40 @@ function library(video: string | null = "avc", audio: string | null = "aac") {
   class WebM { getSupportedVideoCodecs() { return ["vp8", "vp9", "av1"]; } getSupportedAudioCodecs() { return ["opus"]; } }
   return { Mp4OutputFormat: Mp4, MovOutputFormat: Mp4, WebMOutputFormat: WebM, getFirstEncodableVideoCodec: vi.fn(async () => video), getFirstEncodableAudioCodec: vi.fn(async () => audio) } as unknown as typeof import("mediabunny");
 }
+
+describe("audio export validation", () => {
+  it.each(["wav", "mp3", "aac", "ogg", "opus"] as const)("accepts %s settings and a valid marked range", (format) => {
+    expect(getAudioExportValidationError({ ...DEFAULT_AUDIO_SETTINGS, format, range: { startTime: 2, endTime: 4 } }, 10)).toBeNull();
+  });
+
+  it.each([0, -1, NaN, Infinity])("rejects an invalid duration: %s", (duration) => {
+    expect(getAudioExportValidationError(DEFAULT_AUDIO_SETTINGS, duration)).toContain("Add audio");
+  });
+
+  const invalidSettings: { settings: Partial<AudioExportSettings>; message: string }[] = [
+    { settings: { format: "invalid" as AudioExportSettings["format"] }, message: "format" },
+    { settings: { sampleRate: 12345 as AudioExportSettings["sampleRate"] }, message: "sample rate" },
+    { settings: { format: "mp3", sampleRate: 96000 }, message: "MP3" },
+    { settings: { format: "opus", sampleRate: 44100 }, message: "Opus" },
+    { settings: { channels: 3 as AudioExportSettings["channels"] }, message: "mono or stereo" },
+    { settings: { bitDepth: 20 as AudioExportSettings["bitDepth"] }, message: "bit depth" },
+    ...[0, NaN, Infinity].map((bitrate) => ({ settings: { bitrate }, message: "bitrate" })),
+  ];
+  it.each(invalidSettings)("rejects invalid audio settings: $settings", ({ settings, message }) => {
+    expect(getAudioExportValidationError({ ...DEFAULT_AUDIO_SETTINGS, ...settings }, 10)).toContain(message);
+  });
+
+  it("permits 96 kHz 32-bit float WAV without a lossy bitrate", () => {
+    expect(getAudioExportValidationError({ ...DEFAULT_AUDIO_SETTINGS, format: "wav", sampleRate: 96000, bitDepth: 32, bitrate: 0 }, 10)).toBeNull();
+  });
+
+  it.each([
+    { startTime: -1, endTime: 2 }, { startTime: 2, endTime: 2 }, { startTime: 4, endTime: 2 },
+    { startTime: 2, endTime: 11 }, { startTime: NaN, endTime: 4 }, { startTime: 2, endTime: Infinity },
+  ])("rejects invalid audio export marks: %j", (range) => {
+    expect(getAudioExportValidationError({ ...DEFAULT_AUDIO_SETTINGS, range }, 10)).toContain("In/Out range");
+  });
+});
 
 describe("browser export preflight", () => {
   it("checks the exact selected codec and the actual output dimensions", async () => {

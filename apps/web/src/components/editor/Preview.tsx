@@ -7740,7 +7740,7 @@ export const Preview: React.FC = () => {
               );
             })}
         </div>
-        {exportState.isExporting && <ExportProgressOverlay progress={exportState.progress} phase={exportState.phase} width={videoAreaSize.width} height={videoAreaSize.height} />}
+        {exportState.isExporting && <ExportProgressOverlay progress={exportState.progress} phase={exportState.phase} mediaType={exportState.mediaType} width={videoAreaSize.width} height={videoAreaSize.height} />}
       </div>
 
       {/* Player Controls with integrated Scrub Bar */}

@@ -642,22 +642,33 @@ export class FFmpegFallback {
 
   async convertAudio(
     file: File | Blob,
-    format: "mp3" | "wav" | "aac" | "ogg",
+    format: "mp3" | "wav" | "aac" | "flac" | "ogg" | "opus",
     options: {
       bitrate?: string;
       sampleRate?: number;
       channels?: number;
+      signal?: AbortSignal;
     } = {},
   ): Promise<Blob> {
-    await this.load();
-    this.ensureLoaded();
-
-    const inputFilename = "input";
-    const outputFilename = `output.${format}`;
+    const { signal } = options;
+    const checkAborted = () => {
+      if (signal?.aborted) throw new DOMException("Audio export cancelled", "AbortError");
+    };
+    const cancel = () => this.terminate();
+    checkAborted();
+    signal?.addEventListener("abort", cancel, { once: true });
+    const operationId = crypto.randomUUID();
+    const inputFilename = `audio_${operationId}_input.wav`;
+    const outputFilename = `audio_${operationId}.${format}`;
 
     try {
+      await this.load(signal);
+      checkAborted();
+      this.ensureLoaded();
+      const instance = this.ffmpeg!;
       const inputData = await this.fileToUint8Array(file);
-      await this.ffmpeg!.writeFile(inputFilename, inputData);
+      checkAborted();
+      await instance.writeFile(inputFilename, inputData);
 
       const args = ["-i", inputFilename, "-vn"]; // No video
       switch (format) {
@@ -673,8 +684,14 @@ export class FFmpegFallback {
         case "ogg":
           args.push("-c:a", "libvorbis");
           break;
+        case "opus":
+          args.push("-c:a", "libopus", "-f", "ogg");
+          break;
+        case "flac":
+          args.push("-c:a", "flac");
+          break;
       }
-      if (options.bitrate) {
+      if (options.bitrate && format !== "wav" && format !== "flac") {
         args.push("-b:a", options.bitrate);
       }
       if (options.sampleRate) {
@@ -686,21 +703,32 @@ export class FFmpegFallback {
 
       args.push(outputFilename);
 
-      await this.ffmpeg!.exec(args);
+      checkAborted();
+      const exitCode = await instance.exec(args);
+      checkAborted();
+      if (exitCode !== 0) throw new Error(`Audio encoding to ${format.toUpperCase()} failed (FFmpeg exited with ${exitCode})`);
 
-      const data = await this.ffmpeg!.readFile(outputFilename);
-      const mimeTypes: Record<string, string> = {
+      const data = await instance.readFile(outputFilename);
+      checkAborted();
+      if (!data.byteLength) throw new Error("Audio encoding produced an empty file");
+      const mimeTypes: Record<typeof format, string> = {
         mp3: "audio/mpeg",
         wav: "audio/wav",
         aac: "audio/aac",
+        flac: "audio/flac",
         ogg: "audio/ogg",
+        opus: "audio/ogg; codecs=opus",
       };
 
-      return new Blob([data.buffer as ArrayBuffer], {
+      return new Blob([data.slice().buffer as ArrayBuffer], {
         type: mimeTypes[format],
       });
+    } catch (error) {
+      checkAborted();
+      throw error;
     } finally {
       await this.cleanupFiles([inputFilename, outputFilename]);
+      signal?.removeEventListener("abort", cancel);
     }
   }
 

@@ -45,7 +45,6 @@ export { StickerPickerPanel } from "./StickerPickerPanel";
 export { AudioEffectsSection } from "./AudioEffectsSection";
 export { AudioDuckingSection } from "./AudioDuckingSection";
 export { AutoCutSilenceSection } from "./AutoCutSilenceSection";
-export { MusicLibraryPanel } from "./MusicLibraryPanel";
 
 // Transitions & Keyframes
 export { TransitionInspector } from "./TransitionInspector";

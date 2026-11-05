@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector, persist } from "zustand/middleware";
 import type { PreviewQuality } from "../components/editor/preview/preview-resolution";
+import type { ExportMediaType } from "../services/export-runner";
 
 export type PanelId =
   | "mediaLibrary"
@@ -140,12 +141,9 @@ export interface UIState {
     isExporting: boolean;
     progress: number;
     phase: string;
+    mediaType?: ExportMediaType;
   };
-  setExportState: (state: {
-    isExporting: boolean;
-    progress: number;
-    phase: string;
-  }) => void;
+  setExportState: (state: UIState["exportState"]) => void;
   startEffectApplication: (clipId: string, label?: string) => void;
   finishEffectApplication: () => void;
 }
@@ -258,6 +256,7 @@ export const useUIStore = create<UIState>()(
 
 
         exportState: {
+          mediaType: "video",
           isExporting: false,
           progress: 0,
           phase: "",

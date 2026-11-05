@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { Project, VideoExportSettings, ExportResult } from "@openreel/core";
+import type { AudioExportSettings, Project, VideoExportSettings, ExportResult } from "@openreel/core";
 import {
   useExportRunner,
   mimeForExt,
@@ -93,6 +93,14 @@ describe("export-runner pure helpers", () => {
     expect(mimeForExt("xyz")).toBe("application/octet-stream");
   });
 
+  it.each([
+    ["wav", "audio/wav"], ["mp3", "audio/mpeg"], ["aac", "audio/aac"],
+    ["ogg", "audio/ogg"], ["opus", "audio/ogg"],
+  ])("preserves the %s audio extension and MIME type", (extension, mime) => {
+    expect(mimeForExt(extension)).toBe(mime);
+    expect(exportFilename("Audio project", extension)).toBe(`Audio project.${extension}`);
+  });
+
   it("resolves container ext from format", () => {
     expect(extForFormat("mov")).toBe("mov");
     expect(extForFormat("webm")).toBe("webm");
@@ -142,6 +150,44 @@ describe("useExportRunner", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockEngine.initialize.mockResolvedValue(undefined);
+  });
+
+  it("retains the audio job label through progress and completion, then resets it for video", () => {
+    const { result } = renderHook(() => useExportRunner({ project: fakeProject() }));
+    act(() => { result.current.beginExport(undefined, "audio"); });
+    expect(result.current.state).toMatchObject({ isExporting: true, mediaType: "audio", progress: 0 });
+    act(() => { result.current.reportProgress(0.5, "encoding"); });
+    expect(result.current.state).toMatchObject({ mediaType: "audio", progress: 50, phase: "encoding..." });
+    act(() => { result.current.markComplete(); });
+    expect(result.current.state).toMatchObject({ mediaType: "audio", complete: true, isExporting: false, progress: 100 });
+    act(() => { result.current.beginExport(); });
+    expect(result.current.state).toMatchObject({ mediaType: "video", complete: false, isExporting: true, progress: 0 });
+    act(() => { result.current.cancel(); });
+    expect(result.current.state).toMatchObject({ isExporting: false, progress: 0, complete: false });
+  });
+
+  it.each(["wav", "mp3", "aac", "ogg", "opus"] as const)("forwards %s audio settings and range to the engine and completes the writable", async (format) => {
+    mockEngine.exportAudio.mockImplementation(async function* () {
+      yield { phase: "encoding", progress: 0.5 };
+      return { success: true, blob: fakeBlob([new Uint8Array([1, 2, 3])]) };
+    });
+    const project = fakeProject();
+    const { result } = renderHook(() => useExportRunner({ project }));
+    const writable = fakeStream();
+    const settings: AudioExportSettings = {
+      format, sampleRate: 48000, channels: 1, bitDepth: 24, bitrate: 128, range: { startTime: 2, endTime: 4 },
+    };
+    await act(async () => {
+      result.current.beginExport(writable, "audio");
+      await result.current.runAudioExport(settings, writable);
+      result.current.markComplete();
+    });
+    expect(mockEngine.exportAudio).toHaveBeenCalledWith(project, settings);
+    expect(mockEngine.exportVideo).not.toHaveBeenCalled();
+    expect(writable.write).toHaveBeenCalledWith(new Uint8Array([1, 2, 3]));
+    expect(writable.close).toHaveBeenCalledOnce();
+    expect(writable.abort).not.toHaveBeenCalled();
+    expect(result.current.state).toMatchObject({ mediaType: "audio", complete: true, isExporting: false, progress: 100 });
   });
 
   it("advances progress and completes on success", async () => {

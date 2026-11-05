@@ -39,7 +39,7 @@ export {
   resolveWebCodecsExportLimits,
   type WebCodecsExportAdjustment,
 } from "./export/webcodecs-limits";
-export { checkBrowserExportCapability, getVideoExportValidationError, getMissingExportMedia, type BrowserExportCapability } from "./export/browser-capabilities";
+export { checkBrowserExportCapability, getVideoExportValidationError, getAudioExportValidationError, getMissingExportMedia, type BrowserExportCapability } from "./export/browser-capabilities";
 
 export type {
   VideoExportSettings,

@@ -3,7 +3,6 @@ export * from "./timeline";
 export * from "./actions";
 export * from "./effects";
 export * from "./project-presets";
-export * from "./sound-library";
 export * from "./result";
 
 export type {

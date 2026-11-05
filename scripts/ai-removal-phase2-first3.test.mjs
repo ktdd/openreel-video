@@ -54,9 +54,34 @@ test("removed chat and generation implementations are deleted rather than hidden
   assert.equal(existsSync(resolve(root, "apps/web/src/services/agent")), false);
 });
 
+test("procedural music and sound library is deleted while ordinary audio tools remain", () => {
+  for (const path of [
+    "apps/web/src/components/editor/inspector/MusicLibraryPanel.tsx",
+    "packages/core/src/audio/sound-library-engine.ts",
+    "packages/core/src/audio/sound-generator.ts",
+    "packages/core/src/types/sound-library.ts",
+  ]) assert.equal(existsSync(resolve(root, path)), false, path);
+  for (const path of [
+    "apps/web/src/components/editor/AssetsPanel.tsx",
+    "apps/web/src/components/editor/inspector/index.ts",
+    "apps/web/src/stores/engine-store.ts",
+    "packages/core/src/audio/index.ts",
+    "packages/core/src/types/index.ts",
+  ]) assert.doesNotMatch(read(path), /MusicLibraryPanel|SoundLibraryEngine|soundLibrary|sound-library|sound-generator/, path);
+  assert.doesNotMatch(read("apps/web/src/components/editor/AssetsPanel.tsx"), /value:\s*"audio"/);
+  for (const path of [
+    "packages/core/src/audio/audio-engine.ts",
+    "packages/core/src/audio/audio-effects-engine.ts",
+    "packages/core/src/audio/beat-detection-engine.ts",
+    "apps/web/src/components/editor/inspector/VoiceOverPanel.tsx",
+    "apps/web/src/components/editor/inspector/tabs/AudioTab.tsx",
+    "apps/web/src/components/editor/ExportAudioDialog.tsx",
+  ]) assert.ok(existsSync(resolve(root, path)), path);
+});
+
 test("manual layout and media tools are retained", () => {
   const assets = read("apps/web/src/components/editor/AssetsPanel.tsx");
-  for (const name of ["MusicLibraryPanel", "FilterPresetsPanel", "RecipesTab", "generateBackgroundBlob", "replaceMediaAsset"]) assert.ok(assets.includes(name), name);
+  for (const name of ["FilterPresetsPanel", "RecipesTab", "generateBackgroundBlob", "replaceMediaAsset"]) assert.ok(assets.includes(name), name);
   assert.match(read("apps/web/src/components/editor/editor-responsive.css"), /grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/);
   for (const path of [
     "apps/web/src/components/editor/EditSharingPanel.tsx",

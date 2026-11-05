@@ -9,7 +9,6 @@ import { useProjectStore } from "../../stores/project-store";
 import { useSettingsStore } from "../../stores/settings-store";
 import { useUIStore } from "../../stores/ui-store";
 
-vi.mock("./inspector/MusicLibraryPanel", () => ({ MusicLibraryPanel: () => <p>Music and sound library</p> }));
 vi.mock("./inspector/FilterPresetsPanel", () => ({ FilterPresetsPanel: () => <p>Manual filter presets</p> }));
 vi.mock("./settings/GeneralPanel", () => ({ GeneralPanel: () => <p>Project and general settings</p> }));
 
@@ -33,13 +32,13 @@ function image(id: string, missing = false): MediaItem {
 }
 
 describe("Phase 2 chat and Kie surface removal", () => {
-  it("keeps music, filters, titles and Recipes accessible without generation tools", () => {
+  it("keeps filters, titles and Recipes accessible without generation tools or the sound library", () => {
     const request = vi.spyOn(globalThis, "fetch");
     const view = render(<AssetsPanel />);
     expect(view.queryByRole("button", { name: "AI Generate" })).toBeNull();
     expect(view.getByRole("button", { name: "Recipes" })).toBeInTheDocument();
-    fireEvent.click(view.getByRole("button", { name: "Audio" }));
-    expect(view.getByText("Music and sound library")).toBeInTheDocument();
+    expect(view.queryByRole("button", { name: "Audio" })).toBeNull();
+    expect(view.queryByText("Music & SFX")).toBeNull();
     fireEvent.click(view.getByRole("button", { name: "Effects" }));
     fireEvent.click(view.getByRole("button", { name: "Filter Presets" }));
     expect(view.getByText("Manual filter presets")).toBeInTheDocument();

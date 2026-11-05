@@ -1,4 +1,4 @@
-import { CODEC_MAP, type VideoExportSettings } from "./types";
+import { CODEC_MAP, type AudioExportSettings, type VideoExportSettings } from "./types";
 import type { Project } from "../types/project";
 
 type MediaBunnyModule = typeof import("mediabunny");
@@ -14,6 +14,24 @@ export function getVideoExportValidationError(settings: VideoExportSettings, dur
   if (![settings.width, settings.height].every((value) => Number.isInteger(value) && value > 0)) return "Choose a valid width and height for your video.";
   if (!Number.isFinite(settings.frameRate) || settings.frameRate <= 0) return "Choose a valid frame rate for your video.";
   if (!Number.isFinite(settings.bitrate) || settings.bitrate <= 0) return "Choose a valid video bitrate.";
+  return null;
+}
+
+export function getAudioExportValidationError(settings: AudioExportSettings, duration: number): string | null {
+  if (!Number.isFinite(duration) || duration <= 0) return "Add audio to the timeline before exporting.";
+  if (!["wav", "mp3", "aac", "flac", "ogg", "opus"].includes(settings.format)) return "Choose a valid audio format.";
+  if (![44100, 48000, 96000].includes(settings.sampleRate)) return "Choose a valid audio sample rate.";
+  if (settings.format === "mp3" && settings.sampleRate > 48000) return "MP3 requires a sample rate of 44.1 or 48 kHz.";
+  if (settings.format === "opus" && settings.sampleRate !== 48000) return "Opus export uses a 48 kHz sample rate.";
+  if (settings.channels !== 1 && settings.channels !== 2) return "Choose mono or stereo audio.";
+  if (![16, 24, 32].includes(settings.bitDepth)) return "Choose a valid audio bit depth.";
+  if (settings.format !== "wav" && settings.format !== "flac"
+    && (!Number.isFinite(settings.bitrate) || settings.bitrate <= 0)) return "Choose a valid audio bitrate.";
+  const range = settings.range;
+  if (range && (!Number.isFinite(range.startTime) || !Number.isFinite(range.endTime)
+    || range.startTime < 0 || range.endTime <= range.startTime || range.endTime > duration + 1e-7)) {
+    return "Choose an In/Out range inside the timeline, with Out after In.";
+  }
   return null;
 }
 

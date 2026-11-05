@@ -9,7 +9,6 @@ import {
   GraphicsEngine,
   PhotoEngine,
   ExportEngine,
-  SoundLibraryEngine,
   ChromaKeyEngine,
   MaskEngine,
   NestedSequenceEngine,
@@ -68,7 +67,6 @@ export interface EngineState {
   graphicsEngine: GraphicsEngine | null;
   photoEngine: PhotoEngine | null;
   exportEngine: ExportEngine | null;
-  soundLibraryEngine: SoundLibraryEngine | null;
   chromaKeyEngine: ChromaKeyEngine | null;
   maskEngine: MaskEngine | null;
   nestedSequenceEngine: NestedSequenceEngine | null;
@@ -92,7 +90,6 @@ export interface EngineState {
   getGraphicsEngine: () => GraphicsEngine | null;
   getPhotoEngine: () => PhotoEngine | null;
   getExportEngine: () => ExportEngine | null;
-  getSoundLibraryEngine: () => Promise<SoundLibraryEngine>;
   getChromaKeyEngine: () => Promise<ChromaKeyEngine>;
   getMaskEngine: () => Promise<MaskEngine>;
   getNestedSequenceEngine: () => Promise<NestedSequenceEngine>;
@@ -190,7 +187,6 @@ export const useEngineStore = create<EngineState>()(
     graphicsEngine: coreGraphicsEngine,
     photoEngine: null,
     exportEngine: null,
-    soundLibraryEngine: null,
     chromaKeyEngine: null,
     maskEngine: null,
     nestedSequenceEngine: null,
@@ -277,7 +273,6 @@ export const useEngineStore = create<EngineState>()(
         graphicsEngine: null,
         photoEngine: null,
         exportEngine: null,
-        soundLibraryEngine: null,
         chromaKeyEngine: null,
         maskEngine: null,
         nestedSequenceEngine: null,
@@ -363,8 +358,6 @@ export const useEngineStore = create<EngineState>()(
     getGraphicsEngine: () => get().graphicsEngine,
     getPhotoEngine: () => get().photoEngine,
     getExportEngine: () => get().exportEngine,
-    getSoundLibraryEngine: () =>
-      getOrCreateEngine("soundLibrary", () => new SoundLibraryEngine()),
     getChromaKeyEngine: () =>
       getOrCreateEngine(
         "chromaKey",

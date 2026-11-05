@@ -8,7 +8,10 @@ import {
   type Project,
 } from "@openreel/core";
 
+export type ExportMediaType = "video" | "audio";
+
 export interface ExportRunnerState {
+  mediaType?: ExportMediaType;
   isExporting: boolean;
   progress: number;
   phase: string;
@@ -24,6 +27,11 @@ const MIME_BY_EXT: Record<string, string> = {
   webm: "video/webm",
   mov: "video/quicktime",
   wav: "audio/wav",
+  mp3: "audio/mpeg",
+  aac: "audio/aac",
+  ogg: "audio/ogg",
+  opus: "audio/ogg",
+  flac: "audio/flac",
 };
 
 export function mimeForExt(ext: string): string {
@@ -357,6 +365,7 @@ export async function createDownloadWritable(
 }
 
 const INITIAL_STATE: ExportRunnerState = {
+  mediaType: "video",
   isExporting: false,
   progress: 0,
   phase: "",
@@ -380,7 +389,7 @@ export interface UseExportRunner {
   showSavePicker: (filename: string, ext: string, opts?: { delivery?: ExportDeliveryMode }) => Promise<FileSystemWritableFileStream>;
   reportProgress: (progress01: number, phase: string) => void;
   markComplete: () => void;
-  beginExport: (writable?: FileSystemWritableFileStream) => () => void;
+  beginExport: (writable?: FileSystemWritableFileStream, mediaType?: ExportMediaType) => () => void;
   assertNotCancelled: () => void;
   finishExportSoon: () => void;
   failExport: (error: unknown) => void;
@@ -401,7 +410,7 @@ export function useExportRunner(options: ExportRunnerOptions): UseExportRunner {
     if (cancelled.current) throw new DOMException("Export cancelled", "AbortError");
   }, []);
 
-  const beginExport = useCallback((writable?: FileSystemWritableFileStream) => {
+  const beginExport = useCallback((writable?: FileSystemWritableFileStream, mediaType: ExportMediaType = "video") => {
     if (running.current) {
       void writable?.abort().catch(() => undefined);
       throw new Error("The previous export is still finishing. Please retry in a moment.");
@@ -411,6 +420,7 @@ export function useExportRunner(options: ExportRunnerOptions): UseExportRunner {
     cancelled.current = false;
     activeWritable.current = writable ?? null;
     setState({
+      mediaType,
       isExporting: true,
       progress: 0,
       phase: "Initializing...",
