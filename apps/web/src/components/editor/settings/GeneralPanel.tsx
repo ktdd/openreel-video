@@ -1,12 +1,7 @@
+import { ToolcraftButton as Button, ToolcraftClickableCard as ClickableCard, ToolcraftSelectControl as Selector, ToolcraftText as Text, ToolcraftNumberInputControl, ToolcraftSwitchControl } from "@openreel/ui";
 import React, { useCallback } from "react";
-import { ToolcraftSwitchControl } from "@openreel/ui";
-import { ToolcraftButton as Button } from "@openreel/ui";
-import { ToolcraftClickableCard as ClickableCard } from "@openreel/ui";
-import { ToolcraftNumberInputControl } from "@openreel/ui";
-import { ToolcraftSelectControl as Selector } from "@openreel/ui";
-import { ToolcraftText as Text } from "@openreel/ui";
-import { useSettingsStore } from "../../../stores/settings-store";
 import { useProjectStore } from "../../../stores/project-store";
+import { useSettingsStore } from "../../../stores/settings-store";
 import { EDITING_FRAME_RATE_OPTIONS } from "../editing-frame-rate";
 
 const ASPECT_PRESETS: Array<{ label: string; width: number; height: number }> = [
@@ -87,7 +82,7 @@ export const GeneralPanel: React.FC = () => {
           <Text type="body" color="primary" className="text-sm font-medium">
             Project Composition
           </Text>
-          <Text type="supporting" color="secondary" className="mt-0.5 text-xs">
+          <Text type="supporting" color="secondary" className="mt-0.5 ml-1 text-xs">
             Set the canvas dimensions for your project. Pick a preset for TikTok,
             Reels, YouTube, or enter custom values.
           </Text>
@@ -113,7 +108,7 @@ export const GeneralPanel: React.FC = () => {
                 <Text type="supporting" color="inherit" className="font-medium">
                   {preset.label}
                 </Text>
-                <Text type="supporting" color="secondary" className="mt-0.5 text-[10px]">
+                <Text type="supporting" color="secondary" className="mt-0.5 ml-1 text-[10px]">
                   {preset.width} × {preset.height}
                 </Text>
               </ClickableCard>
@@ -145,6 +140,7 @@ export const GeneralPanel: React.FC = () => {
             onClick={handleApplyCustom}
             variant="primary"
             size="md"
+            style={{width: 100}}
           />
         </div>
 
@@ -181,7 +177,7 @@ export const GeneralPanel: React.FC = () => {
           <Text type="supporting" color="secondary" className="text-xs font-medium">
             Background fill
           </Text>
-          <Text type="supporting" color="secondary" className="text-[11px]">
+          <Text type="supporting" color="secondary" className="text-[11px] ml-1">
             Fills the canvas around clips that don&apos;t match the aspect ratio.
           </Text>
           <div className="flex flex-wrap items-center gap-2">
@@ -250,7 +246,7 @@ export const GeneralPanel: React.FC = () => {
             <Text type="supporting" color="secondary" className="text-sm">
               Enable auto-save
             </Text>
-            <Text type="supporting" color="secondary" className="mt-0.5 text-xs">
+            <Text type="supporting" color="secondary" className="mt-0.5 ml-1 text-xs">
               Automatically save your project at regular intervals
             </Text>
           </div>

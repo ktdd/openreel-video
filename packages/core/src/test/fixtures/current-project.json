@@ -1,0 +1,74 @@
+{
+  "id": "current-release-project",
+  "name": "Current manual editing project",
+  "createdAt": 1700000000000,
+  "modifiedAt": 1700000000000,
+  "settings": { "width": 640, "height": 360, "frameRate": 24, "sampleRate": 48000, "channels": 2 },
+  "mediaLibrary": { "items": [{
+    "id": "local-image", "name": "local-image.svg", "type": "image",
+    "blob": null, "fileHandle": null, "thumbnailUrl": null, "waveformData": null,
+    "sourceFile": { "name": "local-image.svg", "size": 109, "lastModified": 1700000000000 },
+    "metadata": { "duration": 0, "width": 16, "height": 16, "frameRate": 0, "codec": "svg", "sampleRate": 0, "channels": 0, "fileSize": 109 }
+  }] },
+  "timeline": {
+    "duration": 3, "markers": [],
+    "subtitles": [{ "id": "caption", "text": "Manual caption", "startTime": 0, "endTime": 1, "words": [] }],
+    "tracks": [{
+      "id": "image-track", "type": "image", "name": "Local media", "locked": false, "hidden": false, "muted": false, "solo": false, "transitions": [],
+      "clips": [{
+        "id": "image-clip", "mediaId": "local-image", "trackId": "image-track", "startTime": 0, "duration": 3,
+        "inPoint": 0, "outPoint": 3, "volume": 1, "effects": [], "audioEffects": [],
+        "keyframes": [{ "id": "fade", "time": 0, "property": "opacity", "value": 0.5, "easing": "linear" }],
+        "transform": { "position": { "x": 0, "y": 0 }, "scale": { "x": 1, "y": 1 }, "rotation": 15, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 }
+      }]
+    }]
+  },
+  "textClips": [],
+  "generatedShaders": [{
+    "id": "saved-amber", "name": "Saved Amber", "category": "fill", "origin": "generated",
+    "glsl": "#version 300 es\nprecision highp float;\nuniform float u_amount;\nout vec4 fragColor;\nvoid main(){fragColor=vec4(u_amount,0.5,0.0,1.0);}",
+    "params": [{ "name": "amount", "label": "Amber amount", "type": "number", "default": 0.5, "min": 0, "max": 1, "step": 0.1 }]
+  }],
+  "motionCompositions": [{
+    "id": "creation-composition", "name": "Manual scene", "width": 640, "height": 360, "frameRate": 24, "duration": 3,
+    "backgroundColor": "#000000", "assets": [], "markers": [], "audioClips": [], "guides": [], "lights": [], "tracks": [],
+    "variables": [{ "id": "headline", "name": "Headline", "type": "text", "value": "Editable headline" }],
+    "createdAt": 1700000000000, "modifiedAt": 1700000000000,
+    "layers": [{
+      "id": "headline-layer", "type": "text", "name": "Headline", "startTime": 0, "duration": 3,
+      "visible": true, "locked": false, "keyframes": [], "text": "Editable headline",
+      "variableBindings": [{ "id": "headline-binding", "variableId": "headline", "target": "text.content" }],
+      "transform": { "position": { "x": 320, "y": 100 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+      "style": { "fontFamily": "Arial", "fontSize": 24, "fontWeight": 400, "color": "#ffffff", "align": "center", "lineHeight": 1.2,
+        "fillShader": { "shaderId": "saved-amber", "params": { "amount": 0.8 } } }
+    }, {
+      "id": "creation-layer", "type": "scene3d", "name": "Box", "startTime": 0, "duration": 3,
+      "visible": true, "locked": false, "keyframes": [],
+      "transform": { "position": { "x": 320, "y": 180 }, "scale": { "x": 1, "y": 1 }, "rotation": 0, "anchor": { "x": 0.5, "y": 0.5 }, "opacity": 1 },
+      "object": { "kind": "box", "size": 0.5 },
+      "objects": [{ "id": "render-box", "name": "Box", "object": { "kind": "box", "size": 0.5 }, "material": { "kind": "physical", "color": "#6699ff", "roughness": 0.5 } }]
+    }]
+  }],
+  "motionInstances": [],
+  "creation": {
+    "version": "0.1.0", "activeSceneId": "creation-scene", "operationHistory": [],
+    "assets": [{
+      "id": "box-asset", "name": "Procedural box", "kind": "prop", "seed": "manual", "parameters": {},
+      "nodes": [{ "id": "box-node", "type": "primitive", "name": "Box", "inputs": [], "parameters": { "kind": "box", "size": 1 } }],
+      "materials": [{ "id": "box-material", "name": "Blue", "model": "pbr", "baseColor": "#6699ff", "roughness": 0.5 }],
+      "dependencies": [], "caches": [], "createdAt": 1700000000000, "modifiedAt": 1700000000000
+    }],
+    "scenes": [{
+      "id": "creation-scene", "name": "Manual box scene", "duration": 3, "frameRate": 24,
+      "objects": [{ "id": "creation-box", "name": "Box", "assetId": "box-asset", "materialId": "box-material", "visible": true, "selectable": true, "tags": [],
+        "transform": { "position": { "x": 0, "y": 0, "z": 0 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 } } }],
+      "cameras": [{ "id": "creation-camera", "name": "Camera", "position": { "x": 0, "y": 0, "z": 4 }, "target": { "x": 0, "y": 0, "z": 0 }, "fov": 35 }],
+      "activeCameraId": "creation-camera",
+      "lights": [{ "id": "creation-light", "name": "Key", "kind": "directional", "color": "#ffffff", "intensity": 1 }],
+      "animations": [], "environment": { "kind": "studio" },
+      "renderBindings": [{ "id": "creation-binding", "kind": "motion-scene3d", "compositionId": "creation-composition", "layerId": "creation-layer",
+        "objectBindings": [{ "sceneObjectId": "creation-box", "renderObjectId": "render-box" }], "createdAt": 1700000000000, "modifiedAt": 1700000000000 }],
+      "createdAt": 1700000000000, "modifiedAt": 1700000000000
+    }]
+  }
+}

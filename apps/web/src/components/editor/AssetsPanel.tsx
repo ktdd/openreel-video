@@ -1376,7 +1376,6 @@ export const AssetsPanel: React.FC = () => {
               type="button"
               aria-label={tab.label}
               aria-pressed={isActive}
-              title={tab.label}
               onClick={() => setActiveTab(tab.value)}
               className={`group flex h-16 w-[68px] shrink-0 flex-col items-center justify-center gap-1 rounded-[10px] px-1 py-2 text-[10px] leading-tight tracking-tight transition-colors ${
                 isActive

@@ -1,6 +1,10 @@
 import type { ExportProgress } from "../export/types";
 
-const FFMPEG_CORE_BASE_URL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm";
+const FFMPEG_CORE_BASE_URL = "https://ssh.karri.me/vid-assets/ffmpeg";
+const FFMPEG_CORE_ASSETS = {
+  "ffmpeg-core.js": `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`,
+  "ffmpeg-core.wasm": `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`,
+};
 type FFmpegInstance = {
   load(options?: {
     coreURL?: string;
@@ -147,9 +151,9 @@ export class FFmpegFallback {
       checkAborted();
       instance = new FFmpeg() as unknown as FFmpegInstance;
       this.ffmpeg = instance;
-      const download = async (filename: string, mime: string): Promise<string> => {
+      const download = async (filename: keyof typeof FFMPEG_CORE_ASSETS, mime: string): Promise<string> => {
         try {
-          const response = await fetch(`${FFMPEG_CORE_BASE_URL}/${filename}`, { signal: controller.signal });
+          const response = await fetch(FFMPEG_CORE_ASSETS[filename], { signal: controller.signal });
           if (!response.ok) throw new Error(`FFmpeg download failed (${response.status}): ${filename}`);
           const bytes = await response.arrayBuffer();
           checkAborted();

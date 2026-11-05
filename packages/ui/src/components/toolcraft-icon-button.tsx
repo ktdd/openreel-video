@@ -40,7 +40,7 @@ export const ToolcraftIconButton = React.forwardRef<
         ref={ref}
         type={type}
         aria-label={label}
-        title={title ?? label}
+        title={title === "" ? undefined : (title ?? label)}
         disabled={resolvedDisabled}
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-[7px] outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",

@@ -8,8 +8,6 @@ import { Icon } from "@/icons/Icon";
 import {
   Sun,
   Moon,
-  SunMoon,
-  Settings,
   HelpCircle,
   FileCode,
   Command,
@@ -28,6 +26,7 @@ const RailButton: React.FC<{
   <Tooltip content={label} placement="end">
     <IconButton
       label={label}
+      title=""
       icon={<Icon name={icon} size={16} ariaHidden />}
       size="sm"
       variant={active ? "secondary" : "ghost"}
@@ -47,22 +46,15 @@ export const EditorActionRail: React.FC = () => {
     activeModal,
   } = useUIStore();
   const { mode: themeMode, toggleTheme } = useThemeStore();
-  const { openSettings } = useSettingsStore();
+  const { openSettings, settingsOpen } = useSettingsStore();
 
-  const themeLabel =
-    themeMode === "auto"
-      ? "System"
-      : themeMode.charAt(0).toUpperCase() + themeMode.slice(1);
-  const nextThemeLabel =
-    themeMode === "light" ? "Dark" : themeMode === "dark" ? "System" : "Light";
-  const themeIcon =
-    themeMode === "light" ? (
-      <Sun size={16} aria-hidden />
-    ) : themeMode === "dark" ? (
-      <Moon size={16} aria-hidden />
-    ) : (
-      <SunMoon size={16} aria-hidden />
-    );
+  const themeLabel = themeMode === "light" ? "Light" : "Dark";
+  const nextThemeLabel = themeMode === "light" ? "Dark" : "Light";
+  const themeIcon = themeMode === "light" ? (
+    <Sun size={16} aria-hidden />
+  ) : (
+    <Moon size={16} aria-hidden />
+  );
   const themeActionLabel = `Theme: ${themeLabel}. Switch to ${nextThemeLabel}`;
 
   return (
@@ -117,6 +109,7 @@ export const EditorActionRail: React.FC = () => {
       <Tooltip content={themeActionLabel} placement="end">
         <IconButton
           label={themeActionLabel}
+          title=""
           icon={themeIcon}
           size="sm"
           variant="secondary"
@@ -124,10 +117,18 @@ export const EditorActionRail: React.FC = () => {
         />
       </Tooltip>
 
+      <RailButton
+        label="Settings"
+        icon="gear"
+        onClick={openSettings}
+        active={settingsOpen}
+      />
+
       <DropdownMenu
         placement="end"
         button={{
           label: "More editor actions",
+          title: "",
           icon: <Icon name="star" size={16} ariaHidden />,
           size: "sm",
           variant: "ghost",
@@ -136,12 +137,6 @@ export const EditorActionRail: React.FC = () => {
         hasChevron={false}
         menuWidth={224}
         items={[
-          {
-            label: "Settings & API keys",
-            icon: <Settings size={14} aria-hidden />,
-            onClick: () => openSettings(),
-          },
-          { type: "divider" },
           {
             label: "Help & shortcuts (press ?)",
             icon: <HelpCircle size={14} aria-hidden />,
@@ -153,7 +148,7 @@ export const EditorActionRail: React.FC = () => {
             isDisabled: true,
           },
           {
-            label: "Cmd+K to search",
+            label: "Ctrl/Cmd+K to search",
             icon: <Command size={14} aria-hidden />,
             isDisabled: true,
           },

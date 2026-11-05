@@ -29,7 +29,14 @@ export * from "./unified-effects-processor";
 
 // Parallel decoding
 export * from "./parallel-frame-decoder";
-export * from "./decode-worker";
+export type {
+  DecodeRequest,
+  DecodeResponse,
+  InitRequest,
+  InitResponse,
+  WorkerRequest,
+  WorkerResponse,
+} from "./decode-worker-types";
 
 // Frame buffering
 export * from "./frame-ring-buffer";

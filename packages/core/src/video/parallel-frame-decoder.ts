@@ -2,8 +2,7 @@ import type {
   DecodeRequest,
   DecodeResponse,
   WorkerResponse,
-} from "./decode-worker";
-import { createDecodeWorkerUrl } from "./decode-worker";
+} from "./decode-worker-types";
 
 export interface FrameDecodeRequest {
   clipId: string;
@@ -48,7 +47,6 @@ export interface ParallelDecoderStats {
 
 export class ParallelFrameDecoder {
   private workers: WorkerState[] = [];
-  private workerUrls: string[] = [];
   private requestQueue: Array<{
     request: FrameDecodeRequest;
     resolve: (result: FrameDecodeResult) => void;
@@ -97,10 +95,9 @@ export class ParallelFrameDecoder {
 
   private async createWorker(index: number): Promise<WorkerState> {
     return new Promise((resolve, reject) => {
-      const workerUrl = createDecodeWorkerUrl();
-      this.workerUrls.push(workerUrl);
-
-      const worker = new Worker(workerUrl, { type: "module" });
+      const worker = new Worker(new URL("./decode-worker.ts", import.meta.url), {
+        type: "module",
+      });
 
       const state: WorkerState = {
         worker,
@@ -113,6 +110,7 @@ export class ParallelFrameDecoder {
       };
 
       const initTimeout = setTimeout(() => {
+        worker.terminate();
         reject(new Error(`Worker ${index} initialization timed out`));
       }, 10000);
 
@@ -122,10 +120,7 @@ export class ParallelFrameDecoder {
         if (response.type === "ready") {
           clearTimeout(initTimeout);
           state.workerId = response.workerId;
-          state.mediabunnyAvailable = response.mediabunnyAvailable ?? false;
-          if (state.mediabunnyAvailable) {
-          } else {
-          }
+          state.mediabunnyAvailable = response.mediabunnyAvailable;
           resolve(state);
           return;
         }
@@ -138,6 +133,7 @@ export class ParallelFrameDecoder {
       worker.onerror = (error) => {
         console.error(`[ParallelFrameDecoder] Worker ${index} error:`, error);
         clearTimeout(initTimeout);
+        worker.terminate();
         reject(error);
       };
 
@@ -399,11 +395,6 @@ export class ParallelFrameDecoder {
       worker.worker.terminate();
     }
     this.workers = [];
-
-    for (const url of this.workerUrls) {
-      URL.revokeObjectURL(url);
-    }
-    this.workerUrls = [];
 
     this.clearCache();
 

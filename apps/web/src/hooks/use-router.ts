@@ -27,6 +27,10 @@ export interface RouterState {
 function parseHash(hash: string): RouterState {
   const cleanHash = hash.replace(/^#\/?/, "");
   const [path, queryString] = cleanHash.split("?");
+  const pathParts = path.split("/");
+
+  // Sharing is disabled; never expose a share route or its parameters to the app.
+  if (pathParts[0] === "share") return { route: "editor", params: {} };
 
   const params: RouteParams = {};
   if (queryString) {
@@ -36,18 +40,12 @@ function parseHash(hash: string): RouterState {
     });
   }
 
-  const pathParts = path.split("/");
   let route: AppRoute = (pathParts[0] || "editor") as AppRoute;
   const validRoutes: AppRoute[] = [
     "editor",
     "new",
-    "share",
     "motion",
   ];
-
-  if (route === "share" && pathParts[1]) {
-    params.shareId = pathParts[1];
-  }
 
   if (route === "motion" && !MOTION_CREATOR_ENABLED) {
     route = "editor";
@@ -60,7 +58,7 @@ function parseHash(hash: string): RouterState {
 }
 
 function buildHash(route: AppRoute, params?: RouteParams): string {
-  if (route === "motion" && !MOTION_CREATOR_ENABLED) {
+  if (route === "share" || (route === "motion" && !MOTION_CREATOR_ENABLED)) {
     route = "editor";
     params = undefined;
   }
@@ -91,10 +89,18 @@ export function useRouter() {
   });
 
   useEffect(() => {
+    const redirectShareRoute = () => {
+      if (/^#\/?share(?:[/?]|$)/.test(window.location.hash)) {
+        // Replace rather than push so Back cannot reopen the disabled viewer.
+        window.history.replaceState(window.history.state, "", "#/editor");
+      }
+    };
     const handleHashChange = () => {
+      redirectShareRoute();
       setState(parseHash(window.location.hash));
     };
 
+    redirectShareRoute();
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);

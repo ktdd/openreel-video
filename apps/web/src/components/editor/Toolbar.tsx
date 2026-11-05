@@ -25,7 +25,6 @@ import { HistoryPanel } from "./inspector/HistoryPanel";
 import { ProjectSwitcher } from "./ProjectSwitcher";
 import { SettingsDialog } from "./settings/SettingsDialog";
 import { Icon } from "@/icons/Icon";
-import { useAnalytics, AnalyticsEvents } from "../../hooks/useAnalytics";
 import {
   ToolcraftDropdownMenu as DropdownMenu,
   ToolcraftDropdownMenuItem as DropdownMenuItem,
@@ -64,7 +63,10 @@ export const Toolbar: React.FC = () => {
   const [isCompressOpen, setIsCompressOpen] = useState(false);
   const sourceMatch = useMemo(() => deriveSourceExportMatch(project), [project]);
   const hasTimelineContent = (project.timeline?.duration ?? 0) > 0;
-  const { track } = useAnalytics();
+
+  useEffect(() => {
+    if (!hasTimelineContent) setIsExportOpen(false);
+  }, [hasTimelineContent]);
 
   // Local editable project name (committed onBlur / Enter)
   const [projectNameDraft, setProjectNameDraft] = useState(project.name);
@@ -81,20 +83,6 @@ export const Toolbar: React.FC = () => {
     }
   }, [projectNameDraft, project.name, renameProject]);
 
-  const handleExported = useCallback(
-    (videoSettings: Partial<VideoExportSettings>) => {
-      track(AnalyticsEvents.PROJECT_EXPORTED, {
-        format: videoSettings.format ?? "mp4",
-        codec: videoSettings.codec ?? "h264",
-        width: videoSettings.width ?? project.settings.width,
-        height: videoSettings.height ?? project.settings.height,
-        frameRate: videoSettings.frameRate ?? project.settings.frameRate,
-        duration: project.timeline?.duration ?? 0,
-      });
-    },
-    [project, track],
-  );
-
   const {
     state: exportState,
     runExport,
@@ -106,7 +94,7 @@ export const Toolbar: React.FC = () => {
     failExport,
     cancel: handleCancelExport,
     resetError,
-  } = useExportRunner({ project, onExported: handleExported });
+  } = useExportRunner({ project });
 
   const [deviceProfile, setDeviceProfile] = useState<DeviceProfile | null>(null);
   const [exportEstimates, setExportEstimates] = useState<Map<string, TimeEstimate>>(new Map());
@@ -177,10 +165,6 @@ export const Toolbar: React.FC = () => {
 
           await runAudioExport(audioSettings, writable);
           markComplete();
-          track(AnalyticsEvents.PROJECT_EXPORTED, {
-            format: "wav",
-            duration: project.timeline?.duration ?? 0,
-          });
         } else {
           const base = {
             width: project.settings.width,
@@ -214,7 +198,7 @@ export const Toolbar: React.FC = () => {
         failExport(error);
       }
     },
-    [project, hasTimelineContent, track, runExport, runAudioExport, showSavePicker, beginExport, markComplete, finishExportSoon, failExport],
+    [project, hasTimelineContent, runExport, runAudioExport, showSavePicker, beginExport, markComplete, finishExportSoon, failExport],
   );
 
   const handleCustomExport = useCallback(
@@ -242,23 +226,12 @@ export const Toolbar: React.FC = () => {
 
         await runExport(exportSettings, ext, writable);
 
-        track(AnalyticsEvents.PROJECT_EXPORTED, {
-          format: settings.format,
-          codec: settings.codec,
-          width: settings.width,
-          height: settings.height,
-          frameRate: settings.frameRate,
-          duration: project.timeline?.duration ?? 0,
-          exportType: "custom",
-          upscaling: settings.upscaling?.enabled ?? false,
-        });
-
         finishExportSoon();
       } catch (error) {
         failExport(error);
       }
     },
-    [project, hasTimelineContent, closeModal, track, runExport, showSavePicker, beginExport, finishExportSoon, failExport],
+    [project, hasTimelineContent, closeModal, runExport, showSavePicker, beginExport, finishExportSoon, failExport],
   );
 
 
@@ -388,11 +361,12 @@ export const Toolbar: React.FC = () => {
               Export
             </button>
             <DropdownMenu
-              isMenuOpen={isExportOpen}
-              onOpenChange={setIsExportOpen}
+              isMenuOpen={hasTimelineContent && isExportOpen}
+              onOpenChange={(open) => setIsExportOpen(open && hasTimelineContent)}
               hasChevron={false}
               button={{
                 label: "Export options",
+                isDisabled: !hasTimelineContent,
                 variant: "primary",
                 size: "sm",
                 isIconOnly: true,

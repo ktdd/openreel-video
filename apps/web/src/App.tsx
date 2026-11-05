@@ -20,9 +20,6 @@ const ScriptViewDialog = lazy(() =>
 const SearchModal = lazy(() =>
   import("./components/editor/SearchModal").then((m) => ({ default: m.SearchModal })),
 );
-const SharePage = lazy(() =>
-  import("./pages/SharePage").then((m) => ({ default: m.SharePage })),
-);
 const LoadingSpinner: React.FC<{ message: string }> = ({ message }) => (
   <div className="h-screen w-screen bg-background flex flex-col items-center justify-center">
     <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin mb-3" />
@@ -50,7 +47,6 @@ function App() {
 
   const { route, params, navigate, parsedDimensions, fps } = useRouter();
   const hasHandledInitialRoute = useRef(false);
-  const isSharePage = route === "share" && params.shareId;
 
   useEffect(() => {
     if (activeModal === "scriptView") setHasOpenedScriptView(true);
@@ -62,7 +58,7 @@ function App() {
       hasHandledInitialRoute.current = false;
       return;
     }
-    if (isSharePage || hasHandledInitialRoute.current || isChecking || showDialog || isRecovering) return;
+    if (hasHandledInitialRoute.current || isChecking || showDialog || isRecovering) return;
 
     if (route === "new") {
       hasHandledInitialRoute.current = true;
@@ -112,7 +108,6 @@ function App() {
     fps,
     createNewProject,
     navigate,
-    isSharePage,
     isChecking,
     showDialog,
     isRecovering,
@@ -121,10 +116,10 @@ function App() {
   useEffect(() => {
     // Recovery owns the choice until it settles. A bare editor URL still needs
     // a real project for autosave and preview-proxy lifecycle subscriptions.
-    if (isSharePage || route === "new" || isChecking || showDialog || isRecovering || hasOpenProject) return;
+    if (route === "new" || isChecking || showDialog || isRecovering || hasOpenProject) return;
     // React StrictMode may replay effects before this render's selector updates.
     if (!useProjectStore.getState().hasOpenProject) createNewProject("New Project");
-  }, [isSharePage, route, isChecking, showDialog, isRecovering, hasOpenProject, createNewProject]);
+  }, [route, isChecking, showDialog, isRecovering, hasOpenProject, createNewProject]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -147,11 +142,7 @@ function App() {
   return (
     <div className="h-screen h-[100dvh] w-screen bg-background text-text-primary overflow-hidden">
       <MobileBlocker />
-      {isSharePage ? (
-        <Suspense fallback={<LoadingSpinner message="Loading shared video..." />}>
-          <SharePage shareId={params.shareId!} />
-        </Suspense>
-      ) : !hasOpenProject || route === "new" ? (
+      {!hasOpenProject || route === "new" ? (
         <LoadingSpinner message={isChecking ? "Checking for saved projects..." : showDialog ? "Choose a saved project or start fresh..." : "Opening project..."} />
       ) : (
         <Suspense fallback={<LoadingSpinner message="Loading editor..." />}>
@@ -163,7 +154,7 @@ function App() {
         {(hasOpenedScriptView || activeModal === "scriptView") && <ScriptViewDialog isOpen={activeModal === "scriptView"} onClose={closeModal} />}
         {activeModal === "search" && <SearchModal isOpen onClose={closeModal} />}
       </Suspense>
-      {!isSharePage && showDialog && availableSaves.length > 0 && (
+      {showDialog && availableSaves.length > 0 && (
         <RecoveryDialog
           saves={availableSaves}
           onRecover={async (saveId) => {

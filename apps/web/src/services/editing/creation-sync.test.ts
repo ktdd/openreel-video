@@ -2,12 +2,12 @@ import "../../test/install-local-storage-mock";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Project } from "@openreel/core";
 import { editSnapshot } from "@openreel/core/actions/handlers/edit-snapshot";
-import legacy from "../../../../../packages/core/src/test/fixtures/ai-removal/legacy-ai-project.json";
+import currentProject from "../../../../../packages/core/src/test/fixtures/current-project.json";
 import { useProjectStore } from "../../stores/project-store";
 import { EditingSession } from "./editing-session";
 import { syncCreationSceneToMotion } from "./creation-sync";
 
-beforeEach(() => useProjectStore.getState().loadProject(structuredClone(legacy.project) as unknown as Project));
+beforeEach(() => useProjectStore.getState().loadProject(structuredClone(currentProject) as unknown as Project));
 afterEach(() => { vi.restoreAllMocks(); });
 const snapshot = () => editSnapshot(useProjectStore.getState().getFullProject());
 

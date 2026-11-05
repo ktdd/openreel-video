@@ -25,6 +25,7 @@ import {
 } from "./project-serializer";
 import { createCreationScene, createEmptyCreationState } from "../creation";
 import { UNIVERSAL_TRACKS_CAPABILITY } from "../timeline/timeline-items";
+import currentProject from "../test/fixtures/current-project.json";
 
 const makeVideoLayer = (
   overrides: Partial<MotionVideoLayer> = {},
@@ -448,6 +449,39 @@ const makeShaderDef = (
   ],
   origin: "generated",
   ...overrides,
+});
+
+describe("current-format release content", () => {
+  it("preserves captions, shader definitions, variable bindings, creation IDs and timeline edits together", () => {
+    const serializer = new ProjectSerializer(new MemoryStorageEngine());
+    const project = structuredClone(currentProject) as unknown as Project;
+    const reopened = serializer.importFromJsonWithValidation(serializer.exportToJsonWithMetadata(project)).project;
+    if (!reopened) throw new Error("Current-format project validation failed");
+    expect(reopened.timeline).toEqual(project.timeline);
+    expect(reopened.generatedShaders).toEqual(project.generatedShaders);
+    expect(reopened.creation?.scenes[0]).toMatchObject(project.creation!.scenes[0]);
+    expect(reopened.creation?.assets).toEqual(project.creation?.assets);
+    const composition = reopened.motionCompositions![0];
+    expect(composition.variables).toEqual(project.motionCompositions![0].variables);
+    expect(composition.layers).toEqual(project.motionCompositions![0].layers);
+    expect(serializer.importFromJson(serializer.exportToJson(reopened))).toEqual(reopened);
+  });
+
+  it("keeps local media bytes and unrelated saved projects through save/reopen", async () => {
+    const storage = new MemoryStorageEngine();
+    const serializer = new ProjectSerializer(storage);
+    const project = structuredClone(currentProject) as unknown as Project;
+    const blob = new Blob(["local image content"], { type: "image/svg+xml" });
+    const withMedia = { ...project, mediaLibrary: { items: [{ ...project.mediaLibrary.items[0], blob }] } };
+    const unrelated = makeProject({ id: "unrelated-project", name: "Do not replace" });
+    await serializer.saveProject(unrelated);
+    await serializer.saveProject(withMedia);
+    const reopened = await serializer.loadProject(project.id);
+    expect(await reopened!.mediaLibrary.items[0].blob!.text()).toBe(await blob.text());
+    expect(reopened).toMatchObject({ timeline: project.timeline, creation: project.creation, generatedShaders: project.generatedShaders });
+    expect(await serializer.loadProject(unrelated.id)).toMatchObject({ ...unrelated, modifiedAt: expect.any(Number) });
+    expect(await storage.listProjects()).toHaveLength(2);
+  });
 });
 
 describe("ProjectSerializer generatedShaders", () => {

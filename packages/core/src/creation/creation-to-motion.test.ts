@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { Project } from "../types/project";
-import legacy from "../test/fixtures/ai-removal/legacy-ai-project.json";
+import currentProject from "../test/fixtures/current-project.json";
 import { buildMotionScene3DFromCreation } from "./creation-to-motion";
 import type { CreationScene } from "./schema/types";
 import type { MotionScene3DLayer } from "../motion/types";
 
 describe("semantic creation scene conversion", () => {
   it("preserves bound IDs, manual layer controls and unrelated keyframes while rebuilding semantic animation", () => {
-    const project = structuredClone(legacy.project) as unknown as Project;
+    const project = structuredClone(currentProject) as unknown as Project;
     const creation = project.creation!;
     const original = project.motionCompositions![0].layers.find((layer) => layer.id === "creation-layer") as MotionScene3DLayer;
     const scene: CreationScene = { ...creation.scenes[0], animations: [{

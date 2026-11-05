@@ -1,6 +1,8 @@
 import type { StabilizationConfig } from "./types";
 import { DEFAULT_STABILIZATION_CONFIG } from "./types";
 
+const VIDSTAB_ASSETS_BASE_URL = "https://ssh.karri.me/vid-assets";
+
 type FFmpegInstance = {
   load(options?: {
     coreURL?: string;
@@ -20,11 +22,6 @@ type FFmpegInstance = {
     callback?: (data: { progress?: number; time?: number; message?: string; type?: string }) => void,
   ): void;
   terminate(): void;
-};
-
-const VIDSTAB_CORE_CDN = {
-  mt: "https://mediashares.openreel.video/ffmpeg-vidstab/mt",
-  st: "https://mediashares.openreel.video/ffmpeg-vidstab/st",
 };
 
 export type VidstabProgress = {
@@ -58,7 +55,7 @@ export class VidstabEngine {
       const useMultiThread =
         typeof crossOriginIsolated !== "undefined" && crossOriginIsolated;
 
-      const baseURL = useMultiThread ? VIDSTAB_CORE_CDN.mt : VIDSTAB_CORE_CDN.st;
+      const baseURL = `${VIDSTAB_ASSETS_BASE_URL}/${useMultiThread ? "vidstab-mt" : "vidstab-st"}`;
 
       if (useMultiThread) {
         const [coreURL, wasmURL, workerURL] = await Promise.all([
