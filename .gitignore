@@ -42,19 +42,7 @@ coverage/
 .cache/
 .temp/
 .docs/
-docs/*
-!docs/superpowers/
-!docs/android-port/
-!docs/remove-ai-features.md
-!docs/ai-removal-phase0/
-!docs/ai-removal-phase1a.md
-!docs/ai-removal-phase1b.md
-!docs/ai-removal-phase1c.md
-!docs/ai-removal-phase2-first3.md
-!docs/ai-removal-phase2.md
-!docs/ai-removal-phase3.md
-!docs/ai-removal-phase4.md
-!docs/editor-workflows.md
+docs/follow-ups.md
 
 # Local network captures may contain credentials and project/media data.
 /*.har
@@ -67,9 +55,6 @@ apps/cloud/dist/
 apps/cloud/.wrangler/
 apps/ios
 apps/android
-
-
-
 
 # Local files
 FEATURES_TWITTER.md
@@ -85,8 +70,6 @@ mobile-mockup/
 # Xcode user data
 xcuserdata/
 *.xcuserstate
-
-!docs/superpowers/
 
 # Brainstorming session artifacts
 .superpowers/

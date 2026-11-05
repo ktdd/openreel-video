@@ -29,6 +29,16 @@ describe("AssetsPanel graphics workflow", () => {
     });
   });
 
+  it("keeps asset tabs visibly labeled and accessible without redundant native titles", () => {
+    render(<AssetsPanel />);
+    for (const label of ["Media", "Text", "Graphics", "Effects", "Transitions", "Audio", "Recipes"]) {
+      const button = screen.getByRole("button", { name: label });
+      expect(button).toHaveTextContent(label);
+      expect(button).not.toHaveAttribute("title");
+      expect(button).toHaveAttribute("aria-pressed", label === "Media" ? "true" : "false");
+    }
+  });
+
   it("places a new shape at the playhead and opens it in the inspector", async () => {
     render(<AssetsPanel />);
     fireEvent.click(screen.getByRole("button", { name: "Graphics" }));

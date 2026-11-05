@@ -17,4 +17,4 @@ Outputs land in `out/cube/*.cube` and `out/manifest.json`.
 ## Deploy
     ./deploy.sh   # uploads out/ to R2 via wrangler
 
-See `docs/superpowers/specs/2026-05-22-filter-presets-design.md` for design.
+This is an optional standalone asset-generation/deployment utility, not the browser app's build or deployment pipeline. It requires Python and a separately installed Wrangler CLI; neither is supplied by the app. The historical design archive has been removed.

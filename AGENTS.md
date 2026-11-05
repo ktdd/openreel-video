@@ -13,7 +13,7 @@ This is a Bun workspace (`apps/*` and `packages/*` in root `package.json`). Pack
 - `apps/web/src/services/editing`: retained manual editing transactions, portable edit JSON/presets and creation synchronization. Agent workspaces, generative services and their provider settings were removed in Phase 2; see `docs/ai-removal-phase2.md`. On-device transcription/segmentation was removed in Phase 3; see `docs/ai-removal-phase3.md`. Caption content/editing and deterministic reframing remain.
 - `packages/creation-core`: C++20 native creation engine; `packages/creation-bindings` provides native/WASM bindings with a TypeScript CPU fallback in `@openreel/core/creation`. See `packages/creation-core/README.md`.
 - `packages/fxpkg`: effect package types, validation, compiler, and related utilities. `packages/ui` contains shared UI components.
-- `docs/editor-workflows.md`: current manual workflows; `docs/MOBILE-OFFLINE.md`: browser offline boundaries. `docs/superpowers/README.md` marks archived AI/desktop designs as retired; mixed deterministic features are not automatically retired. `scripts` contains verification and utility scripts.
+- `docs/editor-workflows.md`: current manual workflows; `docs/OFFLINE.md`: browser offline boundaries and media asset hosting. Historical mobile parity/design archives have been removed; current source/tests define retained deterministic features. `scripts` contains verification and utility scripts.
 
 ## Setup and commands
 
@@ -28,7 +28,7 @@ bun run test                        # one-shot workspace Vitest suites
 bun run test:watch                  # workspace watch-mode tests
 bun run lint                        # workspace lint scripts
 bun run check:no-ai                 # runtime/config absence + retired cloud-GPU guard
-node --test scripts/check-no-ai.test.mjs scripts/ai-removal-phase*.test.mjs
+node --test scripts/check-no-ai.test.mjs scripts/ai-removal-phase*.test.mjs scripts/browser-runtime-config.test.mjs
 bun run --filter @openreel/web test:run src/path/to/example.test.ts
 bun run --filter @openreel/core typecheck
 ```

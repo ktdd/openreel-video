@@ -27,6 +27,33 @@ beforeEach(() => {
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe("FFmpeg loader resources", () => {
+  it.each([false, true])("downloads the hosted core assets when crossOriginIsolated is %s", async (isolated) => {
+    vi.stubGlobal("crossOriginIsolated", isolated);
+    const fallback = new FFmpegFallback();
+    await fallback.load();
+
+    expect(fetchMock.mock.calls).toEqual([
+      ["https://ssh.karri.me/vid-assets/ffmpeg/ffmpeg-core.js", { signal: expect.any(AbortSignal) }],
+      ["https://ssh.karri.me/vid-assets/ffmpeg/ffmpeg-core.wasm", { signal: expect.any(AbortSignal) }],
+    ]);
+    expect(created).toHaveBeenNthCalledWith(1, expect.objectContaining({ type: "text/javascript" }));
+    expect(created).toHaveBeenNthCalledWith(2, expect.objectContaining({ type: "application/wasm" }));
+    expect(worker.load).toHaveBeenCalledWith({ coreURL: "blob:ffmpeg-1", wasmURL: "blob:ffmpeg-2" });
+  });
+
+  it("downloads only on demand and shares concurrent and completed loads", async () => {
+    const fallback = new FFmpegFallback();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(worker.load).not.toHaveBeenCalled();
+    expect(fallback.isLoaded()).toBe(false);
+
+    await Promise.all([fallback.load(), fallback.load()]);
+    await fallback.load();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(worker.load).toHaveBeenCalledOnce();
+    expect(fallback.isLoaded()).toBe(true);
+  });
+
   it("can retry after cancellation before the dynamically imported worker exists", async () => {
     const fallback = new FFmpegFallback();
     const controller = new AbortController();

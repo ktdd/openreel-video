@@ -97,7 +97,6 @@ test("active docs retire agent setup and point to the manual editor", () => {
     assert.doesNotMatch(text, /verify-ai-workspace|agent-runner run|Connect a model/);
     assert.match(text, /editor-workflows\.md/);
   }
-  assert.match(readFileSync(resolve(root, "docs/superpowers/README.md"), "utf8"), /retired/);
 });
 
 test("root check preserves the independent cloud-GPU guard and frozen FFmpeg patches", () => {

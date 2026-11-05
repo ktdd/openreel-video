@@ -49,11 +49,11 @@ test("generation, credential clients, server proxy and agent workspaces are dele
 
 test("workspace manifests, lockfile, aliases and deployment no longer configure agents or provider forwarding", () => {
   const configs = ["package.json", "tsconfig.base.json", "bun.lock", "apps/web/package.json", "apps/web/tsconfig.json",
-    "apps/web/vite.config.ts", "apps/web/vitest.config.ts", "apps/web/wrangler.toml", "apps/web/.env.example",
+    "apps/web/vite.config.ts", "apps/web/vitest.config.ts",
     "apps/web/public/_redirects", "apps/web/public/_headers", "apps/web/index.html",
     ...files(resolve(root, "packages")).filter((path) => /(?:package|tsconfig)\.json$/.test(path))];
   for (const path of configs) assert.doesNotMatch(read(path), agents, path);
-  for (const path of ["apps/web/wrangler.toml", "apps/web/.env.example", "apps/web/public/_redirects", "apps/web/index.html"]) {
+  for (const path of ["apps/web/public/_redirects", "apps/web/index.html"]) {
     assert.doesNotMatch(read(path), generation, path);
   }
   assert.match(read("apps/web/public/_headers"), /Cross-Origin-Opener-Policy: same-origin/);
@@ -78,5 +78,6 @@ test("manual content remains; settings have no provider or vault controls", () =
   assert.match(dialog, /<GeneralPanel/);
   assert.doesNotMatch(dialog, /API Keys|MCP|AI Editor|TabsTrigger|settingsTab/);
   assert.doesNotMatch(read("apps/web/src/stores/settings-store.ts"), /provider|llm|favorite|cached|session|secret|SettingsTab/i);
-  assert.match(read("apps/web/src/config/api-endpoints.ts"), /https:\/\/api\.openreel\.video/);
+  assert.match(read("apps/web/src/config/api-endpoints.ts"), /export const OPENREEL_CLOUD_URL\b/);
+  assert.match(read("apps/web/src/services/share-service.ts"), /OPENREEL_CLOUD_URL/);
 });

@@ -5,7 +5,7 @@
     "description": "Professional video, audio, and photo editing in your browser",
     "type": "module",
     "scripts": {
-        "dev": "bun run --filter @openreel/web dev",
+        "dev": "cd apps/web && bun run dev",
         "build:wasm": "bun run --filter @openreel/core build:wasm",
         "build": "bun run build:wasm && bun run --filter @openreel/web build",
         "preview": "bun run --filter @openreel/web preview",
